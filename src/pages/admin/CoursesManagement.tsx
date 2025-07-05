@@ -190,32 +190,77 @@ const CoursesManagement: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <AnimatedSection>
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1
-                className={`text-3xl font-bold mb-2 ${
-                  theme === "dark" ? "text-white" : "text-gray-900"
-                }`}
-              >
-                Gestion des Formations
-              </h1>
-              <p
-                className={`${
-                  theme === "dark" ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                Gérez vos formations et programmes éducatifs
-              </p>
+          <div className="relative mb-12">
+            <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/5 to-neon-purple/5 rounded-2xl" />
+            <div className="relative p-8 bg-gradient-to-br from-dark-900/50 to-dark-800/50 border border-neon-blue/20 backdrop-blur-sm rounded-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="inline-block px-4 py-2 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20 rounded-full border border-neon-blue/30 backdrop-blur-sm mb-4">
+                    <span className="text-neon-blue text-sm font-medium">
+                      Admin Dashboard
+                    </span>
+                  </div>
+                  <h1 className="text-3xl lg:text-4xl font-bold mb-2">
+                    <span className="bg-gradient-to-r from-white via-neon-blue to-neon-purple bg-clip-text text-transparent">
+                      Gestion des Formations
+                    </span>
+                  </h1>
+                  <p className="text-gray-400">
+                    Gérez vos formations et programmes éducatifs avec des outils
+                    avancés
+                  </p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowForm(true)}
+                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl text-white font-medium hover:shadow-glow transition-all duration-300"
+                >
+                  <Plus className="h-5 w-5" />
+                  <span>Nouvelle Formation</span>
+                </motion.button>
+              </div>
+
+              {/* Stats Overview */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">
+                    {filteredCourses.length}
+                  </div>
+                  <div className="text-sm text-gray-400">Total Formations</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-neon-blue">
+                    {mockCourses
+                      .reduce((acc, course) => acc + course.students, 0)
+                      .toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-400">Étudiants Totaux</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-neon-purple">
+                    €
+                    {(
+                      mockCourses.reduce(
+                        (acc, course) => acc + course.revenue,
+                        0,
+                      ) / 1000000
+                    ).toFixed(1)}
+                    M
+                  </div>
+                  <div className="text-sm text-gray-400">Revenus Totaux</div>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center space-x-1">
+                    <TrendingUp className="h-5 w-5 text-green-400" />
+                    <span className="text-2xl font-bold text-green-400">
+                      +23%
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-400">Croissance</div>
+                </div>
+              </div>
             </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowForm(true)}
-              className="flex items-center space-x-2 px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors"
-            >
-              <Plus className="h-5 w-5" />
-              <span>Nouvelle Formation</span>
-            </motion.button>
           </div>
         </AnimatedSection>
 
