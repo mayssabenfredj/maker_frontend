@@ -186,9 +186,7 @@ const CoursesManagement: React.FC = () => {
   }
 
   return (
-    <div
-      className={`min-h-screen pt-16 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} transition-colors duration-300`}
-    >
+    <div className="min-h-screen pt-16 bg-dark-950 text-white transition-colors duration-300">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <AnimatedSection>
