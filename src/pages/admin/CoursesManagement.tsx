@@ -24,6 +24,8 @@ const CoursesManagement: React.FC = () => {
   const [editingCourse, setEditingCourse] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
   const categories = [
     { id: "all", label: "Toutes" },
