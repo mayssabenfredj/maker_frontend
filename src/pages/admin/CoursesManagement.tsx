@@ -302,116 +302,160 @@ const CoursesManagement: React.FC = () => {
         </AnimatedSection>
 
         {/* Courses Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCourses.map((course, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {paginatedCourses.map((course, index) => (
             <AnimatedSection key={course.id} delay={index * 0.1}>
               <motion.div
-                whileHover={{ y: -5 }}
-                className={`rounded-xl shadow-lg overflow-hidden ${
-                  theme === "dark" ? "bg-gray-800" : "bg-white"
-                }`}
+                whileHover={{ y: -10, scale: 1.02 }}
+                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-dark-900/50 to-dark-800/50 border border-neon-blue/20 backdrop-blur-sm hover:border-neon-blue/40 transition-all duration-300"
               >
-                <div className="relative">
-                  <img
-                    src={course.image}
-                    alt={course.title.fr}
-                    className="w-full h-48 object-cover"
-                  />
-                  {course.featured && (
-                    <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Populaire
+                {/* Background Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/5 to-neon-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                <div className="relative z-10">
+                  {/* Image Section */}
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={course.image}
+                      alt={course.title.fr}
+                      className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-950/80 to-transparent" />
+
+                    {/* Status Badges */}
+                    <div className="absolute top-4 left-4 flex space-x-2">
+                      {course.featured && (
+                        <div className="px-3 py-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-full text-white text-xs font-medium">
+                          Featured
+                        </div>
+                      )}
+                      <div
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${getLevelColor(course.level)}`}
+                      >
+                        {course.level === "beginner"
+                          ? "Débutant"
+                          : course.level === "intermediate"
+                            ? "Intermédiaire"
+                            : "Avancé"}
+                      </div>
                     </div>
-                  )}
-                  <div className="absolute top-4 right-4 flex space-x-2">
-                    <button
-                      onClick={() => handleEdit(course)}
-                      className="p-2 bg-white rounded-full text-blue-600 hover:bg-blue-50 transition-colors"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
 
-                <div className="p-6">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(course.level)}`}
-                    >
-                      {course.level === "beginner"
-                        ? "Débutant"
-                        : course.level === "intermediate"
-                          ? "Intermédiaire"
-                          : "Avancé"}
-                    </span>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(course.type)}`}
-                    >
-                      {course.type === "kids"
-                        ? "Enfants"
-                        : course.type === "adults"
-                          ? "Adultes"
-                          : "Bootcamp"}
-                    </span>
+                    {/* Action Buttons */}
+                    <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleEdit(course)}
+                        className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-neon-blue/30 transition-colors"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </motion.button>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <div className="flex items-center justify-between text-white text-sm">
+                        <div className="flex items-center space-x-2">
+                          <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                          <span>{course.rating}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Users className="h-4 w-4 text-neon-blue" />
+                          <span>{course.students.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <h3
-                    className={`text-lg font-bold mb-2 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {course.title.fr}
-                  </h3>
+                  {/* Content Section */}
+                  <div className="p-6 space-y-4">
+                    {/* Header */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(course.type)}`}
+                        >
+                          {course.type === "kids"
+                            ? "Enfants"
+                            : course.type === "adults"
+                              ? "Adultes"
+                              : "Bootcamp"}
+                        </span>
+                        <div className="flex items-center space-x-1 text-green-400">
+                          <TrendingUp className="h-3 w-3" />
+                          <span className="text-xs">+{course.growth}%</span>
+                        </div>
+                      </div>
 
-                  <p
-                    className={`text-sm mb-4 line-clamp-2 ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}
-                  >
-                    {course.description.fr}
-                  </p>
+                      <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
+                        {course.title.fr}
+                      </h3>
 
-                  <div className="flex items-center justify-between mb-4">
-                    <span
-                      className={`text-sm ${
-                        theme === "dark" ? "text-gray-400" : "text-gray-600"
-                      }`}
-                    >
-                      {course.duration}
-                    </span>
-                    <span
-                      className={`text-lg font-bold ${
-                        theme === "dark" ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {course.price}€
-                    </span>
-                  </div>
+                      <p className="text-sm text-gray-400 line-clamp-2">
+                        {course.description.fr}
+                      </p>
+                    </div>
 
-                  <div className="flex space-x-2">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleEdit(course)}
-                      className="flex-1 flex items-center justify-center space-x-2 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                    >
-                      <Edit className="h-4 w-4" />
-                      <span>Modifier</span>
-                    </motion.button>
+                    {/* Stats */}
+                    <div className="flex items-center space-x-4 text-sm">
+                      <div className="flex items-center space-x-1">
+                        <Clock className="h-4 w-4 text-neon-blue" />
+                        <span className="text-gray-300">{course.duration}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Award className="h-4 w-4 text-neon-purple" />
+                        <span className="text-gray-300">
+                          €{course.revenue.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleDelete(course.id)}
-                      className="flex items-center justify-center p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </motion.button>
+                    {/* Price and Actions */}
+                    <div className="flex items-center justify-between pt-4 border-t border-neon-blue/10">
+                      <div className="text-2xl font-bold text-white">
+                        €{course.price}
+                      </div>
+
+                      <div className="flex space-x-2">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleEdit(course)}
+                          className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-neon-blue to-neon-cyan rounded-lg text-white text-sm font-medium hover:shadow-glow transition-all duration-300"
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
+                          Edit
+                        </motion.button>
+
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleDelete(course.id)}
+                          className="flex items-center justify-center p-2 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-white hover:shadow-glow-pink transition-all duration-300"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </motion.button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
             </AnimatedSection>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-12">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              itemsPerPage={itemsPerPage}
+              totalItems={filteredCourses.length}
+            />
+          </div>
+        )}
 
         {filteredCourses.length === 0 && (
           <AnimatedSection>
