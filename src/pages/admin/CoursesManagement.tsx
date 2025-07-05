@@ -35,6 +35,90 @@ const CoursesManagement: React.FC = () => {
     { id: "programming", label: "Programmation" },
   ];
 
+  // Mock courses data for demonstration
+  const mockCourses = [
+    {
+      id: "1",
+      title: { fr: "Formation IA Avancée", en: "Advanced AI Training" },
+      description: {
+        fr: "Maîtrisez l'intelligence artificielle avec nos experts",
+        en: "Master artificial intelligence with our experts",
+      },
+      image:
+        "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=500",
+      category: "ai",
+      type: "bootcamp",
+      duration: "16 semaines",
+      price: 1299,
+      level: "advanced",
+      featured: true,
+      rating: 4.9,
+      students: 2847,
+      revenue: 3698253,
+      growth: 24,
+    },
+    {
+      id: "2",
+      title: { fr: "Robotique Industrielle", en: "Industrial Robotics" },
+      description: {
+        fr: "Conception et programmation de robots industriels",
+        en: "Design and programming of industrial robots",
+      },
+      image:
+        "https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=500",
+      category: "robotics",
+      type: "adults",
+      duration: "12 semaines",
+      price: 899,
+      level: "intermediate",
+      featured: true,
+      rating: 4.8,
+      students: 1542,
+      revenue: 1386258,
+      growth: 18,
+    },
+    {
+      id: "3",
+      title: { fr: "IoT pour Débutants", en: "IoT for Beginners" },
+      description: {
+        fr: "Introduction complète à l'Internet des Objets",
+        en: "Complete introduction to Internet of Things",
+      },
+      image:
+        "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=500",
+      category: "iot",
+      type: "adults",
+      duration: "8 semaines",
+      price: 499,
+      level: "beginner",
+      featured: false,
+      rating: 4.6,
+      students: 3421,
+      revenue: 1707079,
+      growth: 32,
+    },
+    // Add more mock courses for pagination demonstration
+    ...Array.from({ length: 15 }, (_, i) => ({
+      id: `${i + 4}`,
+      title: { fr: `Formation ${i + 4}`, en: `Training ${i + 4}` },
+      description: {
+        fr: `Description de la formation ${i + 4}`,
+        en: `Description of training ${i + 4}`,
+      },
+      image: `https://images.pexels.com/photos/${3861969 + i}/pexels-photo-${3861969 + i}.jpeg?auto=compress&cs=tinysrgb&w=500`,
+      category: ["ai", "robotics", "iot", "programming"][i % 4],
+      type: ["adults", "kids", "bootcamp"][i % 3],
+      duration: `${8 + (i % 12)} semaines`,
+      price: 300 + i * 50,
+      level: ["beginner", "intermediate", "advanced"][i % 3],
+      featured: i % 3 === 0,
+      rating: 4.2 + (i % 8) * 0.1,
+      students: 150 + i * 200,
+      revenue: (150 + i * 200) * (300 + i * 50),
+      growth: 5 + (i % 30),
+    })),
+  ];
+
   const filteredCourses = courses.filter((course) => {
     const matchesSearch =
       course.title.fr.toLowerCase().includes(searchTerm.toLowerCase()) ||
