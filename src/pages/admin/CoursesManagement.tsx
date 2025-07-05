@@ -119,7 +119,9 @@ const CoursesManagement: React.FC = () => {
     })),
   ];
 
-  const filteredCourses = courses.filter((course) => {
+  const allCourses = mockCourses.length > 0 ? mockCourses : courses;
+
+  const filteredCourses = allCourses.filter((course) => {
     const matchesSearch =
       course.title.fr.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.title.en.toLowerCase().includes(searchTerm.toLowerCase());
@@ -127,6 +129,13 @@ const CoursesManagement: React.FC = () => {
       filterCategory === "all" || course.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedCourses = filteredCourses.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   const handleEdit = (course: any) => {
     setEditingCourse(course);
