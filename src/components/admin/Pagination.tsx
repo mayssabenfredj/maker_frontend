@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useStore } from '../../stores/useStore';
+import React from "react";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useStore } from "../../stores/useStore";
 
 interface PaginationProps {
   currentPage: number;
@@ -16,7 +16,7 @@ const Pagination: React.FC<PaginationProps> = ({
   totalPages,
   onPageChange,
   itemsPerPage,
-  totalItems
+  totalItems,
 }) => {
   const { theme } = useStore();
 
@@ -25,12 +25,16 @@ const Pagination: React.FC<PaginationProps> = ({
     const range = [];
     const rangeWithDots = [];
 
-    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
       range.push(i);
     }
 
     if (currentPage - delta > 2) {
-      rangeWithDots.push(1, '...');
+      rangeWithDots.push(1, "...");
     } else {
       rangeWithDots.push(1);
     }
@@ -38,7 +42,7 @@ const Pagination: React.FC<PaginationProps> = ({
     rangeWithDots.push(...range);
 
     if (currentPage + delta < totalPages - 1) {
-      rangeWithDots.push('...', totalPages);
+      rangeWithDots.push("...", totalPages);
     } else if (totalPages > 1) {
       rangeWithDots.push(totalPages);
     }
@@ -50,12 +54,18 @@ const Pagination: React.FC<PaginationProps> = ({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className={`flex items-center justify-between px-6 py-4 ${
-      theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-    } border-t`}>
-      <div className={`text-sm ${
-        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-      }`}>
+    <div
+      className={`flex items-center justify-between px-6 py-4 ${
+        theme === "dark"
+          ? "bg-gray-800 border-gray-700"
+          : "bg-white border-gray-200"
+      } border-t`}
+    >
+      <div
+        className={`text-sm ${
+          theme === "dark" ? "text-gray-400" : "text-gray-600"
+        }`}
+      >
         Affichage de {startItem} à {endItem} sur {totalItems} résultats
       </div>
 
@@ -67,10 +77,12 @@ const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === 1}
           className={`p-2 rounded-lg transition-colors ${
             currentPage === 1
-              ? theme === 'dark' ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'
-              : theme === 'dark'
-              ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              ? theme === "dark"
+                ? "text-gray-600 cursor-not-allowed"
+                : "text-gray-400 cursor-not-allowed"
+              : theme === "dark"
+                ? "text-gray-300 hover:text-white hover:bg-gray-700"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           }`}
         >
           <ChevronLeft className="h-5 w-5" />
@@ -78,10 +90,12 @@ const Pagination: React.FC<PaginationProps> = ({
 
         {getVisiblePages().map((page, index) => (
           <React.Fragment key={index}>
-            {page === '...' ? (
-              <span className={`px-3 py-2 ${
-                theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-              }`}>
+            {page === "..." ? (
+              <span
+                className={`px-3 py-2 ${
+                  theme === "dark" ? "text-gray-500" : "text-gray-400"
+                }`}
+              >
                 ...
               </span>
             ) : (
@@ -91,10 +105,10 @@ const Pagination: React.FC<PaginationProps> = ({
                 onClick={() => onPageChange(page as number)}
                 className={`px-3 py-2 rounded-lg font-medium transition-colors ${
                   currentPage === page
-                    ? 'bg-orange-500 text-white'
-                    : theme === 'dark'
-                    ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    ? "bg-orange-500 text-white"
+                    : theme === "dark"
+                      ? "text-gray-300 hover:text-white hover:bg-gray-700"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 {page}
@@ -110,10 +124,12 @@ const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === totalPages}
           className={`p-2 rounded-lg transition-colors ${
             currentPage === totalPages
-              ? theme === 'dark' ? 'text-gray-600 cursor-not-allowed' : 'text-gray-400 cursor-not-allowed'
-              : theme === 'dark'
-              ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              ? theme === "dark"
+                ? "text-gray-600 cursor-not-allowed"
+                : "text-gray-400 cursor-not-allowed"
+              : theme === "dark"
+                ? "text-gray-300 hover:text-white hover:bg-gray-700"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           }`}
         >
           <ChevronRight className="h-5 w-5" />
