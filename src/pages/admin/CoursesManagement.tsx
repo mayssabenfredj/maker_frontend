@@ -266,46 +266,32 @@ const CoursesManagement: React.FC = () => {
 
         {/* Filters */}
         <AnimatedSection>
-          <div
-            className={`p-6 rounded-xl mb-8 ${
-              theme === "dark" ? "bg-gray-800" : "bg-white"
-            } shadow-lg`}
-          >
+          <div className="p-6 rounded-2xl mb-8 bg-gradient-to-br from-dark-900/50 to-dark-800/50 border border-neon-blue/20 backdrop-blur-sm">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search
-                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${
-                    theme === "dark" ? "text-gray-400" : "text-gray-500"
-                  }`}
-                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Rechercher une formation..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors ${
-                    theme === "dark"
-                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                      : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
-                  } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-neon-blue/20 bg-dark-800/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-neon-blue/50 focus:border-neon-blue/50 transition-colors"
                 />
               </div>
 
               <div className="flex items-center space-x-2">
-                <Filter
-                  className={`h-5 w-5 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}
-                />
+                <Filter className="h-5 w-5 text-gray-400" />
                 <select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
-                  className={`px-4 py-3 rounded-lg border transition-colors ${
-                    theme === "dark"
-                      ? "bg-gray-700 border-gray-600 text-white"
-                      : "bg-gray-50 border-gray-300 text-gray-900"
-                  } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+                  className="px-4 py-3 rounded-xl border border-neon-blue/20 bg-dark-800/50 text-white focus:outline-none focus:ring-2 focus:ring-neon-blue/50 focus:border-neon-blue/50 transition-colors"
                 >
                   {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option
+                      key={category.id}
+                      value={category.id}
+                      className="bg-dark-800"
+                    >
                       {category.label}
                     </option>
                   ))}
