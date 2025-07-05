@@ -1,285 +1,170 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight, Cpu, Bot, Brain, Lightbulb, Users, Award, Globe, Star, Clock, ChevronLeft, ChevronRight, Play, CheckCircle, Quote, Volume2, VolumeX } from 'lucide-react';
-import { useStore } from '../stores/useStore';
-import { translations } from '../data/translations';
-import AnimatedSection from '../components/UI/AnimatedSection';
-import FeaturedCoursesCarousel from '../components/Home/FeaturedCoursesCarousel';
-import TestimonialsSection from '../components/Home/TestimonialsSection';
-import NewsSection from '../components/Home/NewsSection';
-import StatsSection from '../components/Home/StatsSection';
-import CalendarSection from '../components/Home/CalendarSection';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Brain,
+  Bot,
+  Zap,
+  Shield,
+  Sparkles,
+  Users,
+  Award,
+  Globe,
+  ChevronDown,
+  Play,
+  Star,
+  CheckCircle2,
+  Quote,
+  TrendingUp,
+  Code,
+  Cpu,
+  Lightbulb,
+} from "lucide-react";
+import { useStore } from "../stores/useStore";
+import { translations } from "../data/translations";
+import AnimatedSection from "../components/UI/AnimatedSection";
 
 const Home: React.FC = () => {
   const { theme, language } = useStore();
   const t = translations[language];
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
-  const heroSlides = [
-    {
-      type: 'formation',
-      title: 'Formations IoT & Robotique',
-      subtitle: 'Apprenez les technologies du futur',
-      description: 'Maîtrisez l\'Internet des Objets et la robotique avec nos formations pratiques',
-      image: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1920',
-      video: 'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4',
-      cta: 'Voir les formations',
-      link: '/formations'
-    },
-    {
-      type: 'bootcamp',
-      title: 'Bootcamps Intensifs',
-      subtitle: 'Transformez votre carrière en quelques mois',
-      description: 'Programmes intensifs pour devenir expert en IA, IoT et robotique',
-      image: 'https://images.pexels.com/photos/8386422/pexels-photo-8386422.jpeg?auto=compress&cs=tinysrgb&w=1920',
-      video: 'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4',
-      cta: 'Découvrir les bootcamps',
-      link: '/bootcamp'
-    },
-    {
-      type: 'workshop',
-      title: 'Workshops Pratiques',
-      subtitle: 'Ateliers hands-on pour tous niveaux',
-      description: 'Apprenez par la pratique avec nos ateliers spécialisés',
-      image: 'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=1920',
-      video: 'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4',
-      cta: 'Rejoindre un workshop',
-      link: '/workshops'
-    }
-  ];
+  // Hero content
+  const heroContent = {
+    title: "Experience the Future of Technology",
+    subtitle:
+      "We are dedicated to pioneering the art of learning with cutting-edge AI and IoT technologies",
+    description:
+      "Transform your skills with our innovative AI-powered learning platform and become a leader in tomorrow's digital world.",
+  };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, [heroSlides.length]);
-
-  const features = [
+  // Services data
+  const services = [
     {
-      icon: Cpu,
-      title: t.home.features.iot.title,
-      description: t.home.features.iot.description,
-      color: 'bg-orange-500',
-      image: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=500',
-      video: 'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4'
+      icon: Brain,
+      title: "AI-Powered Analytics",
+      description:
+        "Leverage advanced artificial intelligence to analyze and optimize your learning journey with personalized insights.",
+      gradient: "from-neon-blue to-primary-500",
     },
     {
       icon: Bot,
-      title: t.home.features.robotics.title,
-      description: t.home.features.robotics.description,
-      color: 'bg-blue-600',
-      image: 'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=500',
-      video: 'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4'
+      title: "Innovative Solutions",
+      description:
+        "Our cutting-edge robotics and IoT solutions provide hands-on experience with the technologies shaping our future.",
+      gradient: "from-neon-purple to-accent-500",
     },
     {
-      icon: Brain,
-      title: t.home.features.ai.title,
-      description: t.home.features.ai.description,
-      color: 'bg-orange-600',
-      image: 'https://images.pexels.com/photos/8386422/pexels-photo-8386422.jpeg?auto=compress&cs=tinysrgb&w=500',
-      video: 'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4'
+      icon: Shield,
+      title: "Customized Approach",
+      description:
+        "Tailored learning paths designed specifically for your goals, ensuring maximum efficiency and engagement.",
+      gradient: "from-neon-green to-primary-600",
     },
-    {
-      icon: Lightbulb,
-      title: t.home.features.steam.title,
-      description: t.home.features.steam.description,
-      color: 'bg-blue-500',
-      image: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=500',
-      video: 'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4'
-    }
   ];
 
-  const achievements = [
+  // Testimonials
+  const testimonials = [
     {
-      icon: Users,
-      number: '500+',
-      label: 'Étudiants Formés',
-      description: 'Apprenants satisfaits'
+      name: "Sarah Williams",
+      role: "Data Scientist",
+      company: "TechCorp",
+      avatar:
+        "https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=100",
+      content:
+        "The AI bootcamp completely transformed my career. The hands-on approach and cutting-edge curriculum gave me the skills I needed to land my dream job.",
+      rating: 5,
     },
     {
-      icon: Award,
-      number: '50+',
-      label: 'Projets Réalisés',
-      description: 'Innovations concrètes'
+      name: "Marcus Chen",
+      role: "Robotics Engineer",
+      company: "FutureTech",
+      avatar:
+        "https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg?auto=compress&cs=tinysrgb&w=100",
+      content:
+        "Incredible learning experience! The IoT workshops provided real-world skills that I use daily in my engineering role.",
+      rating: 5,
     },
     {
-      icon: Globe,
-      number: '10+',
-      label: 'Partenaires',
-      description: 'Entreprises partenaires'
+      name: "Emma Rodriguez",
+      role: "Product Manager",
+      company: "InnovateLab",
+      avatar:
+        "https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=100",
+      content:
+        "The comprehensive curriculum and expert instructors made complex AI concepts accessible and practical.",
+      rating: 5,
     },
-    {
-      icon: Brain,
-      number: '15+',
-      label: 'Formations',
-      description: 'Programmes disponibles'
-    }
   ];
 
-  const whyChooseUs = [
-    {
-      icon: CheckCircle,
-      title: 'Expertise Reconnue',
-      description: 'Formateurs experts avec une expérience industrielle confirmée'
-    },
-    {
-      icon: CheckCircle,
-      title: 'Méthode Pratique',
-      description: 'Apprentissage par la pratique avec des projets concrets'
-    },
-    {
-      icon: CheckCircle,
-      title: 'Équipements Modernes',
-      description: 'Laboratoires équipés des dernières technologies'
-    },
-    {
-      icon: CheckCircle,
-      title: 'Suivi Personnalisé',
-      description: 'Accompagnement individuel tout au long du parcours'
-    }
+  // Stats
+  const stats = [
+    { icon: Users, value: "500+", label: "Students Trained" },
+    { icon: Award, value: "50+", label: "Projects Completed" },
+    { icon: Globe, value: "10+", label: "Partner Companies" },
+    { icon: TrendingUp, value: "95%", label: "Success Rate" },
   ];
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  };
+  // FAQ
+  const faqs = [
+    {
+      question: "What is Artificial Intelligence and Technology?",
+      answer:
+        "AI and technology encompass machine learning, robotics, IoT, and data science - the core technologies driving digital transformation across all industries.",
+    },
+    {
+      question: "How long are the typical AI training programs?",
+      answer:
+        "Our programs range from 4-week workshops to 16-week comprehensive bootcamps, designed to fit different learning goals and schedules.",
+    },
+    {
+      question: "What career opportunities are available?",
+      answer:
+        "Graduates work in roles like AI Engineer, Data Scientist, Robotics Developer, IoT Specialist, and Product Manager at leading tech companies.",
+    },
+    {
+      question: "Do you provide hands-on practical experience?",
+      answer:
+        "Yes! All our programs include extensive hands-on projects, real-world case studies, and access to state-of-the-art laboratories and equipment.",
+    },
+  ];
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  };
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} transition-colors duration-300`}>
-      {/* Hero Section with Carousel */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Background Image/Video */}
-        <div className="absolute inset-0 z-0">
-          <div className="relative w-full h-full">
-            <img
-              src={heroSlides[currentSlide].image}
-              alt={heroSlides[currentSlide].title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-50" />
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-blue-600/20" />
-          </div>
-        </div>
+    <div className="min-h-screen bg-dark-950 text-white overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center">
+        {/* Animated Background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-dark-950 via-dark-900 to-dark-800" />
+          <div
+            className={
+              'absolute inset-0 bg-[url(\'data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%2300d4ff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\')] opacity-20'
+            }
+          />
 
-        {/* Navigation Arrows */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-6 top-1/2 transform -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-orange-500 transition-colors"
-        >
-          <ChevronLeft className="h-6 w-6" />
-        </button>
-        
-        <button
-          onClick={nextSlide}
-          className="absolute right-6 top-1/2 transform -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-blue-600 transition-colors"
-        >
-          <ChevronRight className="h-6 w-6" />
-        </button>
-
-        {/* Slide Indicators */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 flex space-x-2">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? 'bg-orange-500 w-8'
-                  : 'bg-white/50 hover:bg-white/70'
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Hero Content */}
-        <div className="container mx-auto px-4 py-20 relative z-20">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              key={currentSlide}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-              className="space-y-8"
-            >
-              <motion.div
-                className="inline-block px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium mb-4"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                {heroSlides[currentSlide].type.charAt(0).toUpperCase() + heroSlides[currentSlide].type.slice(1)}
-              </motion.div>
-              
-              <motion.h1
-                className="text-5xl md:text-7xl font-bold leading-tight text-white"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, delay: 0.4 }}
-              >
-                {heroSlides[currentSlide].title}
-              </motion.h1>
-              
-              <motion.p
-                className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.6 }}
-              >
-                {heroSlides[currentSlide].subtitle}
-              </motion.p>
-              
-              <motion.p
-                className="text-lg text-white/80 max-w-2xl mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.8 }}
-              >
-                {heroSlides[currentSlide].description}
-              </motion.p>
-              
-              <motion.div
-                className="flex flex-col sm:flex-row gap-6 justify-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 1 }}
-              >
-                <Link
-                  to={heroSlides[currentSlide].link}
-                  className="inline-flex items-center px-8 py-4 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
-                >
-                  {heroSlides[currentSlide].cta}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-                <Link
-                  to="/about"
-                  className="inline-flex items-center px-8 py-4 border-2 border-blue-600 text-blue-600 bg-white font-semibold rounded-xl hover:bg-blue-600 hover:text-white transition-all duration-300"
-                >
-                  En savoir plus
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Floating Elements */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          {[...Array(6)].map((_, i) => (
+          {/* Floating particles */}
+          {[...Array(20)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 bg-white/30 rounded-full"
+              className="absolute w-1 h-1 bg-neon-blue rounded-full"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
               }}
               animate={{
-                y: [0, -20, 0],
-                opacity: [0.3, 0.8, 0.3],
+                y: [0, -30, 0],
+                opacity: [0.2, 1, 0.2],
+                scale: [1, 1.5, 1],
               }}
               transition={{
                 duration: 3 + Math.random() * 2,
@@ -289,55 +174,225 @@ const Home: React.FC = () => {
             />
           ))}
         </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+              className="space-y-8"
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="inline-block"
+              >
+                <div className="px-4 py-2 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20 rounded-full border border-neon-blue/30 backdrop-blur-sm">
+                  <span className="text-neon-blue text-sm font-medium">
+                    Artificial Intelligence Technology
+                  </span>
+                </div>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="text-5xl lg:text-7xl font-bold leading-tight"
+              >
+                <span className="bg-gradient-to-r from-white via-neon-blue to-neon-purple bg-clip-text text-transparent">
+                  {heroContent.title}
+                </span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="text-xl text-gray-300 leading-relaxed"
+              >
+                {heroContent.subtitle}
+              </motion.p>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="text-gray-400 leading-relaxed"
+              >
+                {heroContent.description}
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1 }}
+                className="flex flex-col sm:flex-row gap-4"
+              >
+                <Link
+                  to="/formations"
+                  className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl text-white font-semibold hover:shadow-glow transition-all duration-300 transform hover:scale-105"
+                >
+                  Get Started
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+
+                <button className="group inline-flex items-center px-8 py-4 border border-neon-blue/30 rounded-xl text-neon-blue font-semibold hover:bg-neon-blue/10 transition-all duration-300">
+                  <Play className="mr-2 h-5 w-5" />
+                  Watch Demo
+                </button>
+              </motion.div>
+
+              {/* Customer Avatars */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 }}
+                className="flex items-center space-x-4"
+              >
+                <div className="flex -space-x-2">
+                  {testimonials.slice(0, 3).map((testimonial, index) => (
+                    <img
+                      key={index}
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      className="w-10 h-10 rounded-full border-2 border-dark-800"
+                    />
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-400">200+ Happy Students</p>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Right Visual */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="relative"
+            >
+              <div className="relative">
+                {/* Main Image */}
+                <motion.div
+                  animate={{ y: [0, -20, 0] }}
+                  transition={{ duration: 6, repeat: Infinity }}
+                  className="relative z-10"
+                >
+                  <div className="w-96 h-96 mx-auto relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20 rounded-3xl backdrop-blur-sm border border-neon-blue/30" />
+                    <img
+                      src="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800"
+                      alt="AI Technology"
+                      className="w-full h-full object-cover rounded-3xl opacity-80"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-950/50 to-transparent rounded-3xl" />
+                  </div>
+                </motion.div>
+
+                {/* Floating Elements */}
+                <motion.div
+                  animate={{ x: [0, 30, 0], rotate: [0, 360, 0] }}
+                  transition={{ duration: 8, repeat: Infinity }}
+                  className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-r from-neon-blue to-neon-cyan rounded-2xl flex items-center justify-center shadow-glow"
+                >
+                  <Brain className="h-8 w-8 text-white" />
+                </motion.div>
+
+                <motion.div
+                  animate={{ x: [0, -20, 0], y: [0, 20, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, delay: 1 }}
+                  className="absolute -bottom-4 -right-4 w-20 h-20 bg-gradient-to-r from-neon-purple to-neon-pink rounded-2xl flex items-center justify-center shadow-glow-purple"
+                >
+                  <Bot className="h-10 w-10 text-white" />
+                </motion.div>
+
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 4, repeat: Infinity, delay: 2 }}
+                  className="absolute top-1/2 -right-8 w-12 h-12 bg-gradient-to-r from-neon-green to-neon-cyan rounded-xl flex items-center justify-center shadow-glow"
+                >
+                  <Zap className="h-6 w-6 text-white" />
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        >
+          <div className="flex flex-col items-center space-y-2 text-neon-blue">
+            <span className="text-sm">Scroll Down</span>
+            <ChevronDown className="h-5 w-5" />
+          </div>
+        </motion.div>
       </section>
 
-      {/* Features Section with Videos */}
-      <section className={`py-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}>
-        <div className="container mx-auto px-4">
+      {/* Services Section */}
+      <section className="py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-dark-950 to-dark-900" />
+        <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection>
             <div className="text-center mb-16">
-              <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
-                {t.home.features.title}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-block px-4 py-2 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20 rounded-full border border-neon-blue/30 backdrop-blur-sm mb-6"
+              >
+                <span className="text-neon-blue text-sm font-medium">
+                  Our Services
+                </span>
+              </motion.div>
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Artificial Intelligence And Technology
+                </span>
               </h2>
-              <div className="w-24 h-1 bg-orange-500 mx-auto rounded-full" />
+              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                We are dedicated to the future of AI and implementing smart
+                solutions that transform industries and empower innovation.
+              </p>
             </div>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <AnimatedSection key={index} delay={index * 0.1}>
+          <div className="grid md:grid-cols-3 gap-8">
+            {services.map((service, index) => (
+              <AnimatedSection key={index} delay={index * 0.2}>
                 <motion.div
                   whileHover={{ y: -10, scale: 1.02 }}
-                  className={`group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 ${
-                    theme === 'dark' ? 'bg-gray-900' : 'bg-white'
-                  }`}
+                  className="relative p-8 rounded-2xl bg-gradient-to-br from-dark-900/50 to-dark-800/50 border border-neon-blue/20 backdrop-blur-sm hover:border-neon-blue/40 transition-all duration-300 group"
                 >
-                  {/* Background Image */}
-                  <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
-                    <img
-                      src={feature.image}
-                      alt={feature.title}
-                      className="w-full h-full object-cover"
-                    />
+                  <div
+                    className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${service.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <service.icon className="h-8 w-8 text-white" />
                   </div>
-                  
-                  <div className="relative z-10 p-8">
-                    <div className={`w-16 h-16 rounded-xl ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                      <feature.icon className="h-8 w-8 text-white" />
-                    </div>
-                    <h3 className={`text-xl font-semibold mb-4 ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      {feature.title}
-                    </h3>
-                    <p className={`${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
-                      {feature.description}
-                    </p>
-                  </div>
+                  <h3 className="text-xl font-bold mb-4 text-white">
+                    {service.title}
+                  </h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    {service.description}
+                  </p>
+
+                  {/* Hover Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/5 to-neon-purple/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </motion.div>
               </AnimatedSection>
             ))}
@@ -345,163 +400,234 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Courses Carousel */}
-      <FeaturedCoursesCarousel />
-
-      {/* Calendar Section */}
-      <CalendarSection />
-
-      {/* Interactive Demo Section */}
-      <section className={`py-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}>
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <AnimatedSection direction="left">
-              <div>
-                <h2 className={`text-3xl md:text-4xl font-bold mb-6 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
-                  Expérience Immersive
-                </h2>
-                <p className={`text-lg mb-8 ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  Plongez dans l'univers de la technologie avec nos laboratoires interactifs et nos projets innovants.
-                </p>
-                <div className="space-y-4">
-                  {whyChooseUs.map((item, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-start space-x-4"
-                    >
-                      <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                        <item.icon className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <h4 className={`font-semibold mb-1 ${
-                          theme === 'dark' ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          {item.title}
-                        </h4>
-                        <p className={`text-sm ${
-                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                        }`}>
-                          {item.description}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </AnimatedSection>
-
-            <AnimatedSection direction="right">
-              <div className="relative">
+      {/* Stats Section */}
+      <section className="py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-dark-900 to-dark-800" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <AnimatedSection key={index} delay={index * 0.1}>
                 <motion.div
-                  className="relative rounded-2xl overflow-hidden shadow-2xl"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="text-center p-6 rounded-xl bg-gradient-to-br from-dark-900/50 to-dark-800/50 border border-neon-blue/20 backdrop-blur-sm"
                 >
-                  <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="w-full h-auto rounded-2xl"
-                  >
-                    <source src="https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4" type="video/mp4" />
-                  </video>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <div className="absolute bottom-6 left-6 text-white">
-                    <h3 className="text-xl font-bold mb-2">Laboratoire Robotique</h3>
-                    <p className="text-sm opacity-90">Découvrez nos installations de pointe</p>
+                  <div className="w-12 h-12 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <stat.icon className="h-6 w-6 text-white" />
                   </div>
-                </motion.div>
-                
-                {/* Floating Cards */}
-                <motion.div
-                  className="absolute -top-6 -right-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                    <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      En direct
-                    </span>
+                  <div className="text-3xl font-bold text-white mb-2">
+                    {stat.value}
                   </div>
+                  <div className="text-gray-400 text-sm">{stat.label}</div>
                 </motion.div>
-              </div>
-            </AnimatedSection>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <StatsSection achievements={achievements} />
-
       {/* Testimonials Section */}
-      <TestimonialsSection />
+      <section className="py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-dark-900 to-dark-950" />
+        <div className="container mx-auto px-4 relative z-10">
+          <AnimatedSection>
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-block px-4 py-2 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20 rounded-full border border-neon-blue/30 backdrop-blur-sm mb-6"
+              >
+                <span className="text-neon-blue text-sm font-medium">
+                  Testimonials
+                </span>
+              </motion.div>
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  See What Customers Say
+                </span>
+              </h2>
+            </div>
+          </AnimatedSection>
 
-      {/* News Section */}
-      <NewsSection />
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              key={currentTestimonial}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.5 }}
+              className="bg-gradient-to-br from-dark-900/50 to-dark-800/50 border border-neon-blue/20 backdrop-blur-sm rounded-2xl p-8"
+            >
+              <div className="flex items-center space-x-4 mb-6">
+                <img
+                  src={testimonials[currentTestimonial].avatar}
+                  alt={testimonials[currentTestimonial].name}
+                  className="w-16 h-16 rounded-full border-2 border-neon-blue/30"
+                />
+                <div>
+                  <h4 className="text-white font-semibold">
+                    {testimonials[currentTestimonial].name}
+                  </h4>
+                  <p className="text-gray-400">
+                    {testimonials[currentTestimonial].role}
+                  </p>
+                  <p className="text-neon-blue text-sm">
+                    {testimonials[currentTestimonial].company}
+                  </p>
+                </div>
+                <div className="ml-auto">
+                  <Quote className="h-8 w-8 text-neon-blue/30" />
+                </div>
+              </div>
+              <p className="text-gray-300 text-lg leading-relaxed mb-6">
+                "{testimonials[currentTestimonial].content}"
+              </p>
+              <div className="flex space-x-1">
+                {[...Array(testimonials[currentTestimonial].rating)].map(
+                  (_, i) => (
+                    <Star
+                      key={i}
+                      className="h-5 w-5 fill-yellow-400 text-yellow-400"
+                    />
+                  ),
+                )}
+              </div>
+            </motion.div>
+
+            {/* Testimonial Indicators */}
+            <div className="flex justify-center space-x-2 mt-8">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentTestimonial(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentTestimonial
+                      ? "bg-neon-blue w-8"
+                      : "bg-gray-600 hover:bg-gray-500"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-dark-950 to-dark-900" />
+        <div className="container mx-auto px-4 relative z-10">
+          <AnimatedSection>
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-block px-4 py-2 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20 rounded-full border border-neon-blue/30 backdrop-blur-sm mb-6"
+              >
+                <span className="text-neon-blue text-sm font-medium">FAQ</span>
+              </motion.div>
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Frequently Asked Questions
+                </span>
+              </h2>
+            </div>
+          </AnimatedSection>
+
+          <div className="max-w-3xl mx-auto space-y-4">
+            {faqs.map((faq, index) => (
+              <AnimatedSection key={index} delay={index * 0.1}>
+                <motion.div className="bg-gradient-to-br from-dark-900/50 to-dark-800/50 border border-neon-blue/20 backdrop-blur-sm rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                    className="w-full p-6 text-left flex items-center justify-between hover:bg-neon-blue/5 transition-colors"
+                  >
+                    <span className="text-white font-semibold">
+                      {faq.question}
+                    </span>
+                    <motion.div
+                      animate={{ rotate: openFaq === index ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ChevronDown className="h-5 w-5 text-neon-blue" />
+                    </motion.div>
+                  </button>
+                  <motion.div
+                    initial={false}
+                    animate={{
+                      height: openFaq === index ? "auto" : 0,
+                      opacity: openFaq === index ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-6 pt-0 text-gray-400 leading-relaxed">
+                      {faq.answer}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
-      <section className={`py-20 relative overflow-hidden ${theme === 'dark' ? 'bg-gray-800' : 'bg-orange-50'}`}>
-        {/* Background Video */}
-        <div className="absolute inset-0 opacity-10">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-          >
-            <source src="https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4" type="video/mp4" />
-          </video>
-        </div>
-        
-        <div className="container mx-auto px-4 text-center relative z-10">
+      <section className="py-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-dark-900 via-dark-800 to-dark-900" />
+        <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className={`text-3xl md:text-4xl font-bold mb-6 ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
-                Prêt à transformer votre avenir ?
+            <div className="text-center max-w-4xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-block px-4 py-2 bg-gradient-to-r from-neon-blue/20 to-neon-purple/20 rounded-full border border-neon-blue/30 backdrop-blur-sm mb-6"
+              >
+                <span className="text-neon-blue text-sm font-medium">
+                  Get Started Today
+                </span>
+              </motion.div>
+
+              <h2 className="text-4xl lg:text-6xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-white via-neon-blue to-neon-purple bg-clip-text text-transparent">
+                  Empowering Your Business with AI and Tech
+                </span>
               </h2>
-              <p className={`text-xl mb-8 max-w-2xl mx-auto ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Rejoignez notre communauté d'innovateurs et donnez vie à vos idées les plus audacieuses
+
+              <p className="text-xl text-gray-300 mb-12 leading-relaxed">
+                Join thousands of students who have transformed their careers
+                with our cutting-edge AI and technology programs. Start your
+                journey into the future today.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <Link
                     to="/contact"
-                    className="inline-flex items-center px-8 py-4 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 hover:shadow-lg transform transition-all duration-300"
+                    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl text-white font-semibold hover:shadow-glow transition-all duration-300"
                   >
-                    Contactez-nous
+                    Start Learning Now
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <Link
                     to="/formations"
-                    className="inline-flex items-center px-8 py-4 border-2 border-blue-600 text-blue-600 font-semibold rounded-xl hover:bg-blue-600 hover:text-white transition-all duration-300"
+                    className="inline-flex items-center px-8 py-4 border border-neon-blue/30 rounded-xl text-neon-blue font-semibold hover:bg-neon-blue/10 transition-all duration-300"
                   >
-                    Voir les formations
+                    Explore Programs
                   </Link>
                 </motion.div>
               </div>
-            </motion.div>
+            </div>
           </AnimatedSection>
         </div>
       </section>
