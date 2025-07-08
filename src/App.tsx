@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useStore } from './stores/useStore';
-import Header from './components/Layout/Header';
-import Footer from './components/Layout/Footer';
-import AdminLayout from './components/admin/AdminLayout';
+import PublicLayout from './components/Layout/PublicLayout';
+import AdminLayout from './components/Layout/AdminLayout';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -17,13 +16,20 @@ import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import FormationsManagement from './pages/admin/FormationsManagement';
 import WorkshopsManagement from './pages/admin/WorkshopsManagement';
-import BootcampsManagement from './pages/admin/BootcampsManagement';
-import ServicesManagement from './pages/admin/ServicesManagement';
-import PartnersManagement from './pages/admin/PartnersManagement';
-import ProductsManagement from './pages/admin/ProductsManagement';
+import ProductsManagement from './features/admin/products/pages/ProductsManagement';
 import EventsManagement from './pages/admin/EventsManagement';
-import CategoriesManagement from './pages/admin/CategoriesManagement';
 import UsersManagement from './pages/admin/UsersManagement';
+import CategoriesManagement from './features/admin/categories/pages/CategoriesManagement';
+import { ProductDetail } from './features/admin/products';
+import { BootcampDetail, BootcampsManagement } from './features/admin/bootcamps';
+import ServicesManagement from './features/admin/services/pages/ServicesManagement';
+import Academy from './pages/academy';
+import ServiceDetail from './features/admin/services/pages/ServiceDetail';
+import PartnersManagement from './features/admin/partners/PartnersManagement';
+import ReviewsManagement from './features/admin/reviews/ReviewsManagement';
+import BlogsManagement from './features/admin/blogs/BlogsManagement';
+import BlogDetail from './features/admin/blogs/BlogDetail';
+import HeroSectionManagement from './features/admin/hero-section/HeroSectionManagement';
 
 // Mock data initialization
 const initializeMockData = () => {
@@ -94,69 +100,17 @@ function App() {
       <div className={`min-h-screen ${theme === 'dark' ? 'dark' : ''}`}>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={
-            <>
-              <Header />
-              <Home />
-              <Footer />
-            </>
-          } />
-          <Route path="/about" element={
-            <>
-              <Header />
-              <About />
-              <Footer />
-            </>
-          } />
-          <Route path="/services" element={
-            <>
-              <Header />
-              <Services />
-              <Footer />
-            </>
-          } />
-          <Route path="/formations" element={
-            <>
-              <Header />
-              <Formations />
-              <Footer />
-            </>
-          } />
-          <Route path="/formations/:id" element={
-            <>
-              <Header />
-              <FormationDetail />
-              <Footer />
-            </>
-          } />
-          <Route path="/bootcamp" element={
-            <>
-              <Header />
-              <Bootcamp />
-              <Footer />
-            </>
-          } />
-          <Route path="/shop" element={
-            <>
-              <Header />
-              <Shop />
-              <Footer />
-            </>
-          } />
-          <Route path="/partners" element={
-            <>
-              <Header />
-              <Partners />
-              <Footer />
-            </>
-          } />
-          <Route path="/contact" element={
-            <>
-              <Header />
-              <Contact />
-              <Footer />
-            </>
-          } />
+          <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+          <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+          <Route path="/services" element={<PublicLayout><Services /></PublicLayout>} />
+          <Route path="/formations" element={<PublicLayout><Formations /></PublicLayout>} />
+                    <Route path="/academy" element={<PublicLayout><Academy /></PublicLayout>} />
+
+          <Route path="/formations/:id" element={<PublicLayout><FormationDetail /></PublicLayout>} />
+          <Route path="/bootcamp" element={<PublicLayout><Bootcamp /></PublicLayout>} />
+          <Route path="/shop" element={<PublicLayout><Shop /></PublicLayout>} />
+          <Route path="/partners" element={<PublicLayout><Partners /></PublicLayout>} />
+          <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
           
           {/* Admin Login */}
           <Route path="/admin/login" element={<Login />} />
@@ -169,9 +123,21 @@ function App() {
             <Route path="formations" element={<FormationsManagement />} />
             <Route path="workshops" element={<WorkshopsManagement />} />
             <Route path="bootcamps" element={<BootcampsManagement />} />
+            <Route path="bootcamps/:id" element={<BootcampDetail />} />
             <Route path="services" element={<ServicesManagement />} />
+            <Route path="services/:id" element={<ServiceDetail />} />
+            <Route path="blogs/:id" element={<BlogDetail />} />
+            <Route path="blogs" element={<BlogsManagement />} />
+
+            <Route path="hero" element={<HeroSectionManagement />} />
+
+
             <Route path="partners" element={<PartnersManagement />} />
             <Route path="products" element={<ProductsManagement />} />
+            <Route path="products/:id" element={<ProductDetail />} />
+                        <Route path="reviews" element={<ReviewsManagement />} />
+
+
             <Route path="events" element={<EventsManagement />} />
             <Route path="categories" element={<CategoriesManagement />} />
             <Route path="users" element={<UsersManagement />} />

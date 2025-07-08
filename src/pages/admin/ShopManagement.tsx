@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Plus, Edit, Trash2, Search, Filter, Package, ShoppingCart, TrendingUp, Eye } from 'lucide-react';
 import { useStore } from '../../stores/useStore';
 import AnimatedSection from '../../components/UI/AnimatedSection';
+import { getProductImageUrl } from '../../shared/utils/imageUtils';
 
 const ShopManagement: React.FC = () => {
   const { theme } = useStore();
@@ -239,7 +240,7 @@ const ShopManagement: React.FC = () => {
                   >
                     <div className="relative">
                       <img
-                        src={product.image}
+                        src={getProductImageUrl(product.image)}
                         alt={product.name}
                         className="w-full h-48 object-cover"
                       />

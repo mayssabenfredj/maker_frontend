@@ -9,6 +9,8 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
   itemsPerPage: number;
   totalItems: number;
+  showItemsPerPage?: boolean;
+  onItemsPerPageChange?: (itemsPerPage: number) => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -16,7 +18,9 @@ const Pagination: React.FC<PaginationProps> = ({
   totalPages,
   onPageChange,
   itemsPerPage,
-  totalItems
+  totalItems,
+  showItemsPerPage = false,
+  onItemsPerPageChange
 }) => {
   const { theme } = useStore();
 
@@ -53,10 +57,36 @@ const Pagination: React.FC<PaginationProps> = ({
     <div className={`flex items-center justify-between px-6 py-4 ${
       theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
     } border-t`}>
-      <div className={`text-sm ${
-        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-      }`}>
-        Affichage de {startItem} à {endItem} sur {totalItems} résultats
+      <div className="flex items-center space-x-4">
+        <div className={`text-sm ${
+          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+        }`}>
+          Affichage de {startItem} à {endItem} sur {totalItems} résultats
+        </div>
+        
+        {showItemsPerPage && onItemsPerPageChange && (
+          <div className="flex items-center space-x-2">
+            <span className={`text-sm ${
+              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            }`}>
+              Par page:
+            </span>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
+              className={`px-3 py-1 text-sm rounded-lg border transition-colors ${
+                theme === 'dark'
+                  ? 'bg-gray-700 border-gray-600 text-white'
+                  : 'bg-white border-gray-300 text-gray-900'
+              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center space-x-2">
