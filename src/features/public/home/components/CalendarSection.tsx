@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Users, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
-import { useStore } from '../../stores/useStore';
-import AnimatedSection from '../UI/AnimatedSection';
+import { useStore } from '../../../../stores/useStore';
+import AnimatedSection from '../../../../components/UI/AnimatedSection';
+
 
 const CalendarSection: React.FC = () => {
   const { theme } = useStore();

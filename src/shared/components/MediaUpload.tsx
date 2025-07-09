@@ -20,6 +20,7 @@ export interface MediaUploadProps {
   acceptImages?: string;
   acceptVideo?: string;
   showImage?: boolean; // Ajout de la prop showImage
+  multiple?: boolean; // Ajout de la prop multiple
 }
 
 const MediaUpload: React.FC<MediaUploadProps> = ({
@@ -39,6 +40,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
   acceptImages = 'image/*',
   acceptVideo = 'video/*',
   showImage = true,
+  multiple = true, // Par défaut true
 }) => {
   const { theme } = useStore();
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +50,11 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    setImages([...images, ...imageFiles]);
+    if (multiple) {
+      setImages([...images, ...imageFiles]);
+    } else {
+      setImages(imageFiles.length > 0 ? [imageFiles[0]] : []);
+    }
     if (imageInputRef.current) {
       imageInputRef.current.value = '';
     }
@@ -162,7 +168,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({
           <input
             ref={imageInputRef}
             type="file"
-            multiple
+            multiple={multiple}
             accept={acceptImages}
             onChange={handleImageUpload}
             className="hidden"

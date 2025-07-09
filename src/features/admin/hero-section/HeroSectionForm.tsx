@@ -85,7 +85,8 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({ initialValues = {}, o
           images={imageFiles}
           setImages={setImageFiles}
           existingImages={form.images}
-          label="Images (max 5)"
+          label="Image"
+          multiple={false}
         />
       </div>
       <div>

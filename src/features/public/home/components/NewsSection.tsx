@@ -2,41 +2,17 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ArrowRight, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useStore } from '../../stores/useStore';
-import AnimatedSection from '../UI/AnimatedSection';
+import AnimatedSection from '../../../../components/UI/AnimatedSection';
+import { useStore } from '../../../../stores/useStore';
+import { Blog } from '../../../admin/blogs/blog';
+import { getImageUrl } from '../../../../shared/utils/imageUtils';
 
-const NewsSection: React.FC = () => {
+interface NewsSectionProps {
+  blogs: Blog[];
+}
+
+const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
   const { theme } = useStore();
-
-  const news = [
-    {
-      id: 1,
-      title: 'Nouveau partenariat avec TechCorp pour l\'innovation IoT',
-      excerpt: 'Maker Skills s\'associe avec TechCorp pour développer de nouveaux programmes de formation en IoT industriel.',
-      image: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=400',
-      date: '15 Mars 2024',
-      author: 'Équipe Maker Skills',
-      category: 'Partenariat'
-    },
-    {
-      id: 2,
-      title: 'Lancement du nouveau bootcamp Intelligence Artificielle',
-      excerpt: 'Un programme intensif de 16 semaines pour maîtriser les dernières technologies en IA et Machine Learning.',
-      image: 'https://images.pexels.com/photos/8386422/pexels-photo-8386422.jpeg?auto=compress&cs=tinysrgb&w=400',
-      date: '10 Mars 2024',
-      author: 'Dr. Ahmed Ben Ali',
-      category: 'Formation'
-    },
-    {
-      id: 3,
-      title: 'Nos étudiants remportent le concours national de robotique',
-      excerpt: 'L\'équipe Maker Skills décroche la première place au concours national de robotique éducative.',
-      image: 'https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=400',
-      date: '5 Mars 2024',
-      author: 'Mohamed Slim',
-      category: 'Actualité'
-    }
-  ];
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -70,8 +46,8 @@ const NewsSection: React.FC = () => {
         </AnimatedSection>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {news.map((article, index) => (
-            <AnimatedSection key={article.id} delay={index * 0.1}>
+          {blogs.map((blog, index) => (
+            <AnimatedSection key={blog._id} delay={index * 0.1}>
               <motion.article
                 whileHover={{ y: -10 }}
                 className={`rounded-2xl shadow-lg overflow-hidden ${
@@ -80,52 +56,47 @@ const NewsSection: React.FC = () => {
               >
                 <div className="relative">
                   <img
-                    src={article.image}
-                    alt={article.title}
+                    src={getImageUrl(blog.cover)}
+                    alt={blog.title}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getCategoryColor(article.category)}`}>
-                      {article.category}
+                    <span className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getCategoryColor('Actualité')}`}>
+                      Actualité
                     </span>
                   </div>
                 </div>
-                
                 <div className="p-6">
                   <h3 className={`text-xl font-bold mb-3 line-clamp-2 ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
-                    {article.title}
+                    {blog.title}
                   </h3>
-                  
                   <p className={`text-sm mb-4 line-clamp-3 ${
                     theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                   }`}>
-                    {article.excerpt}
+                    {blog.description?.slice(0, 120) || ''}
                   </p>
-                  
                   <div className="flex items-center justify-between text-sm mb-4">
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-orange-500" />
-                      <span className={`${
+                      <span className={`$${
                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                       }`}>
-                        {article.date}
+                        {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString('fr-FR') : ''}
                       </span>
                     </div>
-                    
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4 text-blue-500" />
-                      <span className={`${
+                      <span className={`$${
                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                       }`}>
-                        {article.author}
+                        Maker Skills
                       </span>
                     </div>
                   </div>
-                  
                   <Link
-                    to={`/news/${article.id}`}
+                    to={`/news/${blog._id}`}
                     className="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors"
                   >
                     Lire la suite

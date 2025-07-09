@@ -5,6 +5,7 @@ import HeroSectionService from './hero-section.service';
 import { HeroSection, CreateHeroSectionDto } from './hero-section';
 import HeroSectionForm from './HeroSectionForm';
 import ConfirmDialog from '../../../shared/components/ConfirmDialog';
+import { getImageUrl } from '../../../shared/utils/imageUtils';
 
 const HeroSectionManagement: React.FC = () => {
   const { theme } = useStore();
@@ -113,7 +114,7 @@ const HeroSectionManagement: React.FC = () => {
               <div key={section._id} className={`p-6 rounded-2xl shadow-lg flex flex-col ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
                 <div className="flex gap-4 mb-4 overflow-x-auto">
                   {section.images && section.images.map((img, i) => (
-                    <img key={i} src={img} alt="" className="h-24 w-auto object-contain rounded-xl shadow" />
+                    <img key={i} src={getImageUrl(img)} alt="" className="h-24 w-auto object-contain rounded-xl shadow" />
                   ))}
                 </div>
                 <h2 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{section.title}</h2>

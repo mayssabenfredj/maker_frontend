@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Clock, Users, Star, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useStore } from '../../stores/useStore';
-import AnimatedSection from '../UI/AnimatedSection';
+import { useStore } from '../../../../stores/useStore';
+import AnimatedSection from '../../../../components/UI/AnimatedSection';
+
 
 const FeaturedCoursesCarousel: React.FC = () => {
   const { theme, language } = useStore();

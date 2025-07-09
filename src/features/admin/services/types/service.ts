@@ -122,4 +122,3 @@ export interface BulkActionsProps {
   onBulkDeactivate: () => void;
   onClearSelection: () => void;
 }
-

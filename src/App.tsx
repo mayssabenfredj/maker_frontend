@@ -3,13 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useStore } from './stores/useStore';
 import PublicLayout from './components/Layout/PublicLayout';
 import AdminLayout from './components/Layout/AdminLayout';
-import Home from './pages/Home';
+import Home from './features/public/home/Home';
 import About from './pages/About';
-import Services from './pages/Services';
 import Formations from './pages/Formations';
 import FormationDetail from './pages/FormationDetail';
 import Bootcamp from './pages/Bootcamp';
-import Shop from './pages/Shop';
 import Partners from './pages/Partners';
 import Contact from './pages/Contact';
 import Login from './pages/admin/Login';
@@ -30,6 +28,8 @@ import ReviewsManagement from './features/admin/reviews/ReviewsManagement';
 import BlogsManagement from './features/admin/blogs/BlogsManagement';
 import BlogDetail from './features/admin/blogs/BlogDetail';
 import HeroSectionManagement from './features/admin/hero-section/HeroSectionManagement';
+import Services from './features/public/services/Services';
+import Shop from './features/public/shop/Shop';
 
 // Mock data initialization
 const initializeMockData = () => {

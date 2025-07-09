@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useStore } from '../../stores/useStore';
-import AnimatedSection from '../UI/AnimatedSection';
+import { useStore } from '../../../../stores/useStore';
+import AnimatedSection from '../../../../components/UI/AnimatedSection';
 
 interface Achievement {
   icon: React.ComponentType<any>;
