@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useStore } from "../../../../stores/useStore";
 import { CreateProjectDto, Project } from "../types/project";
 import MediaUpload from "../../../../shared/components/MediaUpload";
 import RichTextEditor from "../../../../shared/components/RichTextEditor";
+import { categoryService } from "../../categories";
+import Select from "react-select";
 
 interface ProjectFormProps {
   editingProject: Project | null;
@@ -28,15 +30,39 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   loading,
 }) => {
   const { theme } = useStore();
-
-  const statuses = ["Planned", "In Development", "Completed"];
-  const priorities = ["Low", "Medium", "High"];
+  const [categories,setCategories] = React.useState<any[]>([]);
+  const statuses = [
+    { value: "Planning", label: "Planification" },
+    { value: "Planned", label: "Planifié" },
+    { value: "In Development", label: "En développement" },
+    { value: "Prototyping", label: "Prototypage" },
+    { value: "Testing", label: "Test" },
+    { value: "Completed", label: "Terminé" },
+    { value: "Deployed", label: "Déployé" },
+  ];
+  const priorities = [
+    { value: "Low", label: "Faible" },
+    { value: "Medium", label: "Moyenne" },
+    { value: "High", label: "Haute" },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit(e);
   };
-
+useEffect(() => {
+  categoryService.getCategories().then((categories) => {
+  let transformedCategories = categories.map((category) => ({
+    value: category._id,
+    label: category.name,
+  })
+  );
+  setCategories(transformedCategories);
+}).catch((error) => {
+  console.error("Error fetching categories:", error);
+  setCategories([]);
+})
+},[loading])
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -154,8 +180,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
             >
               <option value="">-- Choisir --</option>
-              {statuses.map((s) => (
-                <option key={s} value={s}>{s}</option>
+              {statuses.map((s,_) => (
+                <option key={_} value={s.value}>{s.label}</option>
               ))}
             </select>
           </div>
@@ -168,8 +194,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
             >
               <option value="">-- Choisir --</option>
-              {priorities.map((p) => (
-                <option key={p} value={p}>{p}</option>
+              {priorities.map((p,_) => (
+                <option key={_} value={p.value}>{p.label}</option>
               ))}
             </select>
           </div>
@@ -194,17 +220,23 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               onChange={(e) => setFormData({ ...formData, technologies: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })}
               className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
             />
-          </div>
+          </div> 
           {/* Categories */}
-          <div className="md:col-span-2">
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Catégories (IDs, séparées par des virgules)</label>
-            <input
-              type="text"
-              value={formData.categories.join(", ")}
-              onChange={(e) => setFormData({ ...formData, categories: e.target.value.split(',').map(c => c.trim()).filter(Boolean) })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
+<Select
+  isMulti
+  name="categories"
+  options={categories}
+  value={categories.filter(option => (formData.categories || []).includes(option.value))}
+  onChange={(selected) => {
+    setFormData({
+      ...formData,
+      categories: selected.map(option => option.value),
+    });
+  }}
+  className="basic-multi-select"
+  classNamePrefix="select"
+  placeholder="Sélectionner des catégories..."
+/>
           {/* Team */}
           <div className="md:col-span-2">
             <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Équipe (emails, séparées par des virgules)</label>
