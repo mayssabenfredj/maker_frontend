@@ -105,8 +105,14 @@ const initializeMockData = () => {
 };
 
 function App() {
-  const { theme, setCourses, setServices, setPartners, isAuthenticated } =
-    useStore();
+  const {
+    theme,
+    setCourses,
+    setServices,
+    setPartners,
+    isAuthenticated,
+    setIsAuth,
+  } = useStore();
 
   useEffect(() => {
     // Apply theme to document

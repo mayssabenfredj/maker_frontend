@@ -31,7 +31,9 @@ class CategoryService {
     return response.json();
   }
 
-  async getCategories(): Promise<Category[]> {
+  async getCategories(
+    type?: "workshop" | "bootcamp" | "event" | "course"
+  ): Promise<Category[]> {
     const response = await this.makeRequest<{
       message: string;
       data: Category[];

@@ -34,6 +34,7 @@ interface AppState {
   addPartner: (partner: Partner) => void;
   updatePartner: (id: string, partner: Partial<Partner>) => void;
   deletePartner: (id: string) => void;
+  setIsAuth: (isAuthenticated: boolean) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -50,7 +51,7 @@ export const useStore = create<AppState>((set, get) => ({
   // Actions
   setTheme: (theme) => set({ theme }),
   setLanguage: (language) => set({ language }),
-
+  setIsAuth: (isAuthenticated: boolean) => set({ isAuthenticated }),
   login: (user) => set({ user, isAuthenticated: true }),
   logout: () => set({ user: null, isAuthenticated: false }),
 

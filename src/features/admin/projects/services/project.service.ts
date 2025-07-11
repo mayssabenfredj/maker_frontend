@@ -1,9 +1,13 @@
+import axios from "axios";
 import { Project, CreateProjectDto, UpdateProjectDto } from "../types/project";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3020";
 
 class ProjectService {
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
     const token = localStorage.getItem("token");
     const headers: HeadersInit = {
       Accept: "application/json",
@@ -25,47 +29,50 @@ class ProjectService {
   }
 
   async getProjects(): Promise<Project[]> {
-    const res = await this.request<{ message: string; data: Project[] }>("/projects");
+    const res = await this.request<{ message: string; data: Project[] }>(
+      "/projects"
+    );
     return res.data;
   }
 
   async getProject(id: string): Promise<Project> {
-    const res = await this.request<{ message: string; data: Project }>(`/projects/${id}`);
+    const res = await this.request<{ message: string; data: Project }>(
+      `/projects/${id}`
+    );
     return res.data;
   }
 
-  async createProject(data: CreateProjectDto): Promise<Project> {
+  async createProject(
+    data: CreateProjectDto,
+    imageFile: File
+  ): Promise<Project> {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description || "");
-    if (data.startDate) formData.append("startDate", data.startDate);
-    if (data.endDate) formData.append("endDate", data.endDate);
-    if (data.coverImage instanceof File) {
-      formData.append("coverImage", data.coverImage);
-    }
+    formData.append("technologies", JSON.stringify(data.technologies));
+    formData.append("categories", JSON.stringify(data.categories));
 
-    const res = await this.request<{ message: string; data: Project }>("/projects", {
-      method: "POST",
-      body: formData,
-    });
+    // Append the actual file, not the string path
+    formData.append("coverImage", imageFile);
+
+    const res = await this.request<{ message: string; data: Project }>(
+      "/projects",
+      {
+        method: "POST",
+        body: formData,
+        // Don't set Content-Type header - the browser will set it with the correct boundary
+      }
+    );
     return res.data;
   }
 
   async updateProject(id: string, data: UpdateProjectDto): Promise<Project> {
-    const formData = new FormData();
-    if (data.name) formData.append("name", data.name);
-    if (data.description !== undefined) formData.append("description", data.description);
-    if (data.startDate) formData.append("startDate", data.startDate);
-    if (data.endDate) formData.append("endDate", data.endDate);
-    if (data.coverImage instanceof File) {
-      formData.append("coverImage", data.coverImage);
-    }
-
-    const res = await this.request<{ message: string; data: Project }>(`/projects/${id}`, {
-      method: "PATCH",
-      body: formData,
-    });
-    return res.data;
+    data.technologies = JSON.stringify(data.technologies);
+    data.categories = JSON.stringify(data.categories);
+    console.log("data =>", data);
+    const response = await axios.patch(BASE_URL + "/projects/" + id, data);
+    console.log("response =>", response);
+    return response.data?.data;
   }
 
   async deleteProject(id: string): Promise<void> {

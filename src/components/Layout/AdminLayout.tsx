@@ -14,6 +14,7 @@ import {
   User,
   Rss,
   Image,
+  Folder,
 } from "lucide-react";
 import { useStore } from "../../stores/useStore";
 
@@ -75,7 +76,7 @@ const AdminLayout: React.FC = () => {
     },
     {
       name: "Projets",
-      icon: Image,
+      icon: Folder,
       path: "/admin/projects",
       description: "Gérer les projets",
     },
@@ -95,6 +96,7 @@ const AdminLayout: React.FC = () => {
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem("token");
   };
 
   if (!user) {

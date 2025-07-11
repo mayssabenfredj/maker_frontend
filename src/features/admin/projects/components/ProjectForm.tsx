@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useStore } from "../../../../stores/useStore";
 import { CreateProjectDto, Project } from "../types/project";
 import MediaUpload from "../../../../shared/components/MediaUpload";
-import RichTextEditor from "../../../../shared/components/RichTextEditor";
-import { categoryService } from "../../categories";
 import Select from "react-select";
+import { categoryService } from "../../categories";
+import { X } from "lucide-react";
 
 interface ProjectFormProps {
   editingProject: Project | null;
@@ -30,297 +29,322 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   loading,
 }) => {
   const { theme } = useStore();
-  const [categories,setCategories] = React.useState<any[]>([]);
-  const statuses = [
-    { value: "Planning", label: "Planification" },
-    { value: "Planned", label: "Planifié" },
-    { value: "In Development", label: "En développement" },
-    { value: "Prototyping", label: "Prototypage" },
-    { value: "Testing", label: "Test" },
-    { value: "Completed", label: "Terminé" },
-    { value: "Deployed", label: "Déployé" },
-  ];
-  const priorities = [
-    { value: "Low", label: "Faible" },
-    { value: "Medium", label: "Moyenne" },
-    { value: "High", label: "Haute" },
-  ];
+  const [categories, setCategories] = React.useState<any[]>([]);
+  const [techInput, setTechInput] = React.useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("formData", formData);
     await onSubmit(e);
   };
-useEffect(() => {
-  categoryService.getCategories().then((categories) => {
-  let transformedCategories = categories.map((category) => ({
-    value: category._id,
-    label: category.name,
-  })
-  );
-  setCategories(transformedCategories);
-}).catch((error) => {
-  console.error("Error fetching categories:", error);
-  setCategories([]);
-})
-},[loading])
-  return (
-    <div className="space-y-8">
-      {/* Header */}
 
-      <form
-        onSubmit={handleSubmit}
-        className={`p-8 rounded-2xl shadow-lg space-y-6 ${
+  useEffect(() => {
+    categoryService
+      .getCategories()
+      .then((categories) => {
+        const transformedCategories = categories.map((category) => ({
+          value: category._id,
+          label: category.name,
+        }));
+        setCategories(transformedCategories);
+        if (editingProject) {
+          console.log("edit cat", editingProject?.categories);
+          setFormData((prev) => {
+            return {
+              ...prev,
+              categories: editingProject.categories?.map((cat) => cat?._id),
+            };
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur lors du chargement des catégories:", error);
+        setCategories([]);
+      });
+  }, []);
+
+  const handleTechChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTechInput(value);
+
+    // Mise à jour en temps réel avec séparation par virgules
+    if (value.endsWith(",")) {
+      const newTechs = [
+        ...formData.technologies,
+        value.slice(0, -1).trim(),
+      ].filter(Boolean);
+      setFormData({ ...formData, technologies: newTechs });
+      setTechInput("");
+    }
+  };
+
+  const handleTechKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const newTechs = [...formData.technologies, techInput.trim()].filter(
+        Boolean
+      );
+      setFormData({ ...formData, technologies: newTechs });
+      setTechInput("");
+    }
+  };
+
+  const removeTech = (index: number) => {
+    const newTechs = [...formData.technologies];
+    newTechs.splice(index, 1);
+    setFormData({ ...formData, technologies: newTechs });
+  };
+
+  return (
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${
+        theme === "dark" ? "bg-black/50" : "bg-black/30"
+      }`}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className={`w-full max-w-2xl rounded-2xl shadow-xl ${
           theme === "dark" ? "bg-gray-800" : "bg-white"
         }`}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-300" : "text-gray-700"
+        <div className="p-6 space-y-6">
+          <div className="flex justify-between items-center">
+            <h2
+              className={`text-xl font-bold ${
+                theme === "dark" ? "text-white" : "text-gray-900"
               }`}
             >
-              Nom du projet *
-            </label>
-            <input
-              required
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className={`w-full px-4 py-3 rounded-lg border ${
-                theme === "dark"
-                  ? "bg-gray-700 border-gray-600 text-white"
-                  : "bg-white border-gray-300 text-gray-900"
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-
-          <div>
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              {editingProject ? "Modifier le projet" : "Créer un projet"}
+            </h2>
+            <button
+              onClick={onCancel}
+              className={`p-1 rounded-full ${
+                theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100"
               }`}
             >
-              Date de début
-            </label>
-            <input
-              type="date"
-              value={formData.startDate || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, startDate: e.target.value })
-              }
-              className={`w-full px-4 py-3 rounded-lg border ${
-                theme === "dark"
-                  ? "bg-gray-700 border-gray-600 text-white"
-                  : "bg-white border-gray-300 text-gray-900"
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
+              <X
+                className={`h-5 w-5 ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-500"
+                }`}
+              />
+            </button>
           </div>
 
-          <div>
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              Date cible
-            </label>
-            <input
-              type="date"
-              value={formData.targetDate || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, targetDate: e.target.value })
-              }
-              className={`w-full px-4 py-3 rounded-lg border ${
-                theme === "dark"
-                  ? "bg-gray-700 border-gray-600 text-white"
-                  : "bg-white border-gray-300 text-gray-900"
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-        </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 gap-6">
+              {/* Champ Nom */}
+              <div>
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Nom du projet *
+                </label>
+                <input
+                  required
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    theme === "dark"
+                      ? "bg-gray-700 border-gray-600 text-white"
+                      : "bg-white border-gray-300 text-gray-900"
+                  } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+                />
+              </div>
 
-        <div>
-          <label
-            className={`block text-sm font-medium mb-2 ${
-              theme === "dark" ? "text-gray-300" : "text-gray-700"
-            }`}
-          >
-            Description
-          </label>
-          <RichTextEditor
-            value={formData.description || ""}
-            onChange={(value) =>
-              setFormData({ ...formData, description: value })
-            }
-            placeholder="Décrivez votre projet..."
-          />
-        </div>
+              {/* Champ Description */}
+              <div>
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Description *
+                </label>
+                <textarea
+                  required
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={4}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    theme === "dark"
+                      ? "bg-gray-700 border-gray-600 text-white"
+                      : "bg-white border-gray-300 text-gray-900"
+                  } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+                />
+              </div>
 
-        {/* Additional fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Tagline */}
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Slogan</label>
-            <input
-              type="text"
-              value={formData.tagline || ""}
-              onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-          {/* Status */}
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Statut</label>
-            <select
-              value={formData.status || ""}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            >
-              <option value="">-- Choisir --</option>
-              {statuses.map((s,_) => (
-                <option key={_} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-          </div>
-          {/* Priority */}
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Priorité</label>
-            <select
-              value={formData.priority || ""}
-              onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            >
-              <option value="">-- Choisir --</option>
-              {priorities.map((p,_) => (
-                <option key={_} value={p.value}>{p.label}</option>
-              ))}
-            </select>
-          </div>
-          {/* Completion */}
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Achèvement (%)</label>
-            <input
-              type="number"
-              min={0}
-              max={100}
-              value={formData.completion ?? 0}
-              onChange={(e) => setFormData({ ...formData, completion: Number(e.target.value) })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-          {/* Technologies */}
-          <div className="md:col-span-2">
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Technologies (séparées par des virgules)</label>
-            <input
-              type="text"
-              value={formData.technologies.join(", ")}
-              onChange={(e) => setFormData({ ...formData, technologies: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div> 
-          {/* Categories */}
-<Select
-  isMulti
-  name="categories"
-  options={categories}
-  value={categories.filter(option => (formData.categories || []).includes(option.value))}
-  onChange={(selected) => {
-    setFormData({
-      ...formData,
-      categories: selected.map(option => option.value),
-    });
-  }}
-  className="basic-multi-select"
-  classNamePrefix="select"
-  placeholder="Sélectionner des catégories..."
-/>
-          {/* Team */}
-          <div className="md:col-span-2">
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Équipe (emails, séparées par des virgules)</label>
-            <input
-              type="text"
-              value={formData.team?.join(", ") || ""}
-              onChange={(e) => setFormData({ ...formData, team: e.target.value.split(',').map(m => m.trim()).filter(Boolean) })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-          {/* Repository */}
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Repository</label>
-            <input
-              type="url"
-              value={formData.repository || ""}
-              onChange={(e) => setFormData({ ...formData, repository: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-          {/* Video URL */}
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>Vidéo de démonstration</label>
-            <input
-              type="url"
-              value={formData.videoUrl || ""}
-              onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border ${theme === "dark" ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"} focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-          {/* Featured */}
-          <div className="flex items-center space-x-3 md:col-span-2">
-            <input
-              type="checkbox"
-              checked={formData.isFeatured ?? false}
-              onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-            />
-            <span className={theme === "dark" ? "text-gray-300" : "text-gray-700"}>Mettre en avant</span>
-          </div>
-        </div>
+              {/* Champ Technologies */}
+              <div>
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Technologies *
+                </label>
+                <div
+                  className={`relative ${
+                    theme === "dark"
+                      ? "bg-gray-700 border-gray-600"
+                      : "bg-white border-gray-300"
+                  } border rounded-lg p-2`}
+                >
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {formData.technologies.map((tech, index) => (
+                      <div
+                        key={index}
+                        className={`flex items-center px-3 py-1 rounded-full text-sm ${
+                          theme === "dark"
+                            ? "bg-gray-600 text-white"
+                            : "bg-gray-200 text-gray-800"
+                        }`}
+                      >
+                        {tech}
+                        <button
+                          type="button"
+                          onClick={() => removeTech(index)}
+                          className="ml-2 focus:outline-none"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <input
+                    type="text"
+                    value={techInput}
+                    onChange={handleTechChange}
+                    onKeyDown={handleTechKeyDown}
+                    placeholder="Ajouter une technologie (séparer par virgules)"
+                    className={`w-full px-4 py-2 bg-transparent focus:outline-none ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
+                  />
+                </div>
+              </div>
 
-        {/* Cover image - Single image upload */}
-        <div>
-          <label
-            className={`block text-sm font-medium mb-2 ${
-              theme === "dark" ? "text-gray-300" : "text-gray-700"
-            }`}
-          >
-            Image de couverture
-          </label>
-          <MediaUpload
-            images={imageFile ? [imageFile] : []}
-            setImages={(files) => setImageFile(files[0] || null)}
-            showVideo={false}
-          />
-        </div>
+              {/* Champ Catégories */}
+              <div>
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Catégories *
+                </label>
+                <Select
+                  isMulti
+                  required
+                  name="categories"
+                  options={categories}
+                  value={categories.filter((option) =>
+                    formData.categories.includes(option.value)
+                  )}
+                  onChange={(selected) => {
+                    setFormData({
+                      ...formData,
+                      categories: selected.map((option) => option.value),
+                    });
+                  }}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  placeholder="Sélectionner des catégories..."
+                  noOptionsMessage={() => "Aucune option disponible"}
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: theme === "dark" ? "#374151" : "white",
+                      borderColor: theme === "dark" ? "#4B5563" : "#D1D5DB",
+                      color: theme === "dark" ? "white" : "black",
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      backgroundColor: theme === "dark" ? "#374151" : "white",
+                    }),
+                    option: (base) => ({
+                      ...base,
+                      backgroundColor: theme === "dark" ? "#374151" : "white",
+                      color: theme === "dark" ? "white" : "black",
+                      "&:hover": {
+                        backgroundColor:
+                          theme === "dark" ? "#4B5563" : "#F3F4F6",
+                      },
+                    }),
+                    multiValue: (base) => ({
+                      ...base,
+                      backgroundColor: theme === "dark" ? "#1F2937" : "#E5E7EB",
+                    }),
+                    multiValueLabel: (base) => ({
+                      ...base,
+                      color: theme === "dark" ? "white" : "black",
+                    }),
+                  }}
+                />
+              </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={onCancel}
-            className={`px-6 py-3 rounded-lg font-medium ${
-              theme === "dark"
-                ? "text-gray-300 hover:text-white hover:bg-gray-700"
-                : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-            }`}
-          >
-            Annuler
-          </button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            disabled={loading}
-            className="px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 disabled:opacity-50"
-          >
-            {loading
-              ? "Enregistrement..."
-              : editingProject
-              ? "Modifier"
-              : "Créer"}
-          </motion.button>
+              {/* Champ Image de couverture */}
+              {!editingProject && (
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    Image de couverture *
+                  </label>
+                  <MediaUpload
+                    images={
+                      imageFile
+                        ? [imageFile]
+                        : formData.coverImage
+                        ? [formData.coverImage as unknown as File]
+                        : []
+                    }
+                    setImages={(files) => setImageFile(files[0] || null)}
+                    showVideo={false}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end space-x-4 pt-4">
+              <button
+                type="button"
+                onClick={onCancel}
+                className={`px-6 py-3 rounded-lg font-medium ${
+                  theme === "dark"
+                    ? "text-gray-300 hover:text-white hover:bg-gray-700"
+                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                }`}
+                disabled={loading}
+              >
+                Annuler
+              </button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="submit"
+                disabled={loading}
+                className="px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 disabled:opacity-50"
+              >
+                {loading
+                  ? "Enregistrement..."
+                  : editingProject
+                  ? "Modifier le projet"
+                  : "Créer le projet"}
+              </motion.button>
+            </div>
+          </form>
         </div>
-      </form>
+      </motion.div>
     </div>
   );
 };
