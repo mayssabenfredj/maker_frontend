@@ -32,7 +32,7 @@ class CategoryService {
   }
 
   async getCategories(
-    type?: "workshop" | "bootcamp" | "event" | "course"
+    type?: "event" | "product"
   ): Promise<Category[]> {
     const response = await this.makeRequest<{
       message: string;

@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState,  useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useStore } from '../../../../stores/useStore';
 import { Product, CreateProductDto } from '../types/product';
 import MediaUpload from '../../../../shared/components/MediaUpload';
-import { useCategories } from '../../categories/hooks/useCategories';
 import RichTextEditor from '../../../../shared/components/RichTextEditor';
+import axios from 'axios';
 
 interface ProductFormProps {
   editingProduct: Product | null;
@@ -35,8 +35,14 @@ const ProductForm: React.FC<ProductFormProps> = ({
   loading
 }) => {
   const { theme } = useStore();
-  const { getCategoriesForForms } = useCategories();
   const [formError, setFormError] = useState<string | null>(null);
+  const [events, setEvents] = useState<any[]>([]);
+
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_URL}/events`).then(res => {
+      setEvents(res.data.data || []);
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +126,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
               } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
             >
               <option value="">Sélectionner une catégorie</option>
-              {getCategoriesForForms().map(cat => (
+              {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.label}</option>
               ))}
             </select>
@@ -145,6 +151,31 @@ const ProductForm: React.FC<ProductFormProps> = ({
                   : 'bg-white border-gray-300 text-gray-900'
               } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
             />
+          </div>
+
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              Formations liées (Events)
+            </label>
+            <select
+              multiple
+              value={formData.events || []}
+              onChange={e => {
+                const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
+                setFormData({ ...formData, events: selected });
+              }}
+              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                theme === 'dark'
+                  ? 'bg-gray-700 border-gray-600 text-white'
+                  : 'bg-white border-gray-300 text-gray-900'
+              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+            >
+              {events.map(ev => (
+                <option key={ev._id} value={ev._id}>{ev.name}</option>
+              ))}
+            </select>
           </div>
         </div>
 

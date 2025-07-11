@@ -39,6 +39,10 @@ import HeroSectionManagement from "./features/admin/hero-section/HeroSectionMana
 import Services from "./features/public/services/Services";
 import Shop from "./features/public/shop/Shop";
 import ProjectsManagement from "./features/admin/projects/ProjectsPage";
+import Blogs from "./features/public/blogs/Blogs";
+import BlogDetailPage from "./features/public/blogs/BlogDetailPage";
+import ShopProductDetailPage from "./features/public/shop/ShopProductDetailPage";
+
 
 // Mock data initialization
 const initializeMockData = () => {
@@ -196,6 +200,14 @@ function App() {
             }
           />
           <Route
+            path="/shop/:id"
+            element={
+              <PublicLayout>
+                <ShopProductDetailPage />
+              </PublicLayout>
+            }
+          />
+          <Route
             path="/partners"
             element={
               <PublicLayout>
@@ -208,6 +220,22 @@ function App() {
             element={
               <PublicLayout>
                 <Contact />
+              </PublicLayout>
+            }
+          />
+            <Route
+            path="/blogs"
+            element={
+              <PublicLayout>
+                <Blogs />
+              </PublicLayout>
+            }
+          />
+           <Route
+            path="/blogs/:id"
+            element={
+              <PublicLayout>
+                < BlogDetailPage/>
               </PublicLayout>
             }
           />

@@ -1,3 +1,20 @@
+export interface CommandeProduct {
+  _id: string;
+  fullname: string;
+  email: string;
+  phone: string;
+  adresseLivraison?: string;
+  message?: string;
+}
+
+export interface Event {
+  _id: string;
+  name: string;
+  description?: string;
+  price?: number;
+  type?: string;
+}
+
 export interface Product {
   _id: string;
   name: string;
@@ -8,6 +25,8 @@ export interface Product {
   video?: string; // Chemin vers le fichier vidéo
   createdAt?: string;
   updatedAt?: string;
+  commandes?: CommandeProduct[];
+  events?: (Event | string)[];
 }
 
 export interface CreateProductDto {
@@ -16,6 +35,7 @@ export interface CreateProductDto {
   price: number;
   category: string;
   images?: string[];
+  events?: string[];
   video?: string; // Chemin vers le fichier vidéo
 }
 
@@ -25,5 +45,6 @@ export interface UpdateProductDto {
   price?: number;
   category?: string;
   images?: string[];
+  events?: string[];
   video?: string; // Chemin vers le fichier vidéo
 }

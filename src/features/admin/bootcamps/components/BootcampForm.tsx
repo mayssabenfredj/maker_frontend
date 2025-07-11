@@ -135,6 +135,32 @@ const EventForm: React.FC<BaseFormProps> = ({
             </div>
           </div>
 
+          {/* Sélection des produits liés */}
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${
+              theme === "dark" ? "text-gray-300" : "text-gray-700"
+            }`}>
+              Produits liés
+            </label>
+            <select
+              multiple
+              value={formData.products || []}
+              onChange={e => {
+                const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
+                setFormData({ ...formData, products: selected });
+              }}
+              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+                theme === "dark"
+                  ? "bg-gray-700 border-gray-600 text-white"
+                  : "bg-white border-gray-300 text-gray-900"
+              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+            >
+              {products.map(prod => (
+                <option key={prod._id} value={prod._id}>{prod.name}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Champs spécifiques au type */}
           <BootcampFields
             products={products}

@@ -62,6 +62,14 @@ class ProductService {
     formData.append("price", data.price.toString());
     formData.append("category", data.category);
 
+    // Ajouter les events liés
+    if (data.events && data.events.length > 0) {
+      formData.append("events", JSON.stringify(data.events));
+    } else {
+      // Envoyer un tableau vide si aucun event
+      formData.append("events", JSON.stringify([]));
+    }
+
     // Ajouter les images
     if (imageFiles && imageFiles.length > 0) {
       imageFiles.forEach((file) => {
@@ -106,6 +114,14 @@ class ProductService {
     if (data.price !== undefined)
       formData.append("price", data.price.toString());
     if (data.category) formData.append("category", data.category);
+
+    // Ajouter les events liés
+    if (data.events && data.events.length > 0) {
+      formData.append("events", JSON.stringify(data.events));
+    } else {
+      // Envoyer un tableau vide si aucun event
+      formData.append("events", JSON.stringify([]));
+    }
 
     // Ajouter les images
     if (imageFiles && imageFiles.length > 0) {

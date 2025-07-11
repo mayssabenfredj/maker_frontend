@@ -1,7 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { useStore } from '../../../../stores/useStore';
-import { useCategories } from '../../categories/hooks/useCategories';
 
 interface ProductFiltersProps {
   searchTerm: string;
@@ -19,7 +18,6 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
   categories
 }) => {
   const { theme } = useStore();
-  const { getCategoriesForComponents } = useCategories();
 
   return (
     <div className={`p-6 rounded-2xl ${
@@ -52,7 +50,7 @@ const ProductFilters: React.FC<ProductFiltersProps> = ({
                 : 'bg-gray-50 border-gray-300 text-gray-900'
             } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
           >
-            {getCategoriesForComponents().map(category => (
+            {categories.map(category => (
               <option key={category.id} value={category.id}>
                 {category.label}
               </option>

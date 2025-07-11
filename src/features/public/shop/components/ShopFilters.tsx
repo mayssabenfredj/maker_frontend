@@ -78,25 +78,7 @@ const ShopFilters: React.FC<ShopFiltersProps> = ({
         ))}
       </div>
     </div>
-    {/* Availability */}
-    <div>
-      <label className={`block text-sm font-medium mb-3 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Disponibilité</label>
-      <div className="space-y-2">
-        {availabilityOptions.map(option => (
-          <label key={option.id} className="flex items-center">
-            <input
-              type="radio"
-              name="availability"
-              value={option.id}
-              checked={selectedAvailability === option.id}
-              onChange={e => setSelectedAvailability(e.target.value)}
-              className="w-4 h-4 text-secondary-500 border-gray-300 focus:ring-secondary-500"
-            />
-            <span className={`ml-2 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{option.label}</span>
-          </label>
-        ))}
-      </div>
-    </div>
+   
   </div>
 );
 

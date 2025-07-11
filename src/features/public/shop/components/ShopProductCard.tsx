@@ -3,17 +3,16 @@ import { motion } from 'framer-motion';
 import { ShoppingCart, Star, Heart, Eye } from 'lucide-react';
 import { Product } from '../../../admin/products/types/product';
 import { getImageUrl } from '../../../../shared/utils/imageUtils';
+import { useNavigate } from 'react-router-dom';
 
 interface ShopProductCardProps {
   product: Product & { image: string };
   theme: 'light' | 'dark';
   viewMode: 'grid' | 'list';
-  isInCart: boolean;
-  onAddToCart: () => void;
-  onRemoveFromCart: () => void;
 }
 
-const ShopProductCard: React.FC<ShopProductCardProps> = ({ product, theme, viewMode, isInCart, onAddToCart, onRemoveFromCart }) => {
+const ShopProductCard: React.FC<ShopProductCardProps> = ({ product, theme, viewMode }) => {
+  const navigate = useNavigate();
   return (
     <motion.div
       whileHover={{ y: -5 }}
@@ -38,8 +37,12 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({ product, theme, viewM
         )}
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
           <div className="flex space-x-2">
-            <button className="p-2 bg-white rounded-full text-gray-900 hover:bg-gray-100 transition-colors"><Eye className="h-5 w-5" /></button>
-            <button className="p-2 bg-white rounded-full text-gray-900 hover:bg-gray-100 transition-colors"><Heart className="h-5 w-5" /></button>
+            <button
+              className="p-2 bg-white rounded-full text-gray-900 hover:bg-gray-100 transition-colors"
+              onClick={() => navigate(`/shop/${product._id}`)}
+            >
+              <Eye className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </div>
@@ -66,16 +69,6 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({ product, theme, viewM
               <span className={`text-sm line-through ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>{product.originalPrice}€</span>
             )}
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => product.inStock ? (isInCart ? onRemoveFromCart() : onAddToCart()) : undefined}
-            disabled={!product.inStock}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition-all duration-300 ${!product.inStock ? 'bg-gray-400 text-white cursor-not-allowed' : isInCart ? 'bg-green-500 text-white' : 'bg-secondary-500 text-white hover:bg-secondary-600 hover:shadow-lg'}`}
-          >
-            <ShoppingCart className="h-4 w-4" />
-            <span>{!product.inStock ? 'Précommande' : isInCart ? 'Ajouté' : 'Ajouter'}</span>
-          </motion.button>
         </div>
       </div>
     </motion.div>
@@ -83,3 +76,4 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({ product, theme, viewM
 };
 
 export default ShopProductCard;
+
