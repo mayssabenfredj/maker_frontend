@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CreateBootcampDto } from "../types/bootcamp";
 import ItemList from "./ItemList";
 import { X } from "lucide-react";
 import ModuleEditor from "./ModuleEditor";
 import Select from "react-select";
 import InstructorEditor from "./InstructorEditor";
+import axios from "axios";
 
 interface BootcampFieldsProps {
   formData: any;
@@ -31,6 +32,19 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
     value: product._id,
     label: product.name,
   }));
+
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    axios
+      .get(import.meta.env.VITE_API_URL + "/categories/event")
+      .then((res) => {
+        setCategories(res.data.data);
+      })
+      .catch((error) => {
+        console.log("error feching categories", error);
+      });
+  }, []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Nom */}
@@ -228,7 +242,38 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
           <option value="false">Non</option>
         </select>
       </div>
-
+      <div>
+        <label
+          className={`block text-sm font-medium mb-2 ${
+            theme === "dark" ? "text-gray-300" : "text-gray-700"
+          }`}
+        >
+          Catégorie
+        </label>
+        <select
+          value={formData.category}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              category: e.target.value,
+            })
+          }
+          className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+            theme === "dark"
+              ? "bg-gray-700 border-gray-600 text-white"
+              : "bg-white border-gray-300 text-gray-900"
+          } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+        >
+          <option value="true" disabled>
+            Choisir une catégorie
+          </option>
+          {categories.map((category: any) => (
+            <option key={category?._id} value={category?._id}>
+              {category?.name}
+            </option>
+          ))}
+        </select>
+      </div>
       {/* Prérequis */}
       <div className="md:col-span-2">
         <label

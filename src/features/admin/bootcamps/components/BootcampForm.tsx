@@ -8,6 +8,7 @@ import BootcampFields from "./BootcampFields";
 import { productService } from "../../products";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { uploadFile } from "../../../../shared/uploadService";
 type EventType = "workshop" | "bootcamp" | "event" | "course";
 
 interface BaseFormProps {
@@ -72,6 +73,15 @@ const EventForm: React.FC<BaseFormProps> = ({
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Final formData:", formData);
+
+    let responseImage = await uploadFile(
+      import.meta.env.VITE_API_URL + "/upload",
+      imageFiles[0],
+      "file",
+      { path: "events" }
+    );
+    formData.coverImage = responseImage.data.path;
+
     let response = await axios.post(
       import.meta.env.VITE_API_URL + "/events",
       formData

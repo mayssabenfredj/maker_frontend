@@ -45,7 +45,7 @@ class BootcampService {
     const response = await this.makeRequest<{
       message: string;
       data: Bootcamp;
-    }>(`/bootcamps/${id}`);
+    }>(`/events/${id}`);
     return response.data;
   }
 
@@ -150,7 +150,7 @@ class BootcampService {
   }
 
   async deleteBootcamp(id: string): Promise<void> {
-    await this.makeRequest(`/bootcamps/${id}`, {
+    await this.makeRequest(`/events/${id}`, {
       method: "DELETE",
     });
   }

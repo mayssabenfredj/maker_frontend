@@ -1,12 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Edit, Calendar, MapPin, User, Tag, Package, Euro } from 'lucide-react';
-import { useStore } from '../../../../stores/useStore';
-import { bootcampService } from '../services/bootcamp.service';
-import { useSelections } from '../hooks/useSelections';
-import { getImageUrl } from '../../../../shared/utils/imageUtils';
-import AnimatedSection from '../../../../components/UI/AnimatedSection';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Edit,
+  Calendar,
+  MapPin,
+  User,
+  Tag,
+  Package,
+  Euro,
+} from "lucide-react";
+import { useStore } from "../../../../stores/useStore";
+import { bootcampService } from "../services/bootcamp.service";
+import { useSelections } from "../hooks/useSelections";
+import { getImageUrl } from "../../../../shared/utils/imageUtils";
+import AnimatedSection from "../../../../components/UI/AnimatedSection";
 
 const BootcampDetail: React.FC = () => {
   const { theme } = useStore();
@@ -21,14 +30,17 @@ const BootcampDetail: React.FC = () => {
   useEffect(() => {
     const loadBootcamp = async () => {
       if (!id) return;
-      
+
       setLoading(true);
       setError(null);
       try {
         const data = await bootcampService.getBootcamp(id);
+        console.log(bootcamp);
         setBootcamp(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
+        setError(
+          err instanceof Error ? err.message : "Erreur lors du chargement"
+        );
       } finally {
         setLoading(false);
       }
@@ -38,22 +50,26 @@ const BootcampDetail: React.FC = () => {
   }, [id]);
 
   const getCategoryName = (category: any): string => {
-    if (!category) return 'Aucune catégorie';
-    return typeof category === 'string' ? category : category.name || 'Catégorie inconnue';
+    if (!category) return "Aucune catégorie";
+    return typeof category === "string"
+      ? category
+      : category.name || "Catégorie inconnue";
   };
 
   const getProductName = (product: any): string => {
-    if (!product) return 'Produit inconnu';
-    return typeof product === 'string' ? product : product.name || 'Produit inconnu';
+    if (!product) return "Produit inconnu";
+    return typeof product === "string"
+      ? product
+      : product.name || "Produit inconnu";
   };
 
   const getProductPrice = (product: any): string => {
-    if (!product) return '0';
-    return typeof product === 'string' ? '0' : product.price?.toString() || '0';
+    if (!product) return "0";
+    return typeof product === "string" ? "0" : product.price?.toString() || "0";
   };
 
   const getProductImage = (product: any): string => {
-    if (!product || typeof product === 'string') {
+    if (!product || typeof product === "string") {
       return "/placeholder-product.png";
     }
     if (product.images && product.images.length > 0) {
@@ -71,9 +87,9 @@ const BootcampDetail: React.FC = () => {
 
   const parseTypes = (types: any[]): string[] => {
     if (!types || !Array.isArray(types)) return [];
-    
-    return types.map(type => {
-      if (typeof type === 'string') {
+
+    return types.map((type) => {
+      if (typeof type === "string") {
         // Essayer de parser si c'est un JSON string
         try {
           const parsed = JSON.parse(type);
@@ -87,25 +103,31 @@ const BootcampDetail: React.FC = () => {
   };
 
   const handleEdit = () => {
-    navigate('/admin/bootcamps', { 
-      state: { 
-        editBootcamp: bootcamp, 
-        showForm: true 
-      } 
+    navigate("/admin/bootcamps", {
+      state: {
+        editBootcamp: bootcamp,
+        showForm: true,
+      },
     });
   };
 
   const handleBack = () => {
-    navigate('/admin/bootcamps');
+    navigate("/admin/bootcamps");
   };
 
   if (loading) {
     return (
-      <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-300`}>
+      <div
+        className={`min-h-screen ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        } transition-colors duration-300`}
+      >
         <div className="container mx-auto px-4 py-8">
-          <div className={`text-center py-12 ${
-            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-          }`}>
+          <div
+            className={`text-center py-12 ${
+              theme === "dark" ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
             <div className="animate-spin h-8 w-8 mx-auto mb-4 border-2 border-orange-500 border-t-transparent rounded-full" />
             <p>Chargement du bootcamp...</p>
           </div>
@@ -116,13 +138,19 @@ const BootcampDetail: React.FC = () => {
 
   if (error || !bootcamp) {
     return (
-      <div className={`min-h-screen pt-16 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-300`}>
+      <div
+        className={`min-h-screen pt-16 ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        } transition-colors duration-300`}
+      >
         <div className="container mx-auto px-4 py-8">
-          <div className={`text-center py-12 ${
-            theme === 'dark' ? 'text-red-400' : 'text-red-600'
-          }`}>
+          <div
+            className={`text-center py-12 ${
+              theme === "dark" ? "text-red-400" : "text-red-600"
+            }`}
+          >
             <h3 className="text-xl font-semibold mb-2">Erreur</h3>
-            <p>{error || 'Bootcamp non trouvé'}</p>
+            <p>{error || "Bootcamp non trouvé"}</p>
             <button
               onClick={handleBack}
               className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
@@ -138,7 +166,11 @@ const BootcampDetail: React.FC = () => {
   const parsedTypes = parseTypes(bootcamp.types);
 
   return (
-    <div className={`min-h-screen pt-16 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-300`}>
+    <div
+      className={`min-h-screen pt-16 ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+      } transition-colors duration-300`}
+    >
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <AnimatedSection>
@@ -149,22 +181,26 @@ const BootcampDetail: React.FC = () => {
                 whileTap={{ scale: 0.95 }}
                 onClick={handleBack}
                 className={`p-2 rounded-lg transition-colors ${
-                  theme === 'dark'
-                    ? 'text-gray-400 hover:text-white hover:bg-gray-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  theme === "dark"
+                    ? "text-gray-400 hover:text-white hover:bg-gray-700"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
                 <ArrowLeft className="h-6 w-6" />
               </motion.button>
               <div>
-                <h1 className={`text-3xl font-bold mb-2 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
+                <h1
+                  className={`text-3xl font-bold mb-2 ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
                   {bootcamp.name}
                 </h1>
-                <p className={`${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
+                <p
+                  className={`${
+                    theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
                   Détails du bootcamp
                 </p>
               </div>
@@ -184,12 +220,18 @@ const BootcampDetail: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Images Gallery */}
           <AnimatedSection>
-            <div className={`rounded-xl shadow-lg overflow-hidden ${
-              theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-            }`}>
+            <div
+              className={`rounded-xl shadow-lg overflow-hidden ${
+                theme === "dark" ? "bg-gray-800" : "bg-white"
+              }`}
+            >
               <div className="relative">
                 <img
-                  src={getBootcampImageUrl(bootcamp.images && bootcamp.images.length > 0 ? bootcamp.images[currentImageIndex] : undefined)}
+                  src={getBootcampImageUrl(
+                    bootcamp.images && bootcamp.images.length > 0
+                      ? bootcamp.images[currentImageIndex]
+                      : undefined
+                  )}
                   alt={bootcamp.name}
                   className="w-full h-96 object-cover"
                 />
@@ -201,8 +243,8 @@ const BootcampDetail: React.FC = () => {
                         onClick={() => setCurrentImageIndex(index)}
                         className={`w-3 h-3 rounded-full transition-colors ${
                           index === currentImageIndex
-                            ? 'bg-white'
-                            : 'bg-white/50 hover:bg-white/75'
+                            ? "bg-white"
+                            : "bg-white/50 hover:bg-white/75"
                         }`}
                       />
                     ))}
@@ -214,15 +256,19 @@ const BootcampDetail: React.FC = () => {
 
           {/* Bootcamp Info */}
           <AnimatedSection delay={0.1}>
-            <div className={`p-8 rounded-xl shadow-lg ${
-              theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-            }`}>
+            <div
+              className={`p-8 rounded-xl shadow-lg ${
+                theme === "dark" ? "bg-gray-800" : "bg-white"
+              }`}
+            >
               <div className="space-y-6">
                 {/* Types */}
                 <div>
-                  <h3 className={`text-lg font-semibold mb-3 flex items-center ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
+                  <h3
+                    className={`text-lg font-semibold mb-3 flex items-center ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     <Tag className="h-5 w-5 mr-2" />
                     Types
                   </h3>
@@ -240,43 +286,57 @@ const BootcampDetail: React.FC = () => {
 
                 {/* Dates */}
                 <div>
-                  <h3 className={`text-lg font-semibold mb-3 flex items-center ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
+                  <h3
+                    className={`text-lg font-semibold mb-3 flex items-center ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     <Calendar className="h-5 w-5 mr-2" />
                     Période
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className={`text-sm font-medium ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>
-                        {new Date(bootcamp.dateDebut).toLocaleDateString('fr-FR')}
+                      <div
+                        className={`text-sm font-medium ${
+                          theme === "dark" ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {new Date(bootcamp.dateDebut).toLocaleDateString(
+                          "fr-FR"
+                        )}
                       </div>
-                      <div className={`text-xs ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
+                      <div
+                        className={`text-xs ${
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         Date de début
                       </div>
                     </div>
                     <div>
-                      <div className={`text-sm font-medium ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>
-                        {new Date(bootcamp.dateFin).toLocaleDateString('fr-FR')}
+                      <div
+                        className={`text-sm font-medium ${
+                          theme === "dark" ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {new Date(bootcamp.dateFin).toLocaleDateString("fr-FR")}
                       </div>
-                      <div className={`text-xs ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
+                      <div
+                        className={`text-xs ${
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         Date de fin
                       </div>
                     </div>
                   </div>
                   {bootcamp.periode && (
                     <div className="mt-2">
-                      <div className={`text-sm ${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
+                      <div
+                        className={`text-sm ${
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         Période: {bootcamp.periode}
                       </div>
                     </div>
@@ -285,30 +345,38 @@ const BootcampDetail: React.FC = () => {
 
                 {/* Location */}
                 <div>
-                  <h3 className={`text-lg font-semibold mb-3 flex items-center ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
+                  <h3
+                    className={`text-lg font-semibold mb-3 flex items-center ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     <MapPin className="h-5 w-5 mr-2" />
                     Localisation
                   </h3>
-                  <div className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <div
+                    className={`text-sm ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
                     {bootcamp.location}
                   </div>
                 </div>
 
                 {/* Animateur */}
                 <div>
-                  <h3 className={`text-lg font-semibold mb-3 flex items-center ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
+                  <h3
+                    className={`text-lg font-semibold mb-3 flex items-center ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     <User className="h-5 w-5 mr-2" />
                     Animateur
                   </h3>
-                  <div className={`text-sm ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <div
+                    className={`text-sm ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
                     {bootcamp.animator}
                   </div>
                 </div>
@@ -316,27 +384,35 @@ const BootcampDetail: React.FC = () => {
                 {/* Catégorie et Prix */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className={`text-lg font-semibold mb-2 ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>
+                    <h3
+                      className={`text-lg font-semibold mb-2 ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
                       Catégorie
                     </h3>
-                    <div className={`text-sm ${
-                      theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
+                    <div
+                      className={`text-sm ${
+                        theme === "dark" ? "text-gray-300" : "text-gray-700"
+                      }`}
+                    >
                       {getCategoryName(bootcamp.category)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <h3 className={`text-lg font-semibold mb-2 flex items-center justify-end ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>
+                    <h3
+                      className={`text-lg font-semibold mb-2 flex items-center justify-end ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
                       <Euro className="h-4 w-4 mr-1" />
                       Prix
                     </h3>
-                    <div className={`text-2xl font-bold ${
-                      theme === 'dark' ? 'text-orange-400' : 'text-orange-600'
-                    }`}>
+                    <div
+                      className={`text-2xl font-bold ${
+                        theme === "dark" ? "text-orange-400" : "text-orange-600"
+                      }`}
+                    >
                       {bootcamp.price} DT
                     </div>
                   </div>
@@ -349,12 +425,16 @@ const BootcampDetail: React.FC = () => {
         {/* Produits associés */}
         {bootcamp.products && bootcamp.products.length > 0 && (
           <AnimatedSection delay={0.2}>
-            <div className={`mt-8 p-8 rounded-xl shadow-lg ${
-              theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-            }`}>
-              <h3 className={`text-xl font-semibold mb-6 flex items-center ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
+            <div
+              className={`mt-8 p-8 rounded-xl shadow-lg ${
+                theme === "dark" ? "bg-gray-800" : "bg-white"
+              }`}
+            >
+              <h3
+                className={`text-xl font-semibold mb-6 flex items-center ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
                 <Package className="h-6 w-6 mr-2" />
                 Produits associés
               </h3>
@@ -364,7 +444,9 @@ const BootcampDetail: React.FC = () => {
                     key={index}
                     whileHover={{ scale: 1.02 }}
                     className={`rounded-lg overflow-hidden shadow-md transition-all ${
-                      theme === 'dark' ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'
+                      theme === "dark"
+                        ? "bg-gray-700 hover:bg-gray-600"
+                        : "bg-gray-50 hover:bg-gray-100"
                     }`}
                   >
                     <div className="relative h-48">
@@ -375,14 +457,20 @@ const BootcampDetail: React.FC = () => {
                       />
                     </div>
                     <div className="p-4">
-                      <h4 className={`font-semibold mb-2 ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>
+                      <h4
+                        className={`font-semibold mb-2 ${
+                          theme === "dark" ? "text-white" : "text-gray-900"
+                        }`}
+                      >
                         {getProductName(product)}
                       </h4>
-                      <div className={`text-lg font-bold ${
-                        theme === 'dark' ? 'text-orange-400' : 'text-orange-600'
-                      }`}>
+                      <div
+                        className={`text-lg font-bold ${
+                          theme === "dark"
+                            ? "text-orange-400"
+                            : "text-orange-600"
+                        }`}
+                      >
                         {getProductPrice(product)} DT
                       </div>
                     </div>
@@ -396,17 +484,21 @@ const BootcampDetail: React.FC = () => {
         {/* Description */}
         {bootcamp.description && (
           <AnimatedSection delay={0.3}>
-            <div className={`mt-8 p-8 rounded-xl shadow-lg ${
-              theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-            }`}>
-              <h3 className={`text-xl font-semibold mb-4 ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
+            <div
+              className={`mt-8 p-8 rounded-xl shadow-lg ${
+                theme === "dark" ? "bg-gray-800" : "bg-white"
+              }`}
+            >
+              <h3
+                className={`text-xl font-semibold mb-4 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
                 Description
               </h3>
-              <div 
+              <div
                 className={`prose max-w-none ${
-                  theme === 'dark' ? 'prose-invert' : ''
+                  theme === "dark" ? "prose-invert" : ""
                 }`}
                 dangerouslySetInnerHTML={{ __html: bootcamp.description }}
               />
@@ -416,37 +508,49 @@ const BootcampDetail: React.FC = () => {
 
         {/* Informations supplémentaires */}
         <AnimatedSection delay={0.4}>
-          <div className={`mt-8 p-8 rounded-xl shadow-lg ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          }`}>
-            <h3 className={`text-xl font-semibold mb-4 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
+          <div
+            className={`mt-8 p-8 rounded-xl shadow-lg ${
+              theme === "dark" ? "bg-gray-800" : "bg-white"
+            }`}
+          >
+            <h3
+              className={`text-xl font-semibold mb-4 ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
+            >
               Informations supplémentaires
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className={`text-lg font-medium mb-2 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
+                <h4
+                  className={`text-lg font-medium mb-2 ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
                   Date de création
                 </h4>
-                <div className={`text-sm ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {new Date(bootcamp.createdAt).toLocaleDateString('fr-FR')}
+                <div
+                  className={`text-sm ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  {new Date(bootcamp.createdAt).toLocaleDateString("fr-FR")}
                 </div>
               </div>
               <div>
-                <h4 className={`text-lg font-medium mb-2 ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
+                <h4
+                  className={`text-lg font-medium mb-2 ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
                   Dernière modification
                 </h4>
-                <div className={`text-sm ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  {new Date(bootcamp.updatedAt).toLocaleDateString('fr-FR')}
+                <div
+                  className={`text-sm ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  {new Date(bootcamp.updatedAt).toLocaleDateString("fr-FR")}
                 </div>
               </div>
             </div>
@@ -457,4 +561,4 @@ const BootcampDetail: React.FC = () => {
   );
 };
 
-export default BootcampDetail; 
+export default BootcampDetail;

@@ -59,8 +59,31 @@ const BootcampsManagement: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await axios.get(import.meta.env.VITE_API_URL + "/events");
-      setBootcamps(Array.isArray(data) ? data : []);
+      const res = await axios.get(import.meta.env.VITE_API_URL + "/events");
+      // Access the data array from the response
+      const bootcampsData = res.data.data || [];
+
+      // Transform the data to match your expected structure
+      const transformedBootcamps = bootcampsData.map((bootcamp: any) => ({
+        _id: bootcamp._id,
+        name: bootcamp.name || "",
+        category: bootcamp.category || "", // You might need to adjust this
+        types: bootcamp.types || [], // You might need to adjust this
+        description: bootcamp.description || "", // Not in your sample data
+        dateDebut: bootcamp.startDate || "",
+        dateFin: bootcamp.endDate || "", // Not in your sample data
+        periode: bootcamp.duration || "",
+        location: bootcamp.location || "",
+        price: bootcamp.price?.toString() || "0",
+        animator: bootcamp.instructor?.name || "",
+        products: bootcamp.products || [],
+        // Add other fields as needed
+        modules: bootcamp.modules || [],
+        certification: bootcamp.certification || false,
+        coverImage: bootcamp.coverImage || "",
+      }));
+
+      setBootcamps(transformedBootcamps);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Erreur lors du chargement"
@@ -293,14 +316,14 @@ const BootcampsManagement: React.FC = () => {
                   theme === "dark" ? "text-white" : "text-gray-900"
                 }`}
               >
-                Gestion des Bootcamps
+                Gestion des Evenements
               </h1>
               <p
                 className={`${
                   theme === "dark" ? "text-gray-400" : "text-gray-600"
                 }`}
               >
-                Gérez vos bootcamps intensifs et programmes spécialisés
+                Gérez vos Evenements intensifs et programmes spécialisés
               </p>
             </div>
             <motion.button
@@ -310,7 +333,7 @@ const BootcampsManagement: React.FC = () => {
               className="flex items-center space-x-2 px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors"
             >
               <Plus className="h-5 w-5" />
-              <span>Nouveau Bootcamp</span>
+              <span>Nouvel événement </span>
             </motion.button>
           </div>
         </AnimatedSection>
@@ -466,13 +489,13 @@ const BootcampsManagement: React.FC = () => {
           isOpen={showDeleteConfirm}
           title={
             deleteTarget?.isBulk
-              ? "Supprimer les bootcamps"
-              : "Supprimer le bootcamp"
+              ? "Supprimer les événements"
+              : "Supprimer l'événement"
           }
           message={
             deleteTarget?.isBulk
-              ? `Êtes-vous sûr de vouloir supprimer ${selectedBootcamps.length} bootcamp(s) ?`
-              : "Êtes-vous sûr de vouloir supprimer ce bootcamp ?"
+              ? `Êtes-vous sûr de vouloir supprimer ${selectedBootcamps.length} événements(s) ?`
+              : "Êtes-vous sûr de vouloir supprimer cet événement ?"
           }
           confirmText="Supprimer"
           cancelText="Annuler"
