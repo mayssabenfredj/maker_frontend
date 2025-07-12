@@ -118,7 +118,7 @@ const BootcampsManagement: React.FC = () => {
         price: bootcampToEdit.price,
         animator: bootcampToEdit.animator,
         products:
-          bootcampToEdit.products?.map((p) =>
+          bootcampToEdit?.products?.map((p) =>
             typeof p === "string" ? p : p._id
           ) || [],
       });
@@ -160,11 +160,6 @@ const BootcampsManagement: React.FC = () => {
       if (editingBootcamp) {
         await bootcampService.updateBootcamp(
           editingBootcamp._id,
-          formData,
-          imageFiles.length > 0 ? imageFiles : undefined
-        );
-      } else {
-        await bootcampService.createBootcamp(
           formData,
           imageFiles.length > 0 ? imageFiles : undefined
         );
@@ -218,7 +213,6 @@ const BootcampsManagement: React.FC = () => {
     setImageFiles([]);
     setShowForm(true);
   };
-
   const handleDelete = (id: string) => {
     setDeleteTarget({ id, isBulk: false });
     setShowDeleteConfirm(true);
@@ -288,7 +282,7 @@ const BootcampsManagement: React.FC = () => {
     return (
       <BootcampForm
         theme={theme}
-        editingBootcamp={editingBootcamp}
+        editingEvent={editingBootcamp}
         loading={loading}
         onSubmit={handleSubmit}
         onCancel={handleCancelForm}

@@ -203,7 +203,7 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
           <input
             type="text"
             required
-            value={formData.name}
+            value={formData.address}
             onChange={(e) =>
               setFormData({ ...formData, address: e.target.value })
             }
@@ -458,7 +458,6 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
         </label>
         <Select
           isMulti
-          required
           name="products"
           options={productOptions}
           value={productOptions.filter((option) =>
