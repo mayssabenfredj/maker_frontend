@@ -7,6 +7,7 @@ import { Product } from '../types/product';
 import { productService } from '../services/product.service';
 import { getProductImageUrl } from '../../../../shared/utils/imageUtils';
 import { ConfirmDialog } from '../../../../shared';
+import * as XLSX from 'xlsx';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -69,6 +70,20 @@ const ProductDetail: React.FC = () => {
     if (product?.images && product.images.length > 1) {
       setCurrentImageIndex((prev) => (prev - 1 + product.images!.length) % product.images!.length);
     }
+  };
+
+  const exportCommandesToExcel = () => {
+    if (!product?.commandes || product.commandes.length === 0) return;
+    const ws = XLSX.utils.json_to_sheet(product.commandes.map(cmd => ({
+      Nom: cmd.fullname,
+      Email: cmd.email,
+      Téléphone: cmd.phone,
+      'Adresse livraison': cmd.adresseLivraison || '',
+      Message: cmd.message || '',
+    })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Commandes');
+    XLSX.writeFile(wb, `commandes_${product.name}.xlsx`);
   };
 
   if (loading) {
@@ -282,6 +297,118 @@ const ProductDetail: React.FC = () => {
                 <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                   Créé le {new Date(product.createdAt).toLocaleDateString('fr-FR')}
                 </p>
+              </div>
+            )}
+
+            {/* Section Formations liées */}
+            {product.events && product.events.length > 0 && (
+              <div className="mt-8">
+                <h3 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  Formations liées
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {product.events.map((event) => (
+                    <div
+                      key={typeof event === 'string' ? event : event._id}
+                      className={`p-4 rounded-lg border ${
+                        theme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+                      }`}
+                    >
+                      <h4 className={`font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        {typeof event === 'string' ? event : event.name}
+                      </h4>
+                      {typeof event !== 'string' && event.description && (
+                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                          {event.description}
+                        </p>
+                      )}
+                      {typeof event !== 'string' && event.price && (
+                        <p className={`text-sm font-medium text-orange-500 mt-2`}>
+                          {event.price}€
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Section Commandes */}
+            {product.commandes && product.commandes.length > 0 && (
+              <div className="mt-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    Demandes (Commandes)
+                  </h3>
+                  <button
+                    onClick={exportCommandesToExcel}
+                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
+                  >
+                    <span>📊</span>
+                    <span>Exporter en Excel</span>
+                  </button>
+                </div>
+                <div className={`overflow-x-auto rounded-lg border ${
+                  theme === 'dark' ? 'border-gray-600' : 'border-gray-200'
+                }`}>
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className={`${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                      <tr>
+                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                        }`}>
+                          Nom
+                        </th>
+                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                        }`}>
+                          Email
+                        </th>
+                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                        }`}>
+                          Téléphone
+                        </th>
+                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                        }`}>
+                          Adresse livraison
+                        </th>
+                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
+                        }`}>
+                          Message
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className={`divide-y divide-gray-200 dark:divide-gray-700 ${
+                      theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+                    }`}>
+                      {product.commandes.map((cmd) => (
+                        <tr key={cmd._id} className={`hover:${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                            {cmd.fullname}
+                          </td>
+                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {cmd.email}
+                          </td>
+                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {cmd.phone}
+                          </td>
+                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {cmd.adresseLivraison || '-'}
+                          </td>
+                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                            {cmd.message || '-'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className={`mt-4 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Total: {product.commandes.length} demande(s)
+                </div>
               </div>
             )}
           </div>

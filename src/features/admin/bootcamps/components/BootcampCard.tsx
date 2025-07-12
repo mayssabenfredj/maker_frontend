@@ -1,12 +1,41 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Edit, Trash2, Eye } from 'lucide-react';
-import { Bootcamp } from '../types/bootcamp';
-import { getImageUrl } from '../../../../shared/utils/imageUtils';
+import React from "react";
+import { motion } from "framer-motion";
+import { Edit, Trash2, Eye } from "lucide-react";
+import { getImageUrl } from "../../../../shared/utils/imageUtils";
+
+interface Module {
+  title: string;
+  items: string[];
+  _id: string;
+}
+
+interface Bootcamp {
+  modules: Module[];
+  type?: string;
+  name: string;
+  price: string | number;
+  reduction?: number;
+  duration?: string;
+  periode: string;
+  startDate?: string | null;
+  required?: string[];
+  includedInEvent?: string[];
+  objectives?: string[];
+  location: string;
+  certification: boolean;
+  products: string[];
+  coverImage: string | null;
+  participants?: any[];
+  animator: string;
+  _id: string;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+}
 
 interface BootcampCardProps {
   bootcamp: Bootcamp;
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   isSelected: boolean;
   onSelect: (id: string) => void;
   onEdit: (bootcamp: Bootcamp) => void;
@@ -21,39 +50,77 @@ const BootcampCard: React.FC<BootcampCardProps> = ({
   onSelect,
   onEdit,
   onDelete,
-  onView
+  onView,
 }) => {
-  const getCategoryName = (category: any): string => {
-    if (!category) return 'Aucune catégorie';
-    return typeof category === 'string' ? category : category.name || 'Catégorie inconnue';
-  };
-
-  const getBootcampImageUrl = (imagePath?: string): string => {
+  const getBootcampImageUrl = (imagePath?: string | null): string => {
     if (!imagePath) {
       return "/placeholder-bootcamp.png";
     }
     return getImageUrl(imagePath);
   };
 
+  const formatDate = (dateString?: string | null): string => {
+    if (!dateString) return "Non spécifié";
+    try {
+      return new Date(dateString).toLocaleDateString("fr-FR");
+    } catch {
+      return "Date invalide";
+    }
+  };
+
+  const getLocationText = (location: string): string => {
+    switch (location) {
+      case "in_person":
+        return "En présentiel";
+      case "online":
+        return "En ligne";
+      case "hybrid":
+        return "Hybride";
+      default:
+        return location;
+    }
+  };
+
+  const calculateFinalPrice = (
+    price: string | number,
+    reduction = 0
+  ): number => {
+    const numericPrice = typeof price === "string" ? parseFloat(price) : price;
+    return numericPrice - (numericPrice * reduction) / 100;
+  };
+
+  const price =
+    typeof bootcamp.price === "string"
+      ? parseFloat(bootcamp.price)
+      : bootcamp.price;
+  const reduction = bootcamp.reduction || 0;
+
   return (
     <motion.div
       whileHover={{ y: -5 }}
       className={`rounded-xl shadow-lg overflow-hidden ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        theme === "dark" ? "bg-gray-800" : "bg-white"
       }`}
     >
       <div className="relative">
         <img
-          src={getBootcampImageUrl(bootcamp.images && bootcamp.images.length > 0 ? bootcamp.images[0] : undefined)}
+          src={getBootcampImageUrl(bootcamp.coverImage)}
           alt={bootcamp.name}
           className="w-full h-48 object-cover"
         />
-        <div className="absolute top-4 left-4">
-          <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
-            {bootcamp.types.join(', ')}
+        {bootcamp.type && (
+          <div className="absolute top-4 left-4">
+            <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+              {bootcamp.type}
+            </span>
+          </div>
+        )}
+        {bootcamp.certification && (
+          <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+            Certification
           </span>
-        </div>
-        <div className="absolute top-4 right-4 flex space-x-2">
+        )}
+        <div className="absolute bottom-4 right-4 flex space-x-2">
           <input
             type="checkbox"
             checked={isSelected}
@@ -74,89 +141,118 @@ const BootcampCard: React.FC<BootcampCardProps> = ({
           </button>
         </div>
       </div>
-      
+
       <div className="p-6">
-        <h3 className={`text-xl font-bold mb-2 ${
-          theme === 'dark' ? 'text-white' : 'text-gray-900'
-        }`}>
+        <h3
+          className={`text-xl font-bold mb-2 ${
+            theme === "dark" ? "text-white" : "text-gray-900"
+          }`}
+        >
           {bootcamp.name}
         </h3>
-        
-        <p className={`text-sm mb-4 ${
-          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-        }`}>
-          {bootcamp.description}
-        </p>
-        
+
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <div className={`text-sm font-medium ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              {new Date(bootcamp.dateDebut).toLocaleDateString('fr-FR')}
+            <div
+              className={`text-sm font-medium ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
+            >
+              {bootcamp.periode} Jours
             </div>
-            <div className={`text-xs ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              Début
-            </div>
-          </div>
-          
-          <div>
-            <div className={`text-sm font-medium ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              {new Date(bootcamp.dateFin).toLocaleDateString('fr-FR')}
-            </div>
-            <div className={`text-xs ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              Fin
+            <div
+              className={`text-xs ${
+                theme === "dark" ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              Durée
             </div>
           </div>
-          
+
           <div>
-            <div className={`text-sm font-medium ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              {bootcamp.location}
+            <div
+              className={`text-sm font-medium ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
+            >
+              {getLocationText(bootcamp.location)}
             </div>
-            <div className={`text-xs ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              Lieu
+            <div
+              className={`text-xs ${
+                theme === "dark" ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              Format
             </div>
           </div>
-          
+
           <div>
-            <div className={`text-sm font-medium ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              {bootcamp.animator}
+            <div
+              className={`text-sm font-medium ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
+            >
+              {bootcamp.animator || "Animateur non spécifié"}
             </div>
-            <div className={`text-xs ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
+            <div
+              className={`text-xs ${
+                theme === "dark" ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
               Animateur
             </div>
           </div>
         </div>
-        
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className={`text-sm ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              Catégorie: {getCategoryName(bootcamp.category)}
-            </div>
+
+        {bootcamp.modules?.length > 0 && (
+          <div className="mb-4">
+            <h4
+              className={`text-sm font-medium mb-1 ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
+            >
+              Modules:
+            </h4>
+            <ul
+              className={`text-xs ${
+                theme === "dark" ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              {bootcamp.modules.map((module, index) => (
+                <li key={module._id} className="mb-1">
+                  • {module.title}
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className={`text-xl font-bold ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            {bootcamp.price}€
+        )}
+
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            {reduction > 0 && (
+              <span
+                className={`text-sm line-through ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                {price} DT
+              </span>
+            )}
+            <span
+              className={`text-xl font-bold ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
+            >
+              {calculateFinalPrice(price, reduction)} DT
+            </span>
+            {reduction > 0 && (
+              <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                -{reduction}%
+              </span>
+            )}
           </div>
         </div>
-        
+
         <div className="flex space-x-2">
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -181,4 +277,4 @@ const BootcampCard: React.FC<BootcampCardProps> = ({
   );
 };
 
-export default BootcampCard; 
+export default BootcampCard;

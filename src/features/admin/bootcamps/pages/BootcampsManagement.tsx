@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Plus } from 'lucide-react';
-import { useStore } from '../../../../stores/useStore';
-import { ConfirmDialog } from '../../../../shared';
-import { CreateBootcampDto, Bootcamp } from '../types/bootcamp';
-import { bootcampService } from '../services/bootcamp.service';
-import AnimatedSection from '../../../../components/UI/AnimatedSection';
-import BootcampCard from '../components/BootcampCard';
-import BootcampForm from '../components/BootcampForm';
-import BootcampFilters from '../components/BootcampFilters';
-import BootcampBulkActions from '../components/BootcampBulkActions';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Plus } from "lucide-react";
+import { useStore } from "../../../../stores/useStore";
+import { ConfirmDialog } from "../../../../shared";
+import { CreateBootcampDto, Bootcamp } from "../types/bootcamp";
+import { bootcampService } from "../services/bootcamp.service";
+import AnimatedSection from "../../../../components/UI/AnimatedSection";
+import BootcampCard from "../components/BootcampCard";
+import BootcampForm from "../components/BootcampForm";
+import BootcampFilters from "../components/BootcampFilters";
+import BootcampBulkActions from "../components/BootcampBulkActions";
+import axios from "axios";
 
 const BootcampsManagement: React.FC = () => {
   const { theme } = useStore();
@@ -19,35 +20,38 @@ const BootcampsManagement: React.FC = () => {
   const [bootcamps, setBootcamps] = useState<Bootcamp[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showForm, setShowForm] = useState(false);
   const [editingBootcamp, setEditingBootcamp] = useState<Bootcamp | null>(null);
   const [selectedBootcamps, setSelectedBootcamps] = useState<string[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; isBulk: boolean } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    isBulk: boolean;
+  } | null>(null);
   const [formData, setFormData] = useState<CreateBootcampDto>({
-    name: '',
-    category: '',
+    name: "",
+    category: "",
     types: [],
-    description: '',
-    dateDebut: '',
-    dateFin: '',
-    periode: '',
-    location: '',
-    price: '',
-    animator: '',
-    products: []
+    description: "",
+    dateDebut: "",
+    dateFin: "",
+    periode: "",
+    location: "",
+    price: "",
+    animator: "",
+    products: [],
   });
   const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   // Fonction pour convertir une date ISO en format YYYY-MM-DD
   const formatDateForInput = (dateString: string): string => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
   // Charger les bootcamps
@@ -55,10 +59,35 @@ const BootcampsManagement: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await bootcampService.getBootcamps();
-      setBootcamps(Array.isArray(data) ? data : []);
+      const res = await axios.get(import.meta.env.VITE_API_URL + "/events");
+      // Access the data array from the response
+      const bootcampsData = res.data.data || [];
+
+      // Transform the data to match your expected structure
+      const transformedBootcamps = bootcampsData.map((bootcamp: any) => ({
+        _id: bootcamp._id,
+        name: bootcamp.name || "",
+        category: bootcamp.category || "", // You might need to adjust this
+        types: bootcamp.types || [], // You might need to adjust this
+        description: bootcamp.description || "", // Not in your sample data
+        dateDebut: bootcamp.startDate || "",
+        dateFin: bootcamp.endDate || "", // Not in your sample data
+        periode: bootcamp.duration || "",
+        location: bootcamp.location || "",
+        price: bootcamp.price?.toString() || "0",
+        animator: bootcamp.instructor?.name || "",
+        products: bootcamp.products || [],
+        // Add other fields as needed
+        modules: bootcamp.modules || [],
+        certification: bootcamp.certification || false,
+        coverImage: bootcamp.coverImage || "",
+      }));
+
+      setBootcamps(transformedBootcamps);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
+      setError(
+        err instanceof Error ? err.message : "Erreur lors du chargement"
+      );
       setBootcamps([]);
     } finally {
       setLoading(false);
@@ -76,38 +105,52 @@ const BootcampsManagement: React.FC = () => {
       setEditingBootcamp(bootcampToEdit);
       setFormData({
         name: bootcampToEdit.name,
-        category: typeof bootcampToEdit.category === 'string' ? bootcampToEdit.category : bootcampToEdit.category?._id || '',
+        category:
+          typeof bootcampToEdit.category === "string"
+            ? bootcampToEdit.category
+            : bootcampToEdit.category?._id || "",
         types: bootcampToEdit.types,
-        description: bootcampToEdit.description || '',
+        description: bootcampToEdit.description || "",
         dateDebut: formatDateForInput(bootcampToEdit.dateDebut),
         dateFin: formatDateForInput(bootcampToEdit.dateFin),
-        periode: bootcampToEdit.periode || '',
+        periode: bootcampToEdit.periode || "",
         location: bootcampToEdit.location,
         price: bootcampToEdit.price,
         animator: bootcampToEdit.animator,
-        products: bootcampToEdit.products?.map(p => typeof p === 'string' ? p : p._id) || []
+        products:
+          bootcampToEdit?.products?.map((p) =>
+            typeof p === "string" ? p : p._id
+          ) || [],
       });
       setImageFiles([]);
       setShowForm(true);
-      
+
       // Nettoyer l'état de navigation
       navigate(location.pathname, { replace: true });
     }
   }, [location.state, navigate, location.pathname]);
 
   // Filtrer les bootcamps
-  const filteredBootcamps = (bootcamps || []).filter(bootcamp => {
-    const matchesSearch = bootcamp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (bootcamp.description && bootcamp.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = filterCategory === 'all' || 
-      (typeof bootcamp.category === 'string' ? bootcamp.category : bootcamp.category?._id) === filterCategory;
+  const filteredBootcamps = (bootcamps || []).filter((bootcamp) => {
+    const matchesSearch =
+      bootcamp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (bootcamp.description &&
+        bootcamp.description.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory =
+      filterCategory === "all" ||
+      (typeof bootcamp.category === "string"
+        ? bootcamp.category
+        : bootcamp.category?._id) === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
   // Pagination
   const totalPages = Math.ceil(filteredBootcamps.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedBootcamps = filteredBootcamps.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedBootcamps = filteredBootcamps.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   // Gestion des actions
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,29 +158,33 @@ const BootcampsManagement: React.FC = () => {
     setLoading(true);
     try {
       if (editingBootcamp) {
-        await bootcampService.updateBootcamp(editingBootcamp._id, formData, imageFiles.length > 0 ? imageFiles : undefined);
-      } else {
-        await bootcampService.createBootcamp(formData, imageFiles.length > 0 ? imageFiles : undefined);
+        await bootcampService.updateBootcamp(
+          editingBootcamp._id,
+          formData,
+          imageFiles.length > 0 ? imageFiles : undefined
+        );
       }
       setShowForm(false);
       setEditingBootcamp(null);
       setFormData({
-        name: '',
-        category: '',
+        name: "",
+        category: "",
         types: [],
-        description: '',
-        dateDebut: '',
-        dateFin: '',
-        periode: '',
-        location: '',
-        price: '',
-        animator: '',
-        products: []
+        description: "",
+        dateDebut: "",
+        dateFin: "",
+        periode: "",
+        location: "",
+        price: "",
+        animator: "",
+        products: [],
       });
       setImageFiles([]);
       loadBootcamps();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la sauvegarde');
+      setError(
+        err instanceof Error ? err.message : "Erreur lors de la sauvegarde"
+      );
     } finally {
       setLoading(false);
     }
@@ -147,28 +194,32 @@ const BootcampsManagement: React.FC = () => {
     setEditingBootcamp(bootcamp);
     setFormData({
       name: bootcamp.name,
-      category: typeof bootcamp.category === 'string' ? bootcamp.category : bootcamp.category?._id || '',
+      category:
+        typeof bootcamp.category === "string"
+          ? bootcamp.category
+          : bootcamp.category?._id || "",
       types: bootcamp.types,
-      description: bootcamp.description || '',
+      description: bootcamp.description || "",
       dateDebut: formatDateForInput(bootcamp.dateDebut),
       dateFin: formatDateForInput(bootcamp.dateFin),
-      periode: bootcamp.periode || '',
+      periode: bootcamp.periode || "",
       location: bootcamp.location,
       price: bootcamp.price,
       animator: bootcamp.animator,
-      products: bootcamp.products?.map(p => typeof p === 'string' ? p : p._id) || []
+      products:
+        bootcamp.products?.map((p) => (typeof p === "string" ? p : p._id)) ||
+        [],
     });
     setImageFiles([]);
     setShowForm(true);
   };
-
   const handleDelete = (id: string) => {
     setDeleteTarget({ id, isBulk: false });
     setShowDeleteConfirm(true);
   };
 
   const handleBulkDelete = () => {
-    setDeleteTarget({ id: '', isBulk: true });
+    setDeleteTarget({ id: "", isBulk: true });
     setShowDeleteConfirm(true);
   };
 
@@ -176,14 +227,18 @@ const BootcampsManagement: React.FC = () => {
     if (!deleteTarget) return;
     try {
       if (deleteTarget.isBulk) {
-        await Promise.all(selectedBootcamps.map(id => bootcampService.deleteBootcamp(id)));
+        await Promise.all(
+          selectedBootcamps.map((id) => bootcampService.deleteBootcamp(id))
+        );
         setSelectedBootcamps([]);
       } else {
         await bootcampService.deleteBootcamp(deleteTarget.id);
       }
       loadBootcamps();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la suppression');
+      setError(
+        err instanceof Error ? err.message : "Erreur lors de la suppression"
+      );
     } finally {
       setShowDeleteConfirm(false);
       setDeleteTarget(null);
@@ -191,9 +246,9 @@ const BootcampsManagement: React.FC = () => {
   };
 
   const handleSelectBootcamp = (id: string) => {
-    setSelectedBootcamps(prev => {
+    setSelectedBootcamps((prev) => {
       const newSelection = prev.includes(id)
-        ? prev.filter(item => item !== id)
+        ? prev.filter((item) => item !== id)
         : [...prev, id];
       return newSelection;
     });
@@ -203,17 +258,17 @@ const BootcampsManagement: React.FC = () => {
     setShowForm(false);
     setEditingBootcamp(null);
     setFormData({
-      name: '',
-      category: '',
+      name: "",
+      category: "",
       types: [],
-      description: '',
-      dateDebut: '',
-      dateFin: '',
-      periode: '',
-      location: '',
-      price: '',
-      animator: '',
-      products: []
+      description: "",
+      dateDebut: "",
+      dateFin: "",
+      periode: "",
+      location: "",
+      price: "",
+      animator: "",
+      products: [],
     });
     setImageFiles([]);
   };
@@ -227,7 +282,7 @@ const BootcampsManagement: React.FC = () => {
     return (
       <BootcampForm
         theme={theme}
-        editingBootcamp={editingBootcamp}
+        editingEvent={editingBootcamp}
         loading={loading}
         onSubmit={handleSubmit}
         onCancel={handleCancelForm}
@@ -240,21 +295,29 @@ const BootcampsManagement: React.FC = () => {
   }
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-300`}>
+    <div
+      className={`min-h-screen ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+      } transition-colors duration-300`}
+    >
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <AnimatedSection>
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className={`text-3xl font-bold mb-2 ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
-                Gestion des Bootcamps
+              <h1
+                className={`text-3xl font-bold mb-2 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Gestion des Evenements
               </h1>
-              <p className={`${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-                Gérez vos bootcamps intensifs et programmes spécialisés
+              <p
+                className={`${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                Gérez vos Evenements intensifs et programmes spécialisés
               </p>
             </div>
             <motion.button
@@ -264,7 +327,7 @@ const BootcampsManagement: React.FC = () => {
               className="flex items-center space-x-2 px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors"
             >
               <Plus className="h-5 w-5" />
-              <span>Nouveau Bootcamp</span>
+              <span>Nouvel événement </span>
             </motion.button>
           </div>
         </AnimatedSection>
@@ -272,10 +335,18 @@ const BootcampsManagement: React.FC = () => {
         {/* Error Display */}
         {error && (
           <AnimatedSection>
-            <div className={`p-4 rounded-lg mb-8 ${
-              theme === 'dark' ? 'bg-red-900/20 border-red-800' : 'bg-red-50 border-red-200'
-            } border`}>
-              <p className={`text-sm ${theme === 'dark' ? 'text-red-300' : 'text-red-700'}`}>
+            <div
+              className={`p-4 rounded-lg mb-8 ${
+                theme === "dark"
+                  ? "bg-red-900/20 border-red-800"
+                  : "bg-red-50 border-red-200"
+              } border`}
+            >
+              <p
+                className={`text-sm ${
+                  theme === "dark" ? "text-red-300" : "text-red-700"
+                }`}
+              >
                 {error}
               </p>
             </div>
@@ -319,20 +390,27 @@ const BootcampsManagement: React.FC = () => {
         {!loading && paginatedBootcamps.length === 0 && (
           <AnimatedSection>
             <div className="text-center py-12">
-              <div className={`text-6xl mb-4 ${
-                theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
-              }`}>
+              <div
+                className={`text-6xl mb-4 ${
+                  theme === "dark" ? "text-gray-600" : "text-gray-400"
+                }`}
+              >
                 🚀
               </div>
-              <h3 className={`text-xl font-semibold mb-2 ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h3
+                className={`text-xl font-semibold mb-2 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
                 Aucun bootcamp trouvé
               </h3>
-              <p className={`${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-                Essayez de modifier vos critères de recherche ou créez un nouveau bootcamp.
+              <p
+                className={`${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                Essayez de modifier vos critères de recherche ou créez un
+                nouveau bootcamp.
               </p>
             </div>
           </AnimatedSection>
@@ -341,9 +419,11 @@ const BootcampsManagement: React.FC = () => {
         {/* Loading State */}
         {loading && (
           <AnimatedSection>
-            <div className={`text-center py-12 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
+            <div
+              className={`text-center py-12 ${
+                theme === "dark" ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
               <div className="animate-spin h-8 w-8 mx-auto mb-4 border-2 border-orange-500 border-t-transparent rounded-full" />
               <p>Chargement des bootcamps...</p>
             </div>
@@ -353,14 +433,19 @@ const BootcampsManagement: React.FC = () => {
         {/* Pagination */}
         {totalPages > 1 && (
           <AnimatedSection>
-            <div className={`rounded-2xl overflow-hidden shadow-lg ${
-              theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-            }`}>
+            <div
+              className={`rounded-2xl overflow-hidden shadow-lg ${
+                theme === "dark" ? "bg-gray-800" : "bg-white"
+              }`}
+            >
               <div className="flex items-center justify-between p-4">
-                <div className={`text-sm ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  Page {currentPage} sur {totalPages} ({filteredBootcamps.length} bootcamps)
+                <div
+                  className={`text-sm ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  Page {currentPage} sur {totalPages} (
+                  {filteredBootcamps.length} bootcamps)
                 </div>
                 <div className="flex space-x-2">
                   <button
@@ -368,19 +453,21 @@ const BootcampsManagement: React.FC = () => {
                     disabled={currentPage === 1}
                     className={`px-3 py-1 rounded ${
                       currentPage === 1
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-orange-500 text-white hover:bg-orange-600'
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-orange-500 text-white hover:bg-orange-600"
                     }`}
                   >
                     Précédent
                   </button>
                   <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    onClick={() =>
+                      setCurrentPage(Math.min(totalPages, currentPage + 1))
+                    }
                     disabled={currentPage === totalPages}
                     className={`px-3 py-1 rounded ${
                       currentPage === totalPages
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-orange-500 text-white hover:bg-orange-600'
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-orange-500 text-white hover:bg-orange-600"
                     }`}
                   >
                     Suivant
@@ -394,11 +481,15 @@ const BootcampsManagement: React.FC = () => {
         {/* Confirmation Dialog */}
         <ConfirmDialog
           isOpen={showDeleteConfirm}
-          title={deleteTarget?.isBulk ? 'Supprimer les bootcamps' : 'Supprimer le bootcamp'}
+          title={
+            deleteTarget?.isBulk
+              ? "Supprimer les événements"
+              : "Supprimer l'événement"
+          }
           message={
             deleteTarget?.isBulk
-              ? `Êtes-vous sûr de vouloir supprimer ${selectedBootcamps.length} bootcamp(s) ?`
-              : 'Êtes-vous sûr de vouloir supprimer ce bootcamp ?'
+              ? `Êtes-vous sûr de vouloir supprimer ${selectedBootcamps.length} événements(s) ?`
+              : "Êtes-vous sûr de vouloir supprimer cet événement ?"
           }
           confirmText="Supprimer"
           cancelText="Annuler"

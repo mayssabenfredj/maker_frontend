@@ -1,333 +1,213 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { CreateBootcampDto, Bootcamp } from '../types/bootcamp';
-import { useSelections } from '../hooks/useSelections';
-import RichTextEditor from '../../../../shared/components/RichTextEditor';
-import MediaUpload from '../../../../shared/components/MediaUpload';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import RichTextEditor from "../../../../shared/components/RichTextEditor";
+import MediaUpload from "../../../../shared/components/MediaUpload";
 
-interface BootcampFormProps {
-  theme: 'light' | 'dark';
-  editingBootcamp: Bootcamp | null;
+import BootcampFields from "./BootcampFields";
+
+import { productService } from "../../products";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { uploadFile } from "../../../../shared/uploadService";
+type EventType = "workshop" | "bootcamp" | "event" | "course";
+
+interface BaseFormProps {
+  theme: "light" | "dark";
   loading: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
-  formData: CreateBootcampDto;
-  setFormData: (data: CreateBootcampDto) => void;
   imageFiles: File[];
   setImageFiles: (files: File[]) => void;
+  editingEvent?: any;
 }
 
-const BootcampForm: React.FC<BootcampFormProps> = ({
+const EventForm: React.FC<BaseFormProps> = ({
   theme,
-  editingBootcamp,
   loading,
   onSubmit,
   onCancel,
-  formData,
-  setFormData,
   imageFiles,
-  setImageFiles
+  setImageFiles,
+  editingEvent,
 }) => {
-  const { getCategoriesForForms, getProductsForForms } = useSelections();
-
-  const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedProducts = Array.from(e.target.selectedOptions, option => option.value);
-    setFormData({ ...formData, products: selectedProducts });
+  const [eventType, setEventType] = useState<EventType>(
+    editingEvent?.type || "bootcamp"
+  );
+  const [products, setProducts] = useState<any[]>([]);
+  const [formData, setFormData] = useState<Partial<any>>({
+    ...editingEvent,
+    modules: [{ title: "", items: [] }],
+    instructor: {
+      photoUrl:
+        "https://static.vecteezy.com/system/resources/previews/036/594/092/non_2x/man-empty-avatar-photo-placeholder-for-social-networks-resumes-forums-and-dating-sites-male-and-female-no-photo-images-for-unfilled-user-profile-free-vector.jpg",
+      name: "",
+      title: "",
+      experienceYears: 0,
+      studentsCount: 0,
+    },
+    type: editingEvent?.type || "bootcamp",
+  });
+  console.log(editingEvent);
+  const handleTypeChange = (type: EventType) => {
+    setEventType(type);
+    setFormData({ ...formData, type });
   };
 
-  const handleRemoveExistingImage = (index: number) => {
-    // Pour l'instant, on ne gère pas la suppression des images existantes côté frontend
-    // Cela devrait être géré côté backend lors de la mise à jour
-    console.log('Suppression image existante:', index);
+  const handleCommonFieldChange = (field: keyof any, value: any) => {
+    setFormData({ ...formData, [field]: value });
+  };
+
+  const fetchProducts = async () => {
+    try {
+      let response = await productService.getProducts();
+      setProducts(response);
+    } catch (error) {
+      console.log("error fetching products", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+  const navigate = useNavigate();
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Final formData:", formData);
+    if (!imageFiles[0]) {
+      alert("Veillez ajouter une image de couverture!");
+    }
+    let responseImage = await uploadFile(
+      import.meta.env.VITE_API_URL + "/upload",
+      imageFiles[0],
+      "file",
+      { path: "events" }
+    );
+    formData.coverImage = responseImage.data.path;
+
+    let response = await axios.post(
+      import.meta.env.VITE_API_URL + "/events",
+      formData
+    );
+    if (response?.status == 201) {
+      onCancel();
+    }
+    onSubmit(e); // optional if you still want to notify parent
   };
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            {editingBootcamp ? 'Modifier le Bootcamp' : 'Nouveau Bootcamp'}
-          </h1>
-        </div>
-        <button
-          type="button"
-          onClick={onCancel}
-          className={`p-2 rounded-lg transition-colors ${
-            theme === 'dark'
-              ? 'text-gray-400 hover:text-white hover:bg-gray-700'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-          }`}
+      {/* ... (même en-tête que précédemment) ... */}
+      <form onSubmit={handleFormSubmit}>
+        <div
+          className={`p-8 rounded-2xl ${
+            theme === "dark" ? "bg-gray-800" : "bg-white"
+          } shadow-lg space-y-6`}
         >
-          ✕
-        </button>
-      </div>
-
-      <form onSubmit={onSubmit} className={`p-8 rounded-2xl ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-      } shadow-lg space-y-6`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Sélection du type d'événement */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Nom du bootcamp *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Catégorie *
-            </label>
-            <select
-              required
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}
             >
-              <option value="">Sélectionner une catégorie</option>
-              {getCategoriesForForms().map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.label}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Prix (DT) *
+              Type d'événement *
             </label>
-            <input
-              type="text"
-              required
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {(["bootcamp", "workshop", "event", "course"] as EventType[]).map(
+                (type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => handleTypeChange(type)}
+                    className={`px-4 py-3 rounded-lg border transition-colors ${
+                      eventType === type
+                        ? "bg-orange-500 text-white border-orange-500"
+                        : theme === "dark"
+                        ? "bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                        : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    {type === "bootcamp" && "Bootcamp"}
+                    {type === "workshop" && "Atelier"}
+                    {type === "event" && "Événement"}
+                    {type === "course" && "Cours"}
+                  </button>
+                )
+              )}
+            </div>
           </div>
 
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Animateur *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.animator}
-              onChange={(e) => setFormData({ ...formData, animator: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Date de début *
-            </label>
-            <input
-              type="date"
-              required
-              value={formData.dateDebut}
-              onChange={(e) => setFormData({ ...formData, dateDebut: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Date de fin *
-            </label>
-            <input
-              type="date"
-              required
-              value={formData.dateFin}
-              onChange={(e) => setFormData({ ...formData, dateFin: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Localisation *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              Période
-            </label>
-            <input
-              type="text"
-              value={formData.periode}
-              onChange={(e) => setFormData({ ...formData, periode: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className={`block text-sm font-medium mb-2 ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            Types *
-          </label>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {['Intensif', 'Part-time', 'En ligne', 'Hybride', 'Certification', 'Diplôme', 'kids'].map((type) => (
-              <label key={type} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={formData.types.includes(type)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setFormData({ ...formData, types: [...formData.types, type] });
-                    } else {
-                      setFormData({ ...formData, types: formData.types.filter(t => t !== type) });
-                    }
-                  }}
-                  className="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500"
-                />
-                <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                  {type}
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label className={`block text-sm font-medium mb-2 ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            Produits associés
-          </label>
-          <select
-            multiple
-            value={formData.products}
-            onChange={handleProductChange}
-            className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-              theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-white border-gray-300 text-gray-900'
-            } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-          >
-            {getProductsForForms().map(product => (
-              <option key={product.id} value={product.id}>
-                {product.label}
-              </option>
-            ))}
-          </select>
-          <p className={`text-xs mt-1 ${
-            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-          }`}>
-            Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs produits
-          </p>
-        </div>
-
-        <div>
-          <label className={`block text-sm font-medium mb-2 ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            Description
-          </label>
-          <RichTextEditor
-            value={formData.description || ''}
-            onChange={(value) => setFormData({ ...formData, description: value })}
-            placeholder="Décrivez votre bootcamp..."
-                      className="w-full"
+          {/* Champs spécifiques au type */}
+          <BootcampFields
+            products={products}
+            formData={formData}
+            setFormData={setFormData}
+            theme={theme}
           />
-        </div>
 
-        {/* Media Upload Component */}
-        <MediaUpload
-          images={imageFiles}
-          setImages={setImageFiles}
-          existingImages={editingBootcamp?.images || []}
-          onRemoveExistingImage={handleRemoveExistingImage}
-          label="Images du bootcamp"
-        />
+          {/* Description (commune) */}
+          <div>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Description
+            </label>
+            <RichTextEditor
+              value={formData.description || ""}
+              onChange={(value) =>
+                handleCommonFieldChange("description", value)
+              }
+              placeholder="Décrivez votre événement..."
+              className="w-full"
+            />
+          </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={onCancel}
-            className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-              theme === 'dark'
-                ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-            }`}
-          >
-            Annuler
-          </button>
-          <motion.button
-            type="submit"
-            disabled={loading}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={`px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            {loading ? 'Enregistrement...' : (editingBootcamp ? 'Modifier' : 'Créer')}
-          </motion.button>
+          {/* Media Upload */}
+          <MediaUpload
+            images={imageFiles}
+            setImages={setImageFiles}
+            existingImages={editingEvent?.galleryImages || []}
+            onRemoveExistingImage={(index) => {
+              const newImages = [...(formData.galleryImages || [])];
+              newImages.splice(index, 1);
+              handleCommonFieldChange("galleryImages", newImages);
+            }}
+            label="Images de l'événement"
+          />
+
+          {/* Boutons de soumission */}
+          <div className="flex justify-end space-x-4 mt-6">
+            <button
+              type="button"
+              onClick={onCancel}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                theme === "dark"
+                  ? "text-gray-300 hover:text-white hover:bg-gray-700"
+                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+              }`}
+            >
+              Annuler
+            </button>
+            <motion.button
+              type="submit"
+              disabled={loading}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-6 py-3 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {loading
+                ? "Enregistrement..."
+                : editingEvent
+                ? "Modifier"
+                : "Créer"}
+            </motion.button>
+          </div>
         </div>
       </form>
     </div>
   );
 };
 
-export default BootcampForm; 
+export default EventForm;

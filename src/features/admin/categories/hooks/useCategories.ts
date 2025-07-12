@@ -30,10 +30,14 @@ export const useCategories = () => {
   }, []);
 
   // Transformer les catégories pour les composants
-  const getCategoriesForComponents = () => {
+  const getCategoriesForComponents = async (type?: "product" | "event") => {
+    let filteredCategories = categories;
+    if (type) {
+      filteredCategories = await categoryService.getCategories(type);
+    }
     return [
       { id: "all", label: "Tous" },
-      ...categories.map((cat) => ({
+      ...filteredCategories.map((cat) => ({
         id: cat._id,
         label: cat.name,
       })),
@@ -41,8 +45,12 @@ export const useCategories = () => {
   };
 
   // Transformer les catégories pour les formulaires (sans "Tous")
-  const getCategoriesForForms = () => {
-    return categories.map((cat) => ({
+  const getCategoriesForForms = async (type?: "product" | "event") => {
+    let filteredCategories = categories;
+    if (type) {
+      filteredCategories = await categoryService.getCategories(type);
+    }
+    return filteredCategories.map((cat) => ({
       id: cat._id,
       label: cat.name,
     }));

@@ -29,7 +29,7 @@ export interface CreateBootcampDto {
   location: string;
   price: string;
   animator: string;
-  products?: string[];
+  products?: any;
 }
 
 export interface UpdateBootcampDto {

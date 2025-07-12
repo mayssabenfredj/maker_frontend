@@ -11,7 +11,7 @@ import BulkActions from '../components/BulkActions';
 import Pagination from '../../../../components/admin/Pagination';
 import { CreateProductDto, Product } from '../types/product';
 import { productService } from '../services/product.service';
-import { useCategories } from '../../categories/hooks/useCategories';
+import { categoryService } from '../../categories/services/category.service';
 
 const ProductsManagement: React.FC = () => {
   const { theme } = useStore();
@@ -33,13 +33,45 @@ const ProductsManagement: React.FC = () => {
     name: '',
     description: '',
     price: 0,
-    category: ''
+    category: '',
+    events: []
   });
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [categoryOptions, setCategoryOptions] = useState<{ id: string; label: string }[]>([]);
 
-  // Utiliser le hook des catégories
-  const { getCategoriesForComponents, getCategoriesForForms } = useCategories();
+  // Charger les catégories directement sans hook
+  const loadCategories = async () => {
+    try {
+      const categories = await categoryService.getCategories('product');
+      const formattedCategories = [
+        { id: "all", label: "Tous" },
+        ...categories.map((cat) => ({
+          id: cat._id,
+          label: cat.name,
+        })),
+      ];
+      setCategoryOptions(formattedCategories);
+    } catch (err) {
+      console.error('Erreur lors du chargement des catégories:', err);
+      setCategoryOptions([{ id: "all", label: "Tous" }]);
+    }
+  };
+
+  // Charger les catégories pour le formulaire (sans "Tous")
+  const loadCategoriesForForm = async () => {
+    try {
+      const categories = await categoryService.getCategories('product');
+      const formattedCategories = categories.map((cat) => ({
+        id: cat._id,
+        label: cat.name,
+      }));
+      return formattedCategories;
+    } catch (err) {
+      console.error('Erreur lors du chargement des catégories:', err);
+      return [];
+    }
+  };
 
   // Charger les produits
   const loadProducts = async () => {
@@ -59,7 +91,10 @@ const ProductsManagement: React.FC = () => {
 
   useEffect(() => {
     loadProducts();
+    loadCategories();
   }, []);
+
+ 
 
   // Gérer l'état de navigation depuis ProductDetail
   useEffect(() => {
@@ -72,7 +107,8 @@ const ProductsManagement: React.FC = () => {
         price: productToEdit.price,
         category: productToEdit.category 
           ? (typeof productToEdit.category === 'string' ? productToEdit.category : productToEdit.category._id)
-          : ''
+          : '',
+        events: (productToEdit.events || []).map(event => typeof event === 'string' ? event : event._id)
       });
       setImageFiles([]);
       setVideoFile(null);
@@ -112,7 +148,7 @@ const ProductsManagement: React.FC = () => {
       }
       setShowForm(false);
       setEditingProduct(null);
-      setFormData({ name: '', description: '', price: 0, category: '' });
+      setFormData({ name: '', description: '', price: 0, category: '', events: [] });
       setImageFiles([]);
       setVideoFile(null);
       loadProducts();
@@ -131,7 +167,8 @@ const ProductsManagement: React.FC = () => {
       price: product.price,
       category: product.category 
         ? (typeof product.category === 'string' ? product.category : product.category._id)
-        : ''
+        : '',
+      events: (product.events || []).map(event => typeof event === 'string' ? event : event._id)
     });
     setImageFiles([]);
     setVideoFile(null);
@@ -178,7 +215,7 @@ const ProductsManagement: React.FC = () => {
   const handleCancelForm = () => {
     setShowForm(false);
     setEditingProduct(null);
-    setFormData({ name: '', description: '', price: 0, category: '' });
+    setFormData({ name: '', description: '', price: 0, category: '', events: [] });
     setImageFiles([]);
     setVideoFile(null);
   };
@@ -198,7 +235,7 @@ const ProductsManagement: React.FC = () => {
         setImageFiles={setImageFiles}
         videoFile={videoFile}
         setVideoFile={setVideoFile}
-        categories={getCategoriesForForms()}
+        categories={categoryOptions.filter(cat => cat.id !== 'all')}
         onSubmit={handleSubmit}
         onCancel={handleCancelForm}
         loading={loading}
@@ -253,7 +290,7 @@ const ProductsManagement: React.FC = () => {
         onSearchChange={setSearchTerm}
         filterCategory={filterCategory}
         onCategoryChange={setFilterCategory}
-        categories={getCategoriesForComponents()}
+        categories={categoryOptions}
       />
 
       {/* Products Grid */}

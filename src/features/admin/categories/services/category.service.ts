@@ -31,11 +31,11 @@ class CategoryService {
     return response.json();
   }
 
-  async getCategories(): Promise<Category[]> {
+  async getCategories(type?: "event" | "product"): Promise<Category[]> {
     const response = await this.makeRequest<{
       message: string;
       data: Category[];
-    }>("/categories");
+    }>("/categories/" + type);
     return response.data;
   }
 
