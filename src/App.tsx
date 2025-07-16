@@ -42,7 +42,7 @@ import ProjectsManagement from "./features/admin/projects/ProjectsPage";
 import Blogs from "./features/public/blogs/Blogs";
 import BlogDetailPage from "./features/public/blogs/BlogDetailPage";
 import ShopProductDetailPage from "./features/public/shop/ShopProductDetailPage";
-
+import OrdersManagement from "./pages/admin/OrdersManagement";
 
 // Mock data initialization
 const initializeMockData = () => {
@@ -223,7 +223,7 @@ function App() {
               </PublicLayout>
             }
           />
-            <Route
+          <Route
             path="/blogs"
             element={
               <PublicLayout>
@@ -231,11 +231,11 @@ function App() {
               </PublicLayout>
             }
           />
-           <Route
+          <Route
             path="/blogs/:id"
             element={
               <PublicLayout>
-                < BlogDetailPage/>
+                <BlogDetailPage />
               </PublicLayout>
             }
           />
@@ -271,6 +271,7 @@ function App() {
             <Route path="events" element={<EventsManagement />} />
             <Route path="categories" element={<CategoriesManagement />} />
             <Route path="users" element={<UsersManagement />} />
+            <Route path="orders" element={<OrdersManagement />} />
           </Route>
         </Routes>
       </div>

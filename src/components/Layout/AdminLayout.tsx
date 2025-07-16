@@ -15,6 +15,7 @@ import {
   Rss,
   Image,
   Folder,
+  ShoppingCart,
 } from "lucide-react";
 import { useStore } from "../../stores/useStore";
 
@@ -91,6 +92,13 @@ const AdminLayout: React.FC = () => {
       icon: Users,
       path: "/admin/users",
       description: "Gérer les utilisateurs",
+    },
+    ,
+    {
+      name: "Commandes",
+      icon: ShoppingCart,
+      path: "/admin/orders",
+      description: "Gérer les commandes",
     },
   ];
 

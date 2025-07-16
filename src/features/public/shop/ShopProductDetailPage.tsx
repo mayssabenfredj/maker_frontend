@@ -27,6 +27,7 @@ import { Product } from "../../admin/products/types/product";
 import { Course } from "../../../types";
 import { useStore } from "../../../stores/useStore";
 import { getImageUrl } from "../../../shared/utils/imageUtils";
+import axios from "axios";
 
 const ShopProductDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -53,14 +54,10 @@ const ShopProductDetailPage: React.FC = () => {
   const [orderForm, setOrderForm] = useState({
     fullName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     address: "",
-    city: "",
-    postalCode: "",
-    country: "France",
-    paymentMethod: "card",
-    deliveryMethod: "standard",
-    specialInstructions: "",
+    deliveryMethod: "on-site",
+    notes: "",
   });
 
   useEffect(() => {
@@ -99,30 +96,34 @@ const ShopProductDetailPage: React.FC = () => {
     e.preventDefault();
     const orderData = {
       ...orderForm,
-      product: product?._id,
+      items: [product?._id],
       productName: product?.name,
       quantity,
       unitPrice: product?.price,
-      totalPrice: (product?.price || 0) * quantity,
+      totalPrice: product?.price || 0,
       orderDate: new Date().toISOString(),
     };
-    console.log("Order submitted:", orderData);
-    alert(
-      "Votre commande a été envoyée avec succès! Nous vous contacterons bientôt.",
-    );
-    setShowOrderModal(false);
-    setOrderForm({
-      fullName: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      postalCode: "",
-      country: "France",
-      paymentMethod: "card",
-      deliveryMethod: "standard",
-      specialInstructions: "",
-    });
+
+    axios
+      .post(import.meta.env.VITE_API_URL + "/orders", orderData)
+      .then((data) => {
+        alert(
+          "Votre commande a été envoyée avec succès! Nous vous contacterons bientôt."
+        );
+        setOrderForm({
+          fullName: "",
+          email: "",
+          phoneNumber: "",
+          address: "",
+          deliveryMethod: "on-site",
+          notes: "",
+        });
+        setShowOrderModal(false);
+      })
+      .catch((err) => {
+        alert("Une erreur est survenue lors de l'envoi de votre commande.");
+        console.error(err);
+      });
   };
 
   const nextImage = () => {
@@ -143,13 +144,17 @@ const ShopProductDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div
-        className={`min-h-screen pt-16 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} transition-colors duration-300`}
+        className={`min-h-screen pt-16 ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        } transition-colors duration-300`}
       >
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
             <p
-              className={`mt-4 ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+              className={`mt-4 ${
+                theme === "dark" ? "text-gray-300" : "text-gray-600"
+              }`}
             >
               Chargement...
             </p>
@@ -162,12 +167,16 @@ const ShopProductDetailPage: React.FC = () => {
   if (!product) {
     return (
       <div
-        className={`min-h-screen pt-16 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} transition-colors duration-300`}
+        className={`min-h-screen pt-16 ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        } transition-colors duration-300`}
       >
         <div className="container mx-auto  px-4 py-20">
           <div className="text-center">
             <h1
-              className={`text-2xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+              className={`text-2xl font-bold mb-4 ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
             >
               Produit introuvable
             </h1>
@@ -186,14 +195,20 @@ const ShopProductDetailPage: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} transition-colors duration-300`}
+      className={`min-h-screen ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+      } transition-colors duration-300`}
     >
       {/* Breadcrumb */}
       <section className="pt-20 pb-6 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4">
           <button
             onClick={() => navigate("/shop")}
-            className={`flex items-center text-sm ${theme === "dark" ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-900"} transition-colors duration-300`}
+            className={`flex items-center text-sm ${
+              theme === "dark"
+                ? "text-gray-300 hover:text-white"
+                : "text-gray-600 hover:text-gray-900"
+            } transition-colors duration-300`}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Retour à la boutique
@@ -236,10 +251,14 @@ const ShopProductDetailPage: React.FC = () => {
                   </div>
                 ) : (
                   <div
-                    className={`w-full h-96 rounded-2xl shadow-lg flex items-center justify-center ${theme === "dark" ? "bg-gray-800" : "bg-gray-200"}`}
+                    className={`w-full h-96 rounded-2xl shadow-lg flex items-center justify-center ${
+                      theme === "dark" ? "bg-gray-800" : "bg-gray-200"
+                    }`}
                   >
                     <Package
-                      className={`h-16 w-16 ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`}
+                      className={`h-16 w-16 ${
+                        theme === "dark" ? "text-gray-600" : "text-gray-400"
+                      }`}
                     />
                   </div>
                 )}
@@ -283,14 +302,16 @@ const ShopProductDetailPage: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <h1
-                  className={`text-3xl md:text-4xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                  className={`text-3xl md:text-4xl font-bold mb-4 ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
                 >
                   {product.name}
                 </h1>
 
                 <div className="flex items-center space-x-4 mb-6">
                   <span className="text-3xl font-bold text-orange-500">
-                    {product.price}€
+                    {product.price}DT
                   </span>
                   <div className="flex items-center space-x-1">
                     {[...Array(5)].map((_, i) => (
@@ -300,7 +321,9 @@ const ShopProductDetailPage: React.FC = () => {
                       />
                     ))}
                     <span
-                      className={`text-sm ml-2 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                      className={`text-sm ml-2 ${
+                        theme === "dark" ? "text-gray-400" : "text-gray-500"
+                      }`}
                     >
                       (4.9) · 128 avis
                     </span>
@@ -309,7 +332,9 @@ const ShopProductDetailPage: React.FC = () => {
 
                 {product.description && (
                   <div
-                    className={`prose max-w-none mb-8 ${theme === "dark" ? "prose-invert" : ""}`}
+                    className={`prose max-w-none mb-8 ${
+                      theme === "dark" ? "prose-invert" : ""
+                    }`}
                     dangerouslySetInnerHTML={{ __html: product.description }}
                   />
                 )}
@@ -318,7 +343,9 @@ const ShopProductDetailPage: React.FC = () => {
               {/* Quantity Selector */}
               <div className="flex items-center space-x-4 mb-6">
                 <span
-                  className={`font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                  className={`font-medium ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
                 >
                   Quantité:
                 </span>
@@ -334,7 +361,9 @@ const ShopProductDetailPage: React.FC = () => {
                     <Minus className="h-4 w-4" />
                   </button>
                   <span
-                    className={`px-4 py-2 font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                    className={`px-4 py-2 font-medium ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
                   >
                     {quantity}
                   </span>
@@ -350,9 +379,11 @@ const ShopProductDetailPage: React.FC = () => {
                   </button>
                 </div>
                 <span
-                  className={`text-lg font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                  className={`text-lg font-bold ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
                 >
-                  Total: {getTotalPrice()}€
+                  Total: {getTotalPrice()}DT
                 </span>
               </div>
 
@@ -387,12 +418,16 @@ const ShopProductDetailPage: React.FC = () => {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2
-                className={`text-3xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                className={`text-3xl font-bold mb-4 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
               >
                 Formations liées
               </h2>
               <p
-                className={`text-lg ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+                className={`text-lg ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-600"
+                }`}
               >
                 Découvrez nos formations en lien avec ce produit
               </p>
@@ -401,7 +436,7 @@ const ShopProductDetailPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {product.events.map((event, index) => (
                 <motion.div
-                  key={typeof event === 'string' ? event : event._id}
+                  key={typeof event === "string" ? event : event._id}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
@@ -422,19 +457,27 @@ const ShopProductDetailPage: React.FC = () => {
 
                   <div className="p-6">
                     <h3
-                      className={`text-xl font-bold mb-3 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                      className={`text-xl font-bold mb-3 ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
                     >
-                      {typeof event === 'string' ? event : event.name}
+                      {typeof event === "string" ? event : event.name}
                     </h3>
                     <p
-                      className={`text-sm mb-4 ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+                      className={`text-sm mb-4 ${
+                        theme === "dark" ? "text-gray-300" : "text-gray-600"
+                      }`}
                     >
-                      {typeof event !== 'string' && event.description ? event.description : 'Formation liée à ce produit'}
+                      {typeof event !== "string" && event.description
+                        ? event.description
+                        : "Formation liée à ce produit"}
                     </p>
 
                     <div className="flex items-center justify-between">
                       <span className="text-lg font-bold text-orange-500">
-                        {typeof event !== 'string' && event.price ? `${event.price}€` : 'Sur demande'}
+                        {typeof event !== "string" && event.price
+                          ? `${event.price}DT`
+                          : "Sur demande"}
                       </span>
                       <Link
                         to={`/academy?filter=events`}
@@ -455,16 +498,24 @@ const ShopProductDetailPage: React.FC = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div
-            className={`rounded-3xl p-8 md:p-12 ${theme === "dark" ? "bg-gradient-to-br from-gray-800 to-gray-700" : "bg-gradient-to-br from-orange-50 to-orange-100"}`}
+            className={`rounded-3xl p-8 md:p-12 ${
+              theme === "dark"
+                ? "bg-gradient-to-br from-gray-800 to-gray-700"
+                : "bg-gradient-to-br from-orange-50 to-orange-100"
+            }`}
           >
             <div className="text-center mb-8">
               <h2
-                className={`text-3xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                className={`text-3xl font-bold mb-4 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
               >
                 Offre spéciale : Produit + Formation
               </h2>
               <p
-                className={`text-lg ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+                className={`text-lg ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-600"
+                }`}
               >
                 Économisez en combinant ce produit avec une formation adaptée
               </p>
@@ -472,34 +523,46 @@ const ShopProductDetailPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div
-                className={`p-6 rounded-2xl ${theme === "dark" ? "bg-gray-900/50" : "bg-white/80"} backdrop-blur-sm`}
+                className={`p-6 rounded-2xl ${
+                  theme === "dark" ? "bg-gray-900/50" : "bg-white/80"
+                } backdrop-blur-sm`}
               >
                 <div className="flex items-center space-x-4 mb-4">
                   <Package
-                    className={`h-8 w-8 ${theme === "dark" ? "text-orange-400" : "text-orange-500"}`}
+                    className={`h-8 w-8 ${
+                      theme === "dark" ? "text-orange-400" : "text-orange-500"
+                    }`}
                   />
                   <BookOpen
-                    className={`h-8 w-8 ${theme === "dark" ? "text-orange-400" : "text-orange-500"}`}
+                    className={`h-8 w-8 ${
+                      theme === "dark" ? "text-orange-400" : "text-orange-500"
+                    }`}
                   />
                 </div>
                 <h3
-                  className={`text-xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                  className={`text-xl font-bold mb-2 ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
                 >
                   Pack Complet
                 </h3>
                 <p
-                  className={`text-sm mb-4 ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+                  className={`text-sm mb-4 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-600"
+                  }`}
                 >
                   Ce produit + Formation IoT pour débutants
                 </p>
                 <div className="flex items-center space-x-4">
                   <span
-                    className={`text-lg line-through ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                    className={`text-lg line-through ${
+                      theme === "dark" ? "text-gray-400" : "text-gray-500"
+                    }`}
                   >
-                    {product.price + 299}€
+                    {product.price + 299}DT
                   </span>
                   <span className="text-2xl font-bold text-orange-500">
-                    {Math.round((product.price + 299) * 0.8)}€
+                    {Math.round((product.price + 299) * 0.8)}DT
                   </span>
                   <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                     -20%
@@ -515,7 +578,9 @@ const ShopProductDetailPage: React.FC = () => {
                   Demander un devis pour le pack
                 </button>
                 <p
-                  className={`text-sm mt-3 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                  className={`text-sm mt-3 ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-500"
+                  }`}
                 >
                   Offre limitée dans le temps
                 </p>
@@ -536,18 +601,24 @@ const ShopProductDetailPage: React.FC = () => {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className={`w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}
+            className={`w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 ${
+              theme === "dark" ? "bg-gray-800" : "bg-white"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
               <h3
-                className={`text-xl font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                className={`text-xl font-bold ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
               >
                 Commander le produit
               </h3>
               <button
                 onClick={() => setShowOrderModal(false)}
-                className={`p-2 rounded-lg transition-colors ${theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
+                className={`p-2 rounded-lg transition-colors ${
+                  theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                }`}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -555,10 +626,14 @@ const ShopProductDetailPage: React.FC = () => {
 
             {/* Order Summary */}
             <div
-              className={`p-4 rounded-lg mb-6 ${theme === "dark" ? "bg-gray-700" : "bg-gray-50"}`}
+              className={`p-4 rounded-lg mb-6 ${
+                theme === "dark" ? "bg-gray-700" : "bg-gray-50"
+              }`}
             >
               <h4
-                className={`font-bold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                className={`font-bold mb-2 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
               >
                 Récapitulatif de commande
               </h4>
@@ -570,19 +645,23 @@ const ShopProductDetailPage: React.FC = () => {
                 />
                 <div className="flex-1">
                   <h5
-                    className={`font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                    className={`font-medium ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
                   >
                     {product.name}
                   </h5>
                   <p
-                    className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+                    className={`text-sm ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-600"
+                    }`}
                   >
-                    Quantité: {quantity} × {product.price}€
+                    Quantité: {quantity} × {product.price}DT
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-bold text-orange-500">
-                    {getTotalPrice()}€
+                    {getTotalPrice()}DT
                   </p>
                 </div>
               </div>
@@ -593,7 +672,9 @@ const ShopProductDetailPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label
-                    className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                    className={`block text-sm font-medium mb-2 ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Nom complet *
                   </label>
@@ -618,7 +699,9 @@ const ShopProductDetailPage: React.FC = () => {
 
                 <div>
                   <label
-                    className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                    className={`block text-sm font-medium mb-2 ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
                   >
                     Email *
                   </label>
@@ -644,7 +727,9 @@ const ShopProductDetailPage: React.FC = () => {
 
               <div>
                 <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
                 >
                   Téléphone *
                 </label>
@@ -653,9 +738,12 @@ const ShopProductDetailPage: React.FC = () => {
                   <input
                     type="tel"
                     required
-                    value={orderForm.phone}
+                    value={orderForm.phoneNumber}
                     onChange={(e) =>
-                      setOrderForm({ ...orderForm, phone: e.target.value })
+                      setOrderForm({
+                        ...orderForm,
+                        phoneNumber: e.target.value,
+                      })
                     }
                     className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors ${
                       theme === "dark"
@@ -667,106 +755,11 @@ const ShopProductDetailPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Delivery Address */}
               <div>
                 <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
-                >
-                  Adresse de livraison *
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <input
-                    type="text"
-                    required
-                    value={orderForm.address}
-                    onChange={(e) =>
-                      setOrderForm({ ...orderForm, address: e.target.value })
-                    }
-                    className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors ${
-                      theme === "dark"
-                        ? "bg-gray-700 border-gray-600 text-white focus:border-orange-500"
-                        : "bg-white border-gray-300 text-gray-900 focus:border-orange-500"
-                    } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-                    placeholder="Adresse complète"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    Ville *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={orderForm.city}
-                    onChange={(e) =>
-                      setOrderForm({ ...orderForm, city: e.target.value })
-                    }
-                    className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                      theme === "dark"
-                        ? "bg-gray-700 border-gray-600 text-white focus:border-orange-500"
-                        : "bg-white border-gray-300 text-gray-900 focus:border-orange-500"
-                    } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-                    placeholder="Ville"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    Code postal *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={orderForm.postalCode}
-                    onChange={(e) =>
-                      setOrderForm({ ...orderForm, postalCode: e.target.value })
-                    }
-                    className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                      theme === "dark"
-                        ? "bg-gray-700 border-gray-600 text-white focus:border-orange-500"
-                        : "bg-white border-gray-300 text-gray-900 focus:border-orange-500"
-                    } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-                    placeholder="Code postal"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    Pays *
-                  </label>
-                  <select
-                    value={orderForm.country}
-                    onChange={(e) =>
-                      setOrderForm({ ...orderForm, country: e.target.value })
-                    }
-                    className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                      theme === "dark"
-                        ? "bg-gray-700 border-gray-600 text-white focus:border-orange-500"
-                        : "bg-white border-gray-300 text-gray-900 focus:border-orange-500"
-                    } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-                  >
-                    <option value="France">France</option>
-                    <option value="Belgique">Belgique</option>
-                    <option value="Suisse">Suisse</option>
-                    <option value="Canada">Canada</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Delivery Method */}
-              <div>
-                <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
                 >
                   Mode de livraison
                 </label>
@@ -774,8 +767,8 @@ const ShopProductDetailPage: React.FC = () => {
                   <label className="flex items-center space-x-3">
                     <input
                       type="radio"
-                      value="standard"
-                      checked={orderForm.deliveryMethod === "standard"}
+                      value="on-site"
+                      checked={orderForm.deliveryMethod === "on-site"}
                       onChange={(e) =>
                         setOrderForm({
                           ...orderForm,
@@ -790,14 +783,14 @@ const ShopProductDetailPage: React.FC = () => {
                         theme === "dark" ? "text-gray-300" : "text-gray-700"
                       }
                     >
-                      Livraison standard (3-5 jours) - Gratuit
+                      Sur site
                     </span>
                   </label>
                   <label className="flex items-center space-x-3">
                     <input
                       type="radio"
-                      value="express"
-                      checked={orderForm.deliveryMethod === "express"}
+                      value="home"
+                      checked={orderForm.deliveryMethod === "home"}
                       onChange={(e) =>
                         setOrderForm({
                           ...orderForm,
@@ -812,79 +805,56 @@ const ShopProductDetailPage: React.FC = () => {
                         theme === "dark" ? "text-gray-300" : "text-gray-700"
                       }
                     >
-                      Livraison express (24-48h) - 15€
+                      Livraison à domicile
                     </span>
                   </label>
                 </div>
               </div>
-
-              {/* Payment Method */}
-              <div>
-                <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
-                >
-                  Mode de paiement
-                </label>
-                <div className="space-y-2">
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      value="card"
-                      checked={orderForm.paymentMethod === "card"}
-                      onChange={(e) =>
-                        setOrderForm({
-                          ...orderForm,
-                          paymentMethod: e.target.value,
-                        })
-                      }
-                      className="text-orange-500"
-                    />
-                    <CreditCard className="h-4 w-4 text-gray-400" />
-                    <span
-                      className={
-                        theme === "dark" ? "text-gray-300" : "text-gray-700"
-                      }
-                    >
-                      Carte bancaire
-                    </span>
+              {/* Delivery Address */}
+              {orderForm.deliveryMethod == "home" && (
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    Adresse de livraison *
                   </label>
-                  <label className="flex items-center space-x-3">
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <input
-                      type="radio"
-                      value="transfer"
-                      checked={orderForm.paymentMethod === "transfer"}
+                      type="text"
+                      required
+                      value={orderForm.address}
                       onChange={(e) =>
-                        setOrderForm({
-                          ...orderForm,
-                          paymentMethod: e.target.value,
-                        })
+                        setOrderForm({ ...orderForm, address: e.target.value })
                       }
-                      className="text-orange-500"
+                      className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors ${
+                        theme === "dark"
+                          ? "bg-gray-700 border-gray-600 text-white focus:border-orange-500"
+                          : "bg-white border-gray-300 text-gray-900 focus:border-orange-500"
+                      } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+                      placeholder="Adresse complète"
                     />
-                    <span
-                      className={
-                        theme === "dark" ? "text-gray-300" : "text-gray-700"
-                      }
-                    >
-                      Virement bancaire
-                    </span>
-                  </label>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Special Instructions */}
               <div>
                 <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
                 >
                   Instructions spéciales (optionnel)
                 </label>
                 <textarea
-                  value={orderForm.specialInstructions}
+                  value={orderForm.notes}
                   onChange={(e) =>
                     setOrderForm({
                       ...orderForm,
-                      specialInstructions: e.target.value,
+                      notes: e.target.value,
                     })
                   }
                   rows={3}
@@ -904,7 +874,7 @@ const ShopProductDetailPage: React.FC = () => {
                 Confirmer la commande -{" "}
                 {getTotalPrice() +
                   (orderForm.deliveryMethod === "express" ? 15 : 0)}
-                €
+                DT
               </button>
             </form>
           </motion.div>
@@ -922,18 +892,24 @@ const ShopProductDetailPage: React.FC = () => {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className={`w-full max-w-md rounded-2xl p-6 ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}
+            className={`w-full max-w-md rounded-2xl p-6 ${
+              theme === "dark" ? "bg-gray-800" : "bg-white"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
               <h3
-                className={`text-xl font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                className={`text-xl font-bold ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
               >
                 Demander un devis
               </h3>
               <button
                 onClick={() => setShowQuoteModal(false)}
-                className={`p-2 rounded-lg transition-colors ${theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
+                className={`p-2 rounded-lg transition-colors ${
+                  theme === "dark" ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                }`}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -942,7 +918,9 @@ const ShopProductDetailPage: React.FC = () => {
             <form onSubmit={handleQuoteSubmit} className="space-y-4">
               <div>
                 <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
                 >
                   Nom complet *
                 </label>
@@ -967,7 +945,9 @@ const ShopProductDetailPage: React.FC = () => {
 
               <div>
                 <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
                 >
                   Email *
                 </label>
@@ -992,7 +972,9 @@ const ShopProductDetailPage: React.FC = () => {
 
               <div>
                 <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
                 >
                   Téléphone *
                 </label>
@@ -1017,7 +999,9 @@ const ShopProductDetailPage: React.FC = () => {
 
               <div>
                 <label
-                  className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  className={`block text-sm font-medium mb-2 ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
                 >
                   Message (optionnel)
                 </label>
@@ -1107,7 +1091,7 @@ const ShopProductDetailPage: React.FC = () => {
                 <button
                   onClick={() =>
                     setLightboxIndex(
-                      (lightboxIndex - 1 + images.length) % images.length,
+                      (lightboxIndex - 1 + images.length) % images.length
                     )
                   }
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300"

@@ -1,29 +1,31 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Edit, Trash2, Search, Filter, Eye } from 'lucide-react';
-import { useStore } from '../../stores/useStore';
-import AnimatedSection from '../../components/UI/AnimatedSection';
-import CourseForm from '../../components/admin/CourseForm';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Plus, Edit, Trash2, Search, Filter, Eye } from "lucide-react";
+import { useStore } from "../../stores/useStore";
+import AnimatedSection from "../../components/UI/AnimatedSection";
+import CourseForm from "../../components/admin/CourseForm";
 
 const CoursesManagement: React.FC = () => {
   const { theme, courses, deleteCourse } = useStore();
   const [showForm, setShowForm] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
 
   const categories = [
-    { id: 'all', label: 'Toutes' },
-    { id: 'iot', label: 'IoT' },
-    { id: 'robotics', label: 'Robotique' },
-    { id: 'ai', label: 'IA' },
-    { id: 'programming', label: 'Programmation' }
+    { id: "all", label: "Toutes" },
+    { id: "iot", label: "IoT" },
+    { id: "robotics", label: "Robotique" },
+    { id: "ai", label: "IA" },
+    { id: "programming", label: "Programmation" },
   ];
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.fr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.title.en.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || course.category === filterCategory;
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch =
+      course.title.fr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.title.en.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      filterCategory === "all" || course.category === filterCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -33,7 +35,9 @@ const CoursesManagement: React.FC = () => {
   };
 
   const handleDelete = (courseId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette formation ?')) {
+    if (
+      window.confirm("Êtes-vous sûr de vouloir supprimer cette formation ?")
+    ) {
       deleteCourse(courseId);
     }
   };
@@ -45,46 +49,57 @@ const CoursesManagement: React.FC = () => {
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
-      case 'advanced': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      case "beginner":
+        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
+      case "intermediate":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
+      case "advanced":
+        return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'kids': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400';
-      case 'adults': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
-      case 'bootcamp': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      case "kids":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400";
+      case "adults":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400";
+      case "bootcamp":
+        return "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400";
     }
   };
 
   if (showForm) {
-    return (
-      <CourseForm
-        course={editingCourse}
-        onClose={handleCloseForm}
-      />
-    );
+    return <CourseForm course={editingCourse} onClose={handleCloseForm} />;
   }
 
   return (
-    <div className={`min-h-screen pt-16 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-300`}>
+    <div
+      className={`min-h-screen pt-16 ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+      } transition-colors duration-300`}
+    >
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <AnimatedSection>
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className={`text-3xl font-bold mb-2 ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h1
+                className={`text-3xl font-bold mb-2 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
                 Gestion des Formations
               </h1>
-              <p className={`${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
+              <p
+                className={`${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
                 Gérez vos formations et programmes éducatifs
               </p>
             </div>
@@ -102,39 +117,47 @@ const CoursesManagement: React.FC = () => {
 
         {/* Filters */}
         <AnimatedSection>
-          <div className={`p-6 rounded-xl mb-8 ${
-            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-          } shadow-lg`}>
+          <div
+            className={`p-6 rounded-xl mb-8 ${
+              theme === "dark" ? "bg-gray-800" : "bg-white"
+            } shadow-lg`}
+          >
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                }`} />
+                <Search
+                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-500"
+                  }`}
+                />
                 <input
                   type="text"
                   placeholder="Rechercher une formation..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors ${
-                    theme === 'dark'
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                      : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500'
+                    theme === "dark"
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500"
                   } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
                 />
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <Filter className={`h-5 w-5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
+                <Filter
+                  className={`h-5 w-5 ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}
+                />
                 <select
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
                   className={`px-4 py-3 rounded-lg border transition-colors ${
-                    theme === 'dark'
-                      ? 'bg-gray-700 border-gray-600 text-white'
-                      : 'bg-gray-50 border-gray-300 text-gray-900'
+                    theme === "dark"
+                      ? "bg-gray-700 border-gray-600 text-white"
+                      : "bg-gray-50 border-gray-300 text-gray-900"
                   } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
                 >
-                  {categories.map(category => (
+                  {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.label}
                     </option>
@@ -152,7 +175,7 @@ const CoursesManagement: React.FC = () => {
               <motion.div
                 whileHover={{ y: -5 }}
                 className={`rounded-xl shadow-lg overflow-hidden ${
-                  theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+                  theme === "dark" ? "bg-gray-800" : "bg-white"
                 }`}
               >
                 <div className="relative">
@@ -175,44 +198,66 @@ const CoursesManagement: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="p-6">
                   <div className="flex items-center space-x-2 mb-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(course.level)}`}>
-                      {course.level === 'beginner' ? 'Débutant' : 
-                       course.level === 'intermediate' ? 'Intermédiaire' : 'Avancé'}
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(
+                        course.level
+                      )}`}
+                    >
+                      {course.level === "beginner"
+                        ? "Débutant"
+                        : course.level === "intermediate"
+                        ? "Intermédiaire"
+                        : "Avancé"}
                     </span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(course.type)}`}>
-                      {course.type === 'kids' ? 'Enfants' : 
-                       course.type === 'adults' ? 'Adultes' : 'Bootcamp'}
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(
+                        course.type
+                      )}`}
+                    >
+                      {course.type === "kids"
+                        ? "Enfants"
+                        : course.type === "adults"
+                        ? "Adultes"
+                        : "Bootcamp"}
                     </span>
                   </div>
-                  
-                  <h3 className={`text-lg font-bold mb-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
+
+                  <h3
+                    className={`text-lg font-bold mb-2 ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     {course.title.fr}
                   </h3>
-                  
-                  <p className={`text-sm mb-4 line-clamp-2 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
+
+                  <p
+                    className={`text-sm mb-4 line-clamp-2 ${
+                      theme === "dark" ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
                     {course.description.fr}
                   </p>
-                  
+
                   <div className="flex items-center justify-between mb-4">
-                    <span className={`text-sm ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
+                    <span
+                      className={`text-sm ${
+                        theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      }`}
+                    >
                       {course.duration}
                     </span>
-                    <span className={`text-lg font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      {course.price}€
+                    <span
+                      className={`text-lg font-bold ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      {course.price}DT
                     </span>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -223,7 +268,7 @@ const CoursesManagement: React.FC = () => {
                       <Edit className="h-4 w-4" />
                       <span>Modifier</span>
                     </motion.button>
-                    
+
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -242,20 +287,27 @@ const CoursesManagement: React.FC = () => {
         {filteredCourses.length === 0 && (
           <AnimatedSection>
             <div className="text-center py-12">
-              <div className={`text-6xl mb-4 ${
-                theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
-              }`}>
+              <div
+                className={`text-6xl mb-4 ${
+                  theme === "dark" ? "text-gray-600" : "text-gray-400"
+                }`}
+              >
                 📚
               </div>
-              <h3 className={`text-xl font-semibold mb-2 ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h3
+                className={`text-xl font-semibold mb-2 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
                 Aucune formation trouvée
               </h3>
-              <p className={`${
-                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-              }`}>
-                Essayez de modifier vos critères de recherche ou créez une nouvelle formation.
+              <p
+                className={`${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                Essayez de modifier vos critères de recherche ou créez une
+                nouvelle formation.
               </p>
             </div>
           </AnimatedSection>

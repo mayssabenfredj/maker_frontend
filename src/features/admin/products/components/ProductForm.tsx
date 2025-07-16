@@ -166,7 +166,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 theme === "dark" ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              Prix (€) *
+              Prix (DT) *
             </label>
             <input
               type="number"

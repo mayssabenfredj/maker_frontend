@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Menu, X, Sun, Moon, Globe, ChevronDown } from 'lucide-react';
-import { useStore } from '../../stores/useStore';
-import { translations } from '../../data/translations';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Menu, X, Sun, Moon, Globe, ChevronDown } from "lucide-react";
+import { useStore } from "../../stores/useStore";
+import { translations } from "../../data/translations";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAcademyOpen, setIsAcademyOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const { theme, language, setTheme, setLanguage, isAuthenticated, logout } = useStore();
+  const { theme, language, setTheme, setLanguage, isAuthenticated, logout } =
+    useStore();
   const t = translations[language];
 
   useEffect(() => {
@@ -18,65 +19,66 @@ const Header: React.FC = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navItems = [
-    { path: '/', label: t.nav.home },
-    { 
-      path: '/academy', 
+    { path: "/", label: t.nav.home },
+    {
+      path: "/academy",
       label: t.nav.academy,
       hasDropdown: true,
       dropdownItems: [
-        { path: '/academy?filter=formations', label: 'Formations' },
-        { path: '/academy?filter=bootcamps', label: 'Bootcamps' },
-        { path: '/academy?filter=workshops', label: 'Workshops' },
-        { path: '/academy?filter=events', label: 'Événements' }
-      ]
+        { path: "/academy?filter=formations", label: "Formations" },
+        { path: "/academy?filter=bootcamps", label: "Bootcamps" },
+        { path: "/academy?filter=workshops", label: "Workshops" },
+        { path: "/academy?filter=events", label: "Événements" },
+      ],
     },
-    { path: '/services', label: t.nav.services },
-    { path: '/shop', label: t.nav.shop },
-    { path: '/blogs', label: t.nav.blogs },
-    { path: '/contact', label: t.nav.contact },
+    { path: "/services", label: t.nav.services },
+    { path: "/shop", label: t.nav.shop },
+    { path: "/blogs", label: t.nav.blogs },
+    { path: "/contact", label: t.nav.contact },
   ];
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   const toggleLanguage = () => {
-    setLanguage(language === 'fr' ? 'en' : 'fr');
+    setLanguage(language === "fr" ? "en" : "fr");
   };
 
   const getNavbarClasses = () => {
-    const baseClasses = "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b";
-    
+    const baseClasses =
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b";
+
     if (isScrolled) {
       return `${baseClasses} ${
-        theme === 'dark' 
-          ? 'bg-gray-900/95 backdrop-blur-md border-gray-700' 
-          : 'bg-white/95 backdrop-blur-md border-gray-200'
+        theme === "dark"
+          ? "bg-gray-900/95 backdrop-blur-md border-gray-700"
+          : "bg-white/95 backdrop-blur-md border-gray-200"
       }`;
     }
-    
-    return `${baseClasses} bg-transparent border-transparent`;
+
+    return `${baseClasses} bg-white/95 backdrop-blur-md border-gray-200`;
   };
 
   const getTextClasses = () => {
     if (isScrolled) {
-      return theme === 'dark' ? 'text-white' : 'text-gray-900';
+      return theme === "dark" ? "text-white" : "text-gray-900";
     }
-    return 'text-white';
+    return "text-gray-900";
   };
 
   const getHoverClasses = () => {
     if (isScrolled) {
-      return theme === 'dark' 
-        ? 'hover:text-white hover:bg-gray-800' 
-        : 'hover:text-gray-900 hover:bg-gray-100';
+      return theme === "dark"
+        ? "hover:text-white hover:bg-gray-800"
+        : "hover:text-gray-900 hover:bg-gray-100";
     }
-    return 'hover:text-white hover:bg-white/10';
+    return "hover:text-gray-900 hover:bg-gray-100";
   };
 
   return (
@@ -89,9 +91,9 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <img 
-              src="/src/assets/blueLogo.jpg" 
-              alt="Maker Skills" 
+            <img
+              src="/src/assets/blueLogo.jpg"
+              alt="Maker Skills"
               className="h-10 w-10 rounded-lg"
             />
             <span className={`text-xl font-bold ${getTextClasses()}`}>
@@ -111,23 +113,23 @@ const Header: React.FC = () => {
                   >
                     <button
                       className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium transition-colors ${
-                        location.pathname.startsWith('/academy')
-                          ? 'text-orange-500'
+                        location.pathname.startsWith("/academy")
+                          ? "text-orange-500"
                           : `${getTextClasses()} ${getHoverClasses()}`
                       }`}
                     >
                       <span>{item.label}</span>
                       <ChevronDown className="h-4 w-4" />
                     </button>
-                    
+
                     {isAcademyOpen && (
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className={`absolute top-full left-0 mt-2 w-48 rounded-lg shadow-lg border ${
-                          theme === 'dark'
-                            ? 'bg-gray-800 border-gray-700'
-                            : 'bg-white border-gray-200'
+                          theme === "dark"
+                            ? "bg-gray-800 border-gray-700"
+                            : "bg-white border-gray-200"
                         }`}
                       >
                         {item.dropdownItems?.map((dropdownItem) => (
@@ -135,9 +137,9 @@ const Header: React.FC = () => {
                             key={dropdownItem.path}
                             to={dropdownItem.path}
                             className={`block px-4 py-2 text-sm transition-colors ${
-                              theme === 'dark'
-                                ? 'text-gray-300 hover:text-white hover:bg-gray-700'
-                                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                              theme === "dark"
+                                ? "text-gray-300 hover:text-white hover:bg-gray-700"
+                                : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                             }`}
                           >
                             {dropdownItem.label}
@@ -151,7 +153,7 @@ const Header: React.FC = () => {
                     to={item.path}
                     className={`relative px-3 py-2 text-sm font-medium transition-colors ${
                       location.pathname === item.path
-                        ? 'text-orange-500'
+                        ? "text-orange-500"
                         : `${getTextClasses()} ${getHoverClasses()}`
                     }`}
                   >
@@ -183,7 +185,11 @@ const Header: React.FC = () => {
               onClick={toggleTheme}
               className={`p-2 rounded-lg transition-colors ${getTextClasses()} ${getHoverClasses()}`}
             >
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
             </button>
 
             {/* Admin Link */}
@@ -216,7 +222,11 @@ const Header: React.FC = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`lg:hidden p-2 rounded-lg transition-colors ${getTextClasses()} ${getHoverClasses()}`}
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -225,12 +235,12 @@ const Header: React.FC = () => {
         {isMenuOpen && (
           <motion.nav
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className={`lg:hidden py-4 border-t ${
-              isScrolled 
-                ? 'border-gray-200 dark:border-gray-700' 
-                : 'border-white/20'
+              isScrolled
+                ? "border-gray-200 dark:border-gray-700"
+                : "border-white/20"
             }`}
           >
             {navItems.map((item) => (
@@ -240,28 +250,29 @@ const Header: React.FC = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className={`block px-4 py-2 text-sm font-medium transition-colors ${
                     location.pathname === item.path
-                      ? 'text-orange-500'
+                      ? "text-orange-500"
                       : `${getTextClasses()} ${getHoverClasses()}`
                   }`}
                 >
                   {item.label}
                 </Link>
-                {item.hasDropdown && item.dropdownItems?.map((dropdownItem) => (
-                  <Link
-                    key={dropdownItem.path}
-                    to={dropdownItem.path}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`block px-8 py-2 text-sm transition-colors ${
-                      isScrolled
-                        ? theme === 'dark'
-                          ? 'text-gray-400 hover:text-white'
-                          : 'text-gray-600 hover:text-gray-900'
-                        : 'text-white/80 hover:text-white'
-                    }`}
-                  >
-                    {dropdownItem.label}
-                  </Link>
-                ))}
+                {item.hasDropdown &&
+                  item.dropdownItems?.map((dropdownItem) => (
+                    <Link
+                      key={dropdownItem.path}
+                      to={dropdownItem.path}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`block px-8 py-2 text-sm transition-colors ${
+                        isScrolled
+                          ? theme === "dark"
+                            ? "text-gray-400 hover:text-white"
+                            : "text-gray-600 hover:text-gray-900"
+                          : "text-white/80 hover:text-white"
+                      }`}
+                    >
+                      {dropdownItem.label}
+                    </Link>
+                  ))}
               </div>
             ))}
           </motion.nav>

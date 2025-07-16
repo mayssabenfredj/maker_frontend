@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useStore } from '../../../../stores/useStore';
-import { Product } from '../types/product';
-import { productService } from '../services/product.service';
-import { getProductImageUrl } from '../../../../shared/utils/imageUtils';
-import { ConfirmDialog } from '../../../../shared';
-import * as XLSX from 'xlsx';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useStore } from "../../../../stores/useStore";
+import { Product } from "../types/product";
+import { productService } from "../services/product.service";
+import { getProductImageUrl } from "../../../../shared/utils/imageUtils";
+import { ConfirmDialog } from "../../../../shared";
+import * as XLSX from "xlsx";
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +40,9 @@ const ProductDetail: React.FC = () => {
       const data = await productService.getProduct(id);
       setProduct(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du chargement');
+      setError(
+        err instanceof Error ? err.message : "Erreur lors du chargement"
+      );
     } finally {
       setLoading(false);
     }
@@ -44,19 +52,21 @@ const ProductDetail: React.FC = () => {
     if (!product) return;
     try {
       await productService.deleteProduct(product._id);
-      navigate('/admin/products');
+      navigate("/admin/products");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la suppression');
+      setError(
+        err instanceof Error ? err.message : "Erreur lors de la suppression"
+      );
     }
   };
 
   const handleEdit = () => {
     if (!product) return;
-    navigate('/admin/products', { 
-      state: { 
+    navigate("/admin/products", {
+      state: {
         editProduct: product,
-        showForm: true 
-      } 
+        showForm: true,
+      },
     });
   };
 
@@ -68,21 +78,25 @@ const ProductDetail: React.FC = () => {
 
   const prevImage = () => {
     if (product?.images && product.images.length > 1) {
-      setCurrentImageIndex((prev) => (prev - 1 + product.images!.length) % product.images!.length);
+      setCurrentImageIndex(
+        (prev) => (prev - 1 + product.images!.length) % product.images!.length
+      );
     }
   };
 
   const exportCommandesToExcel = () => {
     if (!product?.commandes || product.commandes.length === 0) return;
-    const ws = XLSX.utils.json_to_sheet(product.commandes.map(cmd => ({
-      Nom: cmd.fullname,
-      Email: cmd.email,
-      Téléphone: cmd.phone,
-      'Adresse livraison': cmd.adresseLivraison || '',
-      Message: cmd.message || '',
-    })));
+    const ws = XLSX.utils.json_to_sheet(
+      product.commandes.map((cmd) => ({
+        Nom: cmd.fullname,
+        Email: cmd.email,
+        Téléphone: cmd.phone,
+        "Adresse livraison": cmd.adresseLivraison || "",
+        Message: cmd.message || "",
+      }))
+    );
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Commandes');
+    XLSX.utils.book_append_sheet(wb, ws, "Commandes");
     XLSX.writeFile(wb, `commandes_${product.name}.xlsx`);
   };
 
@@ -99,8 +113,12 @@ const ProductDetail: React.FC = () => {
       <div className="min-h-screen pt-16 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-500 mb-4">Erreur</h2>
-          <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-            {error || 'Produit non trouvé'}
+          <p
+            className={`${
+              theme === "dark" ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
+            {error || "Produit non trouvé"}
           </p>
         </div>
       </div>
@@ -108,29 +126,41 @@ const ProductDetail: React.FC = () => {
   }
 
   const images = product.images || [];
-  const currentImage = images[currentImageIndex] || '/placeholder-product.png';
+  const currentImage = images[currentImageIndex] || "/placeholder-product.png";
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div
+      className={`min-h-screen ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+      }`}
+    >
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => navigate('/admin/products')}
+              onClick={() => navigate("/admin/products")}
               className={`p-2 rounded-lg transition-colors ${
-                theme === 'dark'
-                  ? 'text-gray-400 hover:text-white hover:bg-gray-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                theme === "dark"
+                  ? "text-gray-400 hover:text-white hover:bg-gray-700"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               }`}
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
             <div>
-              <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <h1
+                className={`text-3xl font-bold ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
                 {product.name}
               </h1>
-              <p className={`mt-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p
+                className={`mt-2 ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
                 Détails du produit
               </p>
             </div>
@@ -168,7 +198,7 @@ const ProductDetail: React.FC = () => {
                   alt={product.name}
                   className="w-full h-96 object-cover rounded-2xl shadow-lg"
                 />
-                
+
                 {/* Image Navigation */}
                 {images.length > 1 && (
                   <>
@@ -190,7 +220,9 @@ const ProductDetail: React.FC = () => {
                           key={idx}
                           onClick={() => setCurrentImageIndex(idx)}
                           className={`w-3 h-3 rounded-full transition-colors ${
-                            idx === currentImageIndex ? 'bg-white' : 'bg-white/50 hover:bg-white/75'
+                            idx === currentImageIndex
+                              ? "bg-white"
+                              : "bg-white/50 hover:bg-white/75"
                           }`}
                         />
                       ))}
@@ -225,8 +257,8 @@ const ProductDetail: React.FC = () => {
                     onClick={() => setCurrentImageIndex(index)}
                     className={`relative overflow-hidden rounded-lg transition-all ${
                       index === currentImageIndex
-                        ? 'ring-2 ring-blue-500 scale-105'
-                        : 'hover:scale-105'
+                        ? "ring-2 ring-blue-500 scale-105"
+                        : "hover:scale-105"
                     }`}
                   >
                     <img
@@ -241,61 +273,102 @@ const ProductDetail: React.FC = () => {
           </div>
 
           {/* Product Info */}
-          <div className={`p-8 rounded-2xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg space-y-6`}>
+          <div
+            className={`p-8 rounded-2xl ${
+              theme === "dark" ? "bg-gray-800" : "bg-white"
+            } shadow-lg space-y-6`}
+          >
             <div>
-              <h2 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <h2
+                className={`text-2xl font-bold mb-2 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
                 {product.name}
               </h2>
               <div className="flex items-center space-x-4">
                 <span className={`text-3xl font-bold text-orange-500`}>
-                  {product.price}€
+                  {product.price}DT
                 </span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
-                }`}>
-                  {product.category 
-                    ? (typeof product.category === 'string' ? product.category : product.category.name)
-                    : 'Aucune catégorie'
-                  }
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    theme === "dark"
+                      ? "bg-gray-700 text-gray-300"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {product.category
+                    ? typeof product.category === "string"
+                      ? product.category
+                      : product.category.name
+                    : "Aucune catégorie"}
                 </span>
               </div>
             </div>
 
             <div>
-              <h3 className={`text-lg font-semibold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <h3
+                className={`text-lg font-semibold mb-3 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
                 Description
               </h3>
-              <div 
+              <div
                 className={`prose max-w-none ${
-                  theme === 'dark' ? 'prose-invert' : ''
+                  theme === "dark" ? "prose-invert" : ""
                 }`}
-                dangerouslySetInnerHTML={{ __html: product.description || 'Aucune description disponible.' }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    product.description || "Aucune description disponible.",
+                }}
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
               <div>
-                <h4 className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                <h4
+                  className={`text-sm font-medium ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
                   Images
                 </h4>
-                <p className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                <p
+                  className={`text-lg font-semibold ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
                   {images.length}
                 </p>
               </div>
               <div>
-                <h4 className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                <h4
+                  className={`text-sm font-medium ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
                   Vidéo
                 </h4>
-                <p className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  {product.video ? 'Oui' : 'Non'}
+                <p
+                  className={`text-lg font-semibold ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  {product.video ? "Oui" : "Non"}
                 </p>
               </div>
             </div>
 
             {product.createdAt && (
               <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Créé le {new Date(product.createdAt).toLocaleDateString('fr-FR')}
+                <p
+                  className={`text-sm ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  Créé le{" "}
+                  {new Date(product.createdAt).toLocaleDateString("fr-FR")}
                 </p>
               </div>
             )}
@@ -303,28 +376,44 @@ const ProductDetail: React.FC = () => {
             {/* Section Formations liées */}
             {product.events && product.events.length > 0 && (
               <div className="mt-8">
-                <h3 className={`text-lg font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                <h3
+                  className={`text-lg font-semibold mb-4 ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}
+                >
                   Formations liées
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {product.events.map((event) => (
                     <div
-                      key={typeof event === 'string' ? event : event._id}
+                      key={typeof event === "string" ? event : event._id}
                       className={`p-4 rounded-lg border ${
-                        theme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+                        theme === "dark"
+                          ? "bg-gray-700 border-gray-600"
+                          : "bg-gray-50 border-gray-200"
                       }`}
                     >
-                      <h4 className={`font-medium mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {typeof event === 'string' ? event : event.name}
+                      <h4
+                        className={`font-medium mb-2 ${
+                          theme === "dark" ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {typeof event === "string" ? event : event.name}
                       </h4>
-                      {typeof event !== 'string' && event.description && (
-                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                      {typeof event !== "string" && event.description && (
+                        <p
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-600"
+                          }`}
+                        >
                           {event.description}
                         </p>
                       )}
-                      {typeof event !== 'string' && event.price && (
-                        <p className={`text-sm font-medium text-orange-500 mt-2`}>
-                          {event.price}€
+                      {typeof event !== "string" && event.price && (
+                        <p
+                          className={`text-sm font-medium text-orange-500 mt-2`}
+                        >
+                          {event.price}DT
                         </p>
                       )}
                     </div>
@@ -337,7 +426,11 @@ const ProductDetail: React.FC = () => {
             {product.commandes && product.commandes.length > 0 && (
               <div className="mt-8">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  <h3
+                    className={`text-lg font-semibold ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     Demandes (Commandes)
                   </h3>
                   <button
@@ -348,65 +441,120 @@ const ProductDetail: React.FC = () => {
                     <span>Exporter en Excel</span>
                   </button>
                 </div>
-                <div className={`overflow-x-auto rounded-lg border ${
-                  theme === 'dark' ? 'border-gray-600' : 'border-gray-200'
-                }`}>
+                <div
+                  className={`overflow-x-auto rounded-lg border ${
+                    theme === "dark" ? "border-gray-600" : "border-gray-200"
+                  }`}
+                >
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead className={`${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                    <thead
+                      className={`${
+                        theme === "dark" ? "bg-gray-700" : "bg-gray-50"
+                      }`}
+                    >
                       <tr>
-                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                        }`}>
+                        <th
+                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
                           Nom
                         </th>
-                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                        }`}>
+                        <th
+                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
                           Email
                         </th>
-                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                        }`}>
+                        <th
+                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
                           Téléphone
                         </th>
-                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                        }`}>
+                        <th
+                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
                           Adresse livraison
                         </th>
-                        <th className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          theme === 'dark' ? 'text-gray-300' : 'text-gray-500'
-                        }`}>
+                        <th
+                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
                           Message
                         </th>
                       </tr>
                     </thead>
-                    <tbody className={`divide-y divide-gray-200 dark:divide-gray-700 ${
-                      theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-                    }`}>
+                    <tbody
+                      className={`divide-y divide-gray-200 dark:divide-gray-700 ${
+                        theme === "dark" ? "bg-gray-800" : "bg-white"
+                      }`}
+                    >
                       {product.commandes.map((cmd) => (
-                        <tr key={cmd._id} className={`hover:${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}>
-                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <tr
+                          key={cmd._id}
+                          className={`hover:${
+                            theme === "dark" ? "bg-gray-700" : "bg-gray-50"
+                          }`}
+                        >
+                          <td
+                            className={`px-4 py-3 text-sm ${
+                              theme === "dark" ? "text-white" : "text-gray-900"
+                            }`}
+                          >
                             {cmd.fullname}
                           </td>
-                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <td
+                            className={`px-4 py-3 text-sm ${
+                              theme === "dark"
+                                ? "text-gray-300"
+                                : "text-gray-600"
+                            }`}
+                          >
                             {cmd.email}
                           </td>
-                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <td
+                            className={`px-4 py-3 text-sm ${
+                              theme === "dark"
+                                ? "text-gray-300"
+                                : "text-gray-600"
+                            }`}
+                          >
                             {cmd.phone}
                           </td>
-                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                            {cmd.adresseLivraison || '-'}
+                          <td
+                            className={`px-4 py-3 text-sm ${
+                              theme === "dark"
+                                ? "text-gray-300"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {cmd.adresseLivraison || "-"}
                           </td>
-                          <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                            {cmd.message || '-'}
+                          <td
+                            className={`px-4 py-3 text-sm ${
+                              theme === "dark"
+                                ? "text-gray-300"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {cmd.message || "-"}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                <div className={`mt-4 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                <div
+                  className={`mt-4 text-sm ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
                   Total: {product.commandes.length} demande(s)
                 </div>
               </div>
@@ -432,4 +580,4 @@ const ProductDetail: React.FC = () => {
   );
 };
 
-export default ProductDetail; 
+export default ProductDetail;
