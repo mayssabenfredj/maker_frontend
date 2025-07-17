@@ -11,7 +11,6 @@ interface ShopFiltersProps {
   priceRanges: { id: string; label: string }[];
   selectedPriceRange: string;
   setSelectedPriceRange: (v: string) => void;
-  availabilityOptions: { id: string; label: string }[];
   selectedAvailability: string;
   setSelectedAvailability: (v: string) => void;
 }
@@ -19,7 +18,6 @@ interface ShopFiltersProps {
 const ShopFilters: React.FC<ShopFiltersProps> = ({
   theme, searchTerm, setSearchTerm, categories, selectedCategory, setSelectedCategory,
   priceRanges, selectedPriceRange, setSelectedPriceRange,
-  availabilityOptions, selectedAvailability, setSelectedAvailability
 }) => (
   <div className={`p-6 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'} sticky top-24`}>
     <h3 className={`text-lg font-bold mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Filtres</h3>

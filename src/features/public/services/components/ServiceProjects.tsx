@@ -28,19 +28,19 @@ const Card: React.FC<{
 }> = ({ image, title, description, theme, children, type }) => (
   <motion.div
     whileHover={{ y: -8, scale: 1.02 }}
-    className={`rounded-2xl overflow-hidden shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} flex flex-col border border-gray-200 dark:border-gray-700`}
-    style={{ minHeight: 320 }}
+    className={`rounded-2xl overflow-hidden shadow-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} flex flex-col border border-gray-200 dark:border-gray-700 w-full sm:w-64 md:w-72 min-w-[220px]`}
+    style={{ minHeight: 320, height: 420 }}
   >
-    <div className="relative w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center overflow-hidden">
+    <div className="relative w-full aspect-[4/4] flex items-center justify-center overflow-hidden">
       {image ? (
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-cover"
+          className={`w-full h-full  block ${type === 'product' ? 'object-contain' : 'object-contain'}`}
         />
       ) : (
         <div className="text-center">
-          <div className={`w-16 h-16 rounded-full mx-auto mb-2 flex items-center justify-center ${
+          <div className={`w-20 h-20 rounded-full mx-auto mb-2 flex items-center justify-center ${
             type === 'project' ? 'bg-blue-500' : 
             type === 'product' ? 'bg-green-500' : 'bg-purple-500'
           }`}>
@@ -64,9 +64,10 @@ const Card: React.FC<{
     <div className="p-6 flex-1 flex flex-col">
       <h3 className={`text-lg font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{title}</h3>
       {description && (
-        <p className={`text-sm mb-4 line-clamp-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-          {truncate(description, 120)}
-        </p>
+        <div className={`text-sm mb-4 line-clamp-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}
+          style={{display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis'}}
+          dangerouslySetInnerHTML={{ __html: description }}
+        />
       )}
       <div className="mt-auto">
         {children}
@@ -104,14 +105,14 @@ const ServiceProjects: React.FC<ServiceProjectsProps> = ({ projects, products, e
       {hasProjects && (
         <div>
           <div className="flex items-center mb-6">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center ">
               <span className="text-white font-bold text-sm">P</span>
             </div>
             <h4 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               Projets réalisés ({projects.length})
             </h4>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 ">
             {projects.map((project, index) => (
               <AnimatedSection key={project._id || index} delay={index * 0.1}>
                 <Card
@@ -149,7 +150,7 @@ const ServiceProjects: React.FC<ServiceProjectsProps> = ({ projects, products, e
               Produits liés ({products.length})
             </h4>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {products.map((product, index) => (
               <AnimatedSection key={product._id || index} delay={index * 0.1}>
                 <Card
@@ -182,7 +183,7 @@ const ServiceProjects: React.FC<ServiceProjectsProps> = ({ projects, products, e
               Événements liés ({events.length})
             </h4>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {events.map((event, index) => (
               <AnimatedSection key={event._id || index} delay={index * 0.1}>
                 <Card

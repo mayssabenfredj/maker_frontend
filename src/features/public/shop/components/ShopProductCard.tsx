@@ -6,7 +6,15 @@ import { getImageUrl } from "../../../../shared/utils/imageUtils";
 import { useNavigate } from "react-router-dom";
 
 interface ShopProductCardProps {
-  product: Product & { image: string };
+  product: (Product & {
+    image: string;
+    featured?: boolean;
+    originalPrice?: number;
+    inStock?: boolean;
+    rating?: number;
+    reviews?: number;
+    tags?: string[];
+  });
   theme: "light" | "dark";
   viewMode: "grid" | "list";
 }
@@ -17,25 +25,38 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({
   viewMode,
 }) => {
   const navigate = useNavigate();
+  
   return (
     <motion.div
       whileHover={{ y: -5 }}
       className={`rounded-2xl shadow-lg overflow-hidden ${
         theme === "dark" ? "bg-gray-800" : "bg-white"
-      } group ${viewMode === "list" ? "flex" : ""}`}
+      } group ${
+        viewMode === "list" 
+          ? "flex flex-row items-stretch mb-4" 
+          : "flex flex-col mb-4 w-full sm:w-64 md:w-72"
+      }`}
+      style={viewMode === "list" ? { height: '200px' } : { height: '500px' }}
     >
+      {/* Image Container */}
       <div
         className={`relative ${
-          viewMode === "list" ? "w-48 flex-shrink-0" : ""
+          viewMode === "list"
+            ? "w-50 sm:w-50 h-full flex-shrink-0"
+            : "h-72 w-full flex-shrink-0"
         }`}
       >
-        <div className="aspect-square overflow-hidden">
+        <div className="w-full h-full overflow-hidden bg-white">
           <img
             src={getImageUrl(product.image)}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className={`w-full h-full transition-transform duration-300 ${
+              viewMode === "list" ? "object-cover" : "object-contain mx-auto"
+            }`}
           />
         </div>
+        
+        {/* Badges */}
         {product.featured && (
           <div className="absolute top-4 left-4 bg-secondary-500 text-white px-3 py-1 rounded-full text-sm font-medium">
             Populaire
@@ -46,11 +67,13 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({
             -{Math.round((1 - product.price / product.originalPrice) * 100)}%
           </div>
         )}
-        {!product.inStock && (
+        {product.inStock === false && (
           <div className="absolute top-4 right-4 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
             Précommande
           </div>
         )}
+        
+        {/* Hover overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
           <div className="flex space-x-2">
             <button
@@ -62,28 +85,41 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({
           </div>
         </div>
       </div>
-      <div className={`p-6 ${viewMode === "list" ? "flex-1" : ""}`}>
+      
+      {/* Content Container */}
+      <div className={`p-4 flex flex-col justify-between ${viewMode === "list" ? "flex-1" : ""}`}>
+        {/* Title */}
         <h3
           className={`text-lg font-bold mb-2 ${
             theme === "dark" ? "text-white" : "text-gray-900"
-          }`}
+          } ${viewMode === "list" ? "line-clamp-1" : "line-clamp-2"}`}
         >
           {product.name}
         </h3>
-        <p
-          className={`text-sm mb-4 ${
-            viewMode === "list" ? "" : "line-clamp-2"
+        
+        {/* Description */}
+        <div
+          className={`text-sm mb-3 ${
+            viewMode === "list" ? "line-clamp-2" : "line-clamp-3"
           } ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}
-        >
-          {product.description}
-        </p>
-        <div className="flex items-center space-x-2 mb-4">
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: viewMode === "list" ? 2 : 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+          dangerouslySetInnerHTML={{ __html: product.description || "" }}
+        />
+        
+        {/* Rating */}
+        <div className="flex items-center space-x-2 mb-3">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
                 className={`h-4 w-4 ${
-                  i < Math.floor(product.rating)
+                  i < Math.floor(product.rating || 0)
                     ? "text-yellow-500 fill-current"
                     : "text-gray-300"
                 }`}
@@ -95,11 +131,13 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({
               theme === "dark" ? "text-gray-400" : "text-gray-600"
             }`}
           >
-            {product.rating} ({product.reviews} avis)
+            {product.rating ?? 0} ({product.reviews ?? 0} avis)
           </span>
         </div>
-        <div className="flex flex-wrap gap-1 mb-4">
-          {product.tags?.slice(0, 2).map((tag, idx) => (
+        
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1 mb-3">
+          {product.tags?.slice(0, 2).map((tag: string, idx: number) => (
             <span
               key={idx}
               className={`px-2 py-1 rounded-full text-xs ${
@@ -112,11 +150,9 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({
             </span>
           ))}
         </div>
-        <div
-          className={`flex items-center ${
-            viewMode === "list" ? "justify-between" : "justify-between"
-          }`}
-        >
+        
+        {/* Price */}
+        <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center space-x-2">
             <span
               className={`text-xl font-bold ${

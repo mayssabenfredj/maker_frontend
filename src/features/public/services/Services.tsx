@@ -59,11 +59,11 @@ const Services: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <div className="relative w-full h-full">
             <img
-              src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80"
+              src="src/assets/enfants-faisant-robot_23-2148863381.avif"
               alt="Services Background"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/60" />
+            <div className="absolute inset-0 bg-black/80" />
           </div>
         </div>
         
@@ -135,9 +135,9 @@ const Services: React.FC = () => {
                     </h3>
                     <p className={`text-lg leading-relaxed ${
                       theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      {services[activeService].description}
-                    </p>
+                    }`}
+                      dangerouslySetInnerHTML={{ __html: services[activeService].description || '' }}
+                    />
                   </div>
                 </div>
               )}

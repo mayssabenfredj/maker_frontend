@@ -11,6 +11,7 @@ interface PaginationProps {
   totalItems: number;
   showItemsPerPage?: boolean;
   onItemsPerPageChange?: (itemsPerPage: number) => void;
+  itemsPerPageOptions?: number[];
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -20,7 +21,8 @@ const Pagination: React.FC<PaginationProps> = ({
   itemsPerPage,
   totalItems,
   showItemsPerPage = false,
-  onItemsPerPageChange
+  onItemsPerPageChange,
+  itemsPerPageOptions = [5, 10, 20, 50],
 }) => {
   const { theme } = useStore();
 
@@ -80,10 +82,9 @@ const Pagination: React.FC<PaginationProps> = ({
                   : 'bg-white border-gray-300 text-gray-900'
               } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
             >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
+              {itemsPerPageOptions.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
             </select>
           </div>
         )}

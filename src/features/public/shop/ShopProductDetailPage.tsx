@@ -21,6 +21,8 @@ import {
   Calendar,
   Plus,
   Minus,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { productService } from "../../admin/products/services/product.service";
 import { Product } from "../../admin/products/types/product";
@@ -41,6 +43,8 @@ const ShopProductDetailPage: React.FC = () => {
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [withFormation, setWithFormation] = useState(false);
+  const [orderFeedback, setOrderFeedback] = useState<null | { type: 'success' | 'error', message: string }>(null);
 
   // Quote form state
   const [quoteForm, setQuoteForm] = useState({
@@ -102,14 +106,12 @@ const ShopProductDetailPage: React.FC = () => {
       unitPrice: product?.price,
       totalPrice: product?.price || 0,
       orderDate: new Date().toISOString(),
+      withFormation,
     };
 
     axios
       .post(import.meta.env.VITE_API_URL + "/orders", orderData)
       .then((data) => {
-        alert(
-          "Votre commande a été envoyée avec succès! Nous vous contacterons bientôt."
-        );
         setOrderForm({
           fullName: "",
           email: "",
@@ -119,9 +121,13 @@ const ShopProductDetailPage: React.FC = () => {
           notes: "",
         });
         setShowOrderModal(false);
+        setOrderFeedback({ type: 'success', message: "Votre commande a été envoyée avec succès ! Nous vous contacterons bientôt." });
+        setTimeout(() => setOrderFeedback(null), 3000);
       })
       .catch((err) => {
-        alert("Une erreur est survenue lors de l'envoi de votre commande.");
+        setShowOrderModal(false);
+        setOrderFeedback({ type: 'error', message: "Une erreur est survenue lors de l'envoi de votre commande." });
+        setTimeout(() => setOrderFeedback(null), 3000);
         console.error(err);
       });
   };
@@ -199,6 +205,25 @@ const ShopProductDetailPage: React.FC = () => {
         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
       } transition-colors duration-300`}
     >
+      {/* Toast Feedback */}
+      {orderFeedback && (
+        <div className="fixed bottom-6 right-6 z-50 animate-fade-in-up">
+          <div className={`flex items-center gap-4 px-6 py-4 rounded-xl shadow-lg border ${orderFeedback.type === 'success' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}` }>
+            {orderFeedback.type === 'success' ? (
+              <CheckCircle className="w-8 h-8 text-green-500 animate-pulse" />
+            ) : (
+              <XCircle className="w-8 h-8 text-red-500 animate-pulse" />
+            )}
+            <div>
+              <span className={`block text-base font-semibold mb-1 ${orderFeedback.type === 'success' ? 'text-green-700' : 'text-red-700'}`}>{orderFeedback.message}</span>
+              <span className="block text-xs text-gray-500">Vous allez recevoir un email de confirmation.</span>
+            </div>
+            <button onClick={() => setOrderFeedback(null)} className="ml-2 p-1 rounded-full hover:bg-gray-200 transition-colors">
+              <X className="w-5 h-5 text-gray-400" />
+            </button>
+          </div>
+        </div>
+      )}
       {/* Breadcrumb */}
       <section className="pt-20 pb-6 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4">
@@ -213,6 +238,55 @@ const ShopProductDetailPage: React.FC = () => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Retour à la boutique
           </button>
+        </div>
+      </section>
+
+      {/* Special Offer Section - déplacée en haut */}
+      <section className="py-10">
+        <div className="container mx-auto px-4">
+          <div
+            className={`rounded-3xl p-8 md:p-12 ${
+              theme === "dark"
+                ? "bg-gradient-to-br from-gray-800 to-gray-700"
+                : "bg-gradient-to-br from-orange-50 to-orange-100"
+            }`}
+          >
+            <div className="text-center mb-8">
+              <h2
+                className={`text-3xl font-bold mb-4 ${
+                  theme === "dark" ? "text-white" : "text-gray-900"
+                }`}
+              >
+                Offre spéciale : Produit + Formation
+              </h2>
+              <p
+                className={`text-lg ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-600"
+                }`}
+              >
+                Économisez en combinant ce produit avec une formation adaptée
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              
+              {product.events && product.events.length > 0 && (
+                <div className="p-6 rounded-2xl border border-orange-200 bg-orange-50 dark:bg-gray-800">
+                  <h4 className="text-lg font-bold mb-2 text-orange-500">Formation incluse :</h4>
+                  <div className="mb-2 font-medium text-gray-900 dark:text-white">
+                    {typeof product.events[0] === "string" ? "Formation" : product.events[0].name}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">
+                    {typeof product.events[0] !== "string" && product.events[0].description
+                      ? product.events[0].description
+                      : "Formation liée à ce produit"}
+                  </div>
+                  <div className="mt-2 text-orange-500 font-bold">
+                   Sur demande 
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -397,13 +471,7 @@ const ShopProductDetailPage: React.FC = () => {
                   <span>Commander maintenant</span>
                 </button>
 
-                <button
-                  onClick={() => setShowQuoteModal(true)}
-                  className={`w-full border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2`}
-                >
-                  <Quote className="h-5 w-5" />
-                  <span>Demander un devis</span>
-                </button>
+               
               </div>
             </div>
           </div>
@@ -480,7 +548,7 @@ const ShopProductDetailPage: React.FC = () => {
                           : "Sur demande"}
                       </span>
                       <Link
-                        to={`/academy?filter=events`}
+                        to={`/formations/${typeof event === "string" ? event : event._id}`}
                         className="text-orange-500 hover:text-orange-600 font-medium text-sm"
                       >
                         En savoir plus →
@@ -493,102 +561,6 @@ const ShopProductDetailPage: React.FC = () => {
           </div>
         </section>
       )}
-
-      {/* Special Offer Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div
-            className={`rounded-3xl p-8 md:p-12 ${
-              theme === "dark"
-                ? "bg-gradient-to-br from-gray-800 to-gray-700"
-                : "bg-gradient-to-br from-orange-50 to-orange-100"
-            }`}
-          >
-            <div className="text-center mb-8">
-              <h2
-                className={`text-3xl font-bold mb-4 ${
-                  theme === "dark" ? "text-white" : "text-gray-900"
-                }`}
-              >
-                Offre spéciale : Produit + Formation
-              </h2>
-              <p
-                className={`text-lg ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-600"
-                }`}
-              >
-                Économisez en combinant ce produit avec une formation adaptée
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div
-                className={`p-6 rounded-2xl ${
-                  theme === "dark" ? "bg-gray-900/50" : "bg-white/80"
-                } backdrop-blur-sm`}
-              >
-                <div className="flex items-center space-x-4 mb-4">
-                  <Package
-                    className={`h-8 w-8 ${
-                      theme === "dark" ? "text-orange-400" : "text-orange-500"
-                    }`}
-                  />
-                  <BookOpen
-                    className={`h-8 w-8 ${
-                      theme === "dark" ? "text-orange-400" : "text-orange-500"
-                    }`}
-                  />
-                </div>
-                <h3
-                  className={`text-xl font-bold mb-2 ${
-                    theme === "dark" ? "text-white" : "text-gray-900"
-                  }`}
-                >
-                  Pack Complet
-                </h3>
-                <p
-                  className={`text-sm mb-4 ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-600"
-                  }`}
-                >
-                  Ce produit + Formation IoT pour débutants
-                </p>
-                <div className="flex items-center space-x-4">
-                  <span
-                    className={`text-lg line-through ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    {product.price + 299}DT
-                  </span>
-                  <span className="text-2xl font-bold text-orange-500">
-                    {Math.round((product.price + 299) * 0.8)}DT
-                  </span>
-                  <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    -20%
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-center md:text-left">
-                <button
-                  onClick={() => setShowQuoteModal(true)}
-                  className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  Demander un devis pour le pack
-                </button>
-                <p
-                  className={`text-sm mt-3 ${
-                    theme === "dark" ? "text-gray-400" : "text-gray-500"
-                  }`}
-                >
-                  Offre limitée dans le temps
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Order Modal */}
       {showOrderModal && (
@@ -668,6 +640,19 @@ const ShopProductDetailPage: React.FC = () => {
             </div>
 
             <form onSubmit={handleOrderSubmit} className="space-y-4">
+              {/* Checkbox formation */}
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="withFormation"
+                  checked={withFormation}
+                  onChange={e => setWithFormation(e.target.checked)}
+                  className="w-4 h-4 text-orange-500 border-gray-300 focus:ring-orange-500"
+                />
+                <label htmlFor="withFormation" className={`ml-2 text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
+                  Je veux le produit avec formation
+                </label>
+              </div>
               {/* Personal Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>

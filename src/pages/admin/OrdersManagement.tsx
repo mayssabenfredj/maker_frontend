@@ -42,6 +42,7 @@ interface Order {
   orderDate: string;
   status: string;
   items: any[];
+  withFormation?: boolean;
 }
 
 const OrdersManagement: React.FC = () => {
@@ -53,6 +54,12 @@ const OrdersManagement: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  // Ajout état pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [dateFrom, setDateFrom] = useState<string | null>(null);
+  const [dateTo, setDateTo] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
   useEffect(() => {
     fetchOrders();
@@ -106,11 +113,12 @@ const OrdersManagement: React.FC = () => {
       "Total Price",
       "Delivery Method",
       "Address",
+      "Avec formation",
       "Status",
       "Order Date",
     ];
 
-    const data = orders.map((order) => ({
+    const data: Record<string, string | number>[] = orders.map((order) => ({
       "Customer Name": order.fullName,
       Email: order.email,
       Phone: order.phoneNumber,
@@ -121,6 +129,7 @@ const OrdersManagement: React.FC = () => {
       "Total Price": formatPrice(order.totalPrice),
       "Delivery Method": getDeliveryMethodLabel(order.deliveryMethod),
       Address: order.address || "N/A",
+      "Avec formation": order.withFormation ? "Oui" : "Non",
       Status: getStatusLabel(order.status),
       "Order Date": formatDate(order.orderDate),
     }));
@@ -147,7 +156,7 @@ const OrdersManagement: React.FC = () => {
       wch:
         Math.max(
           header.length,
-          ...data.map((row) => String(row[header]).length)
+          ...data.map((row) => String(row[header as keyof typeof row] ?? '').length)
         ) + 5,
     }));
     ws["!cols"] = colWidths;
@@ -285,7 +294,14 @@ const OrdersManagement: React.FC = () => {
     setIsDetailModalOpen(false);
   };
 
-  const filteredOrders = orders.filter((order) => {
+  // Trier les commandes par date selon le sortOrder
+  const sortedOrders = [...orders].sort((a, b) => {
+    const diff = new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
+    return sortOrder === 'desc' ? -diff : diff;
+  });
+
+  // Ajout du filtre date dans le filtrage
+  const filteredOrders = sortedOrders.filter((order) => {
     const matchesSearch =
       order.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -295,15 +311,22 @@ const OrdersManagement: React.FC = () => {
       order.deliveryMethod === filterDeliveryMethod;
     const matchesDeliveryStatus =
       filterDeliveryStatus === "all" || order.status === filterDeliveryStatus;
-    return matchesSearch && matchesDeliveryMethod && matchesDeliveryStatus;
+    const orderDate = new Date(order.orderDate);
+    const matchesDateFrom = !dateFrom || orderDate >= new Date(dateFrom);
+    const matchesDateTo = !dateTo || orderDate <= new Date(dateTo + 'T23:59:59');
+    return matchesSearch && matchesDeliveryMethod && matchesDeliveryStatus && matchesDateFrom && matchesDateTo;
   });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
   const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
 
   return (
     <div
-      className={`min-h-screen pt-16 ${
+      className={`min-h-screen ${
         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
       } transition-colors duration-300`}
     >
@@ -426,7 +449,34 @@ const OrdersManagement: React.FC = () => {
                   } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
                 />
               </div>
-
+              <div className="flex items-center gap-2 mb-2 sm:mb-0">
+                <label htmlFor="dateFrom" className="text-sm text-gray-600">Du</label>
+                <input
+                  id="dateFrom"
+                  type="date"
+                  value={dateFrom || ''}
+                  onChange={e => setDateFrom(e.target.value || null)}
+                  className="px-2 py-2 rounded border border-gray-300 text-gray-700"
+                />
+                <label htmlFor="dateTo" className="text-sm text-gray-600">au</label>
+                <input
+                  id="dateTo"
+                  type="date"
+                  value={dateTo || ''}
+                  onChange={e => setDateTo(e.target.value || null)}
+                  className="px-2 py-2 rounded border border-gray-300 text-gray-700"
+                />
+                <label htmlFor="sortOrder" className="text-sm text-gray-600 ml-2">Tri</label>
+                <select
+                  id="sortOrder"
+                  value={sortOrder}
+                  onChange={e => setSortOrder(e.target.value as 'desc' | 'asc')}
+                  className="px-2 py-2 rounded border border-gray-300 text-gray-700"
+                >
+                  <option value="desc">Plus récentes d'abord</option>
+                  <option value="asc">Plus anciennes d'abord</option>
+                </select>
+              </div>
               <div className="flex items-center space-x-2">
                 <Filter
                   className={`h-5 w-5 ${
@@ -517,6 +567,13 @@ const OrdersManagement: React.FC = () => {
                         theme === "dark" ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
+                      Avec formation
+                    </th>
+                    <th
+                      className={`px-6 py-4 text-left text-sm font-medium ${
+                        theme === "dark" ? "text-gray-300" : "text-gray-700"
+                      }`}
+                    >
                       Statut
                     </th>
                     <th
@@ -543,7 +600,7 @@ const OrdersManagement: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredOrders.map((order, index) => (
+                  {paginatedOrders.map((order, index) => (
                     <motion.tr
                       key={order._id}
                       initial={{ opacity: 0, y: 20 }}
@@ -655,6 +712,11 @@ const OrdersManagement: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.withFormation ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          {order.withFormation ? 'Oui' : 'Non'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
                         <div className="space-y-2">
                           <div className="flex items-center space-x-2">
                             <span
@@ -741,6 +803,39 @@ const OrdersManagement: React.FC = () => {
             </div>
           </div>
         </AnimatedSection>
+
+        {/* Pagination UI */}
+        <div className="flex flex-col sm:flex-row justify-end items-center mt-6 gap-2">
+          <div className="flex items-center gap-2 mb-2 sm:mb-0">
+            <label htmlFor="itemsPerPage" className="text-sm text-gray-600">Afficher&nbsp;:</label>
+            <select
+              id="itemsPerPage"
+              value={itemsPerPage}
+              onChange={e => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+              className="px-2 py-1 rounded border border-gray-300 text-gray-700"
+            >
+              {[2, 6, 10, 20, 30, 50].map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+            <span className="text-sm text-gray-600">par page</span>
+          </div>
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-2 rounded-lg border bg-white text-gray-700 disabled:opacity-50"
+          >
+            Précédent
+          </button>
+          <span className="px-2">Page {currentPage} / {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-2 rounded-lg border bg-white text-gray-700 disabled:opacity-50"
+          >
+            Suivant
+          </button>
+        </div>
 
         {/* Order Details Modal */}
         {isDetailModalOpen && selectedOrder && (

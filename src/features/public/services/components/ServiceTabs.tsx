@@ -60,9 +60,9 @@ const ServiceTabs: React.FC<ServiceTabsProps> = ({ services, activeIndex, onSele
                 </h3>
                 <p className={`text-sm leading-relaxed ${
                   theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  {service.description}
-                </p>
+                }`}
+                  dangerouslySetInnerHTML={{ __html: service.description || '' }}
+                />
                 
                 {/* Statistiques du service */}
                 <div className="flex items-center space-x-4 mt-3">

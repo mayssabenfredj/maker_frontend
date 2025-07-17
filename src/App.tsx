@@ -9,11 +9,9 @@ import { useStore } from "./stores/useStore";
 import PublicLayout from "./components/Layout/PublicLayout";
 import AdminLayout from "./components/Layout/AdminLayout";
 import Home from "./features/public/home/Home";
-import About from "./pages/About";
-import Formations from "./pages/Formations";
+
 import FormationDetail from "./pages/FormationDetail";
-import Bootcamp from "./pages/Bootcamp";
-import Partners from "./pages/Partners";
+
 import Contact from "./pages/Contact";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
@@ -143,14 +141,7 @@ function App() {
               </PublicLayout>
             }
           />
-          <Route
-            path="/about"
-            element={
-              <PublicLayout>
-                <About />
-              </PublicLayout>
-            }
-          />
+        
           <Route
             path="/services"
             element={
@@ -159,14 +150,7 @@ function App() {
               </PublicLayout>
             }
           />
-          <Route
-            path="/formations"
-            element={
-              <PublicLayout>
-                <Formations />
-              </PublicLayout>
-            }
-          />
+        
           <Route
             path="/academy"
             element={
@@ -192,14 +176,7 @@ function App() {
               </PublicLayout>
             }
           />
-          <Route
-            path="/bootcamp"
-            element={
-              <PublicLayout>
-                <Bootcamp />
-              </PublicLayout>
-            }
-          />
+        
           <Route
             path="/shop"
             element={
@@ -216,14 +193,7 @@ function App() {
               </PublicLayout>
             }
           />
-          <Route
-            path="/partners"
-            element={
-              <PublicLayout>
-                <Partners />
-              </PublicLayout>
-            }
-          />
+        
           <Route
             path="/contact"
             element={

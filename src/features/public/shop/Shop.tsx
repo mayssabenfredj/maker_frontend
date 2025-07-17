@@ -7,6 +7,8 @@ import ShopFilters from "./components/ShopFilters";
 import ShopTopBar from "./components/ShopTopBar";
 import ShopProductList from "./components/ShopProductList";
 import ShopEmptyState from "./components/ShopEmptyState";
+import Pagination from '../../../components/admin/Pagination';
+import { categoryService } from "../../admin/categories/services/category.service";
 
 const Shop: React.FC = () => {
   const { theme, language } = useStore();
@@ -20,6 +22,9 @@ const Shop: React.FC = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [cart, setCart] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [categories, setCategories] = useState<{ id: string; label: string; count: number }[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -33,21 +38,30 @@ const Shop: React.FC = () => {
         setError("Erreur lors du chargement des produits.");
         setLoading(false);
       });
+    // Charger les catégories dynamiquement
+    categoryService.getCategories("product").then((cats) => {
+      setCategories([
+        { id: "all", label: "Tous les produits", count: 0 },
+        ...cats.map((cat) => ({
+          id: cat._id,
+          label: cat.name,
+          count: 0, // sera mis à jour plus bas
+        })),
+      ]);
+    });
   }, []);
 
-  // Ces options pourraient aussi venir d'une API
-  const categories = [
-    { id: "all", label: "Tous les produits", count: products.length },
-    ...Array.from(new Set(products.map((p) => p.category))).map((cat) => ({
-      id: typeof cat === "string" ? cat : cat?._id || "",
-      label: typeof cat === "string" ? cat : cat?.name || "",
-      count: products.filter(
-        (p) =>
-          (typeof p.category === "string" ? p.category : p.category?._id) ===
-          (typeof cat === "string" ? cat : cat?._id)
-      ).length,
-    })),
-  ];
+  // Mettre à jour le count de chaque catégorie selon les produits filtrés
+  useEffect(() => {
+    setCategories((prev) =>
+      prev.map((cat) =>
+        cat.id === "all"
+          ? { ...cat, count: products.length }
+          : { ...cat, count: products.filter((p) => (typeof p.category === "string" ? p.category : p.category?._id) === cat.id).length }
+      )
+    );
+  }, [products]);
+
   const priceRanges = [
     { id: "all", label: "Tous les prix" },
     { id: "0-25", label: "Moins de 25DT" },
@@ -55,11 +69,7 @@ const Shop: React.FC = () => {
     { id: "50-100", label: "50DT - 100DT" },
     { id: "100+", label: "Plus de 100DT" },
   ];
-  const availabilityOptions = [
-    { id: "all", label: "Tous" },
-    { id: "in-stock", label: "En stock" },
-    { id: "pre-order", label: "Précommande" },
-  ];
+
   const sortOptions = [
     { id: "name", label: "Nom A-Z" },
     { id: "price-low", label: "Prix croissant" },
@@ -122,16 +132,20 @@ const Shop: React.FC = () => {
     }
   });
 
-  const addToCart = (productId: string) => setCart([...cart, productId]);
-  const removeFromCart = (productId: string) =>
-    setCart(cart.filter((id) => id !== productId));
-  const isInCart = (productId: string) => cart.includes(productId);
+  
 
   // Pour compatibilité avec ShopProductCard (image: string)
   const productsWithImage = sortedProducts.map((p) => ({
     ...p,
     image: p.images?.[0] || "",
   }));
+
+  // Pagination
+  const totalPages = Math.ceil(productsWithImage.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = productsWithImage.slice(startIndex, startIndex + itemsPerPage);
+
+  const itemsPerPageOptions = [2, 6, 10, 20, 30];
 
   return (
     <div
@@ -173,7 +187,6 @@ const Shop: React.FC = () => {
               priceRanges={priceRanges}
               selectedPriceRange={selectedPriceRange}
               setSelectedPriceRange={setSelectedPriceRange}
-              availabilityOptions={availabilityOptions}
               selectedAvailability={selectedAvailability}
               setSelectedAvailability={setSelectedAvailability}
             />
@@ -200,14 +213,24 @@ const Shop: React.FC = () => {
               <ShopEmptyState theme={theme} />
             ) : (
               <ShopProductList
-                products={productsWithImage}
+                products={paginatedProducts}
                 theme={theme}
                 viewMode={viewMode}
-                isInCart={isInCart}
-                onAddToCart={addToCart}
-                onRemoveFromCart={removeFromCart}
               />
             )}
+            {/* Pagination toujours en bas */}
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                itemsPerPage={itemsPerPage}
+                totalItems={productsWithImage.length}
+                showItemsPerPage={true}
+                onItemsPerPageChange={setItemsPerPage}
+                itemsPerPageOptions={itemsPerPageOptions}
+              />
+            </div>
           </div>
         </div>
       </div>
