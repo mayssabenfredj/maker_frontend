@@ -35,7 +35,7 @@ class CategoryService {
     const response = await this.makeRequest<{
       message: string;
       data: Category[];
-    }>("/categories/" + type);
+    }>("/categories" + (type ? `?type=${type}` : ""));
     return response.data;
   }
 
