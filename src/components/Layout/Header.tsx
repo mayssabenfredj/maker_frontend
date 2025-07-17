@@ -28,13 +28,6 @@ const Header: React.FC = () => {
     {
       path: "/academy",
       label: t.nav.academy,
-      hasDropdown: true,
-      dropdownItems: [
-        { path: "/academy?filter=formations", label: "Formations" },
-        { path: "/academy?filter=bootcamps", label: "Bootcamps" },
-        { path: "/academy?filter=workshops", label: "Workshops" },
-        { path: "/academy?filter=events", label: "Événements" },
-      ],
     },
     { path: "/services", label: t.nav.services },
     { path: "/shop", label: t.nav.shop },

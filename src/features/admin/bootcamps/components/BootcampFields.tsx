@@ -36,7 +36,7 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     axios
-      .get(import.meta.env.VITE_API_URL + "/categories/event")
+      .get(import.meta.env.VITE_API_URL + "/categories?type=event")
       .then((res) => {
         setCategories(res.data.data);
       })

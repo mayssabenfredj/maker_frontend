@@ -1,5 +1,5 @@
-import React from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -12,113 +12,93 @@ import {
   Calendar,
   MapPin,
   User,
+  Package,
+  Target,
+  BookOpen,
 } from "lucide-react";
 import { useStore } from "../stores/useStore";
 import AnimatedSection from "../components/UI/AnimatedSection";
+import axios from "axios";
 
 const FormationDetail: React.FC = () => {
   const { id } = useParams();
   const { theme } = useStore();
+  const [event, setEvent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const getEventDetails = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          import.meta.env.VITE_API_URL + "/events/" + id
+        );
+        const { data: response } = res;
+        setEvent(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log("error fetching the event details", error);
+        setError("Erreur lors du chargement des détails de l'événement");
+      } finally {
+        setLoading(false);
+      }
+    };
+    getEventDetails();
+  }, [id]);
 
-  // Mock data - in real app, fetch based on id
-  const formation = {
-    id: "1",
-    title: "IoT pour Débutants",
-    description:
-      "Apprenez les bases de l'Internet des Objets avec des projets pratiques et concrets",
-    longDescription:
-      "Cette formation complète vous permettra de maîtriser les fondamentaux de l'Internet des Objets. Vous apprendrez à concevoir, développer et déployer des solutions IoT en utilisant les dernières technologies et plateformes du marché.",
-    image:
-      "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800",
-    category: "IoT",
-    duration: "8 semaines",
-    students: 156,
-    rating: 4.8,
-    reviews: 89,
-    price: 299,
-    originalPrice: 399,
-    level: "Débutant",
-    instructor: {
-      name: "Dr. Ahmed Ben Ali",
-      title: "Expert IoT & Systèmes Embarqués",
-      image: "/src/assets/b84ab9b1f6117b4c6347d56f2b969381.jpg",
-      experience: "15 ans d'expérience",
-      students: "500+ étudiants formés",
-    },
-    schedule: {
-      startDate: "15 Avril 2024",
-      endDate: "10 Juin 2024",
-      schedule: "Mardi et Jeudi 18h-21h",
-      location: "Campus Maker Skills + En ligne",
-    },
-    curriculum: [
-      {
-        week: 1,
-        title: "Introduction à l'IoT",
-        topics: [
-          "Concepts fondamentaux",
-          "Architecture IoT",
-          "Protocoles de communication",
-        ],
-      },
-      {
-        week: 2,
-        title: "Capteurs et Actionneurs",
-        topics: ["Types de capteurs", "Interfaçage", "Traitement des données"],
-      },
-      {
-        week: 3,
-        title: "Microcontrôleurs",
-        topics: ["Arduino", "ESP32", "Programmation embarquée"],
-      },
-      {
-        week: 4,
-        title: "Connectivité",
-        topics: ["WiFi", "Bluetooth", "LoRaWAN", "Cellular"],
-      },
-      {
-        week: 5,
-        title: "Plateformes Cloud",
-        topics: ["AWS IoT", "Azure IoT", "Google Cloud IoT"],
-      },
-      {
-        week: 6,
-        title: "Sécurité IoT",
-        topics: ["Chiffrement", "Authentification", "Bonnes pratiques"],
-      },
-      {
-        week: 7,
-        title: "Projet Pratique",
-        topics: ["Conception", "Développement", "Tests"],
-      },
-      {
-        week: 8,
-        title: "Déploiement et Présentation",
-        topics: ["Mise en production", "Monitoring", "Présentation finale"],
-      },
-    ],
-    prerequisites: [
-      "Connaissances de base en programmation",
-      "Notions d'électronique (optionnel)",
-      "Motivation pour apprendre",
-    ],
-    outcomes: [
-      "Concevoir des solutions IoT complètes",
-      "Programmer des microcontrôleurs",
-      "Intégrer des capteurs et actionneurs",
-      "Déployer sur des plateformes cloud",
-      "Sécuriser vos dispositifs IoT",
-      "Réaliser un projet IoT de A à Z",
-    ],
-    included: [
-      "Kit Arduino complet",
-      "Accès aux laboratoires",
-      "Support de cours",
-      "Certificat de réussite",
-      "Suivi post-formation",
-      "Accès communauté alumni",
-    ],
-  };
+  if (loading) {
+    return (
+      <div
+        className={`min-h-screen pt-16 ${
+          theme === "dark" ? "bg-gray-900" : "bg-white"
+        } flex items-center justify-center`}
+      >
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+          <p
+            className={`mt-4 ${
+              theme === "dark" ? "text-white" : "text-gray-900"
+            }`}
+          >
+            Chargement...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !event) {
+    return (
+      <div
+        className={`min-h-screen pt-16 ${
+          theme === "dark" ? "bg-gray-900" : "bg-white"
+        } flex items-center justify-center`}
+      >
+        <div className="text-center">
+          <p
+            className={`text-xl ${
+              theme === "dark" ? "text-white" : "text-gray-900"
+            }`}
+          >
+            {error || "Événement non trouvé"}
+          </p>
+          <Link
+            to="/academy"
+            className="mt-4 inline-flex items-center text-orange-500 hover:text-orange-600"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Retour aux formations
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate original price if reduction exists
+  const originalPrice = event.reduction
+    ? Math.round(event.price / (1 - event.reduction / 100))
+    : null;
 
   return (
     <div
@@ -132,7 +112,7 @@ const FormationDetail: React.FC = () => {
       >
         <div className="container mx-auto px-4">
           <Link
-            to="/formations"
+            to="/academy"
             className={`inline-flex items-center text-orange-500 hover:text-orange-600 mb-4`}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -150,11 +130,13 @@ const FormationDetail: React.FC = () => {
             <AnimatedSection direction="left">
               <div>
                 <div className="flex items-center space-x-4 mb-4">
-                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {formation.category}
-                  </span>
-                  <span className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 px-3 py-1 rounded-full text-sm font-medium">
-                    {formation.level}
+                  {event.category && (
+                    <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      {event.category.name}
+                    </span>
+                  )}
+                  <span className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 px-3 py-1 rounded-full text-sm font-medium">
+                    {event.type}
                   </span>
                 </div>
 
@@ -163,61 +145,65 @@ const FormationDetail: React.FC = () => {
                     theme === "dark" ? "text-white" : "text-gray-900"
                   }`}
                 >
-                  {formation.title}
+                  {event.name}
                 </h1>
 
-                <p
-                  className={`text-xl mb-6 ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  {formation.description}
-                </p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                  {event.duration && (
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-5 w-5 text-orange-500" />
+                      <span
+                        className={`text-sm ${
+                          theme === "dark" ? "text-gray-300" : "text-gray-700"
+                        }`}
+                      >
+                        {event.duration} jours
+                      </span>
+                    </div>
+                  )}
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-5 w-5 text-orange-500" />
-                    <span
-                      className={`text-sm ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-700"
-                      }`}
-                    >
-                      {formation.duration}
-                    </span>
-                  </div>
+                  {event.participants && (
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-5 w-5 text-blue-500" />
+                      <span
+                        className={`text-sm ${
+                          theme === "dark" ? "text-gray-300" : "text-gray-700"
+                        }`}
+                      >
+                        {event.participants.length} participants
+                      </span>
+                    </div>
+                  )}
 
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-5 w-5 text-blue-500" />
-                    <span
-                      className={`text-sm ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-700"
-                      }`}
-                    >
-                      {formation.students} étudiants
-                    </span>
-                  </div>
+                  {event.location && (
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="h-5 w-5 text-green-500" />
+                      <span
+                        className={`text-sm ${
+                          theme === "dark" ? "text-gray-300" : "text-gray-700"
+                        }`}
+                      >
+                        {event.location === "online"
+                          ? "En ligne"
+                          : event.location === "in_person"
+                          ? "En personne"
+                          : "Hybride"}
+                      </span>
+                    </div>
+                  )}
 
-                  <div className="flex items-center space-x-2">
-                    <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                    <span
-                      className={`text-sm ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-700"
-                      }`}
-                    >
-                      {formation.rating}/5 ({formation.reviews})
-                    </span>
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    <Award className="h-5 w-5 text-purple-500" />
-                    <span
-                      className={`text-sm ${
-                        theme === "dark" ? "text-gray-300" : "text-gray-700"
-                      }`}
-                    >
-                      Certificat
-                    </span>
-                  </div>
+                  {event.certification && (
+                    <div className="flex items-center space-x-2">
+                      <Award className="h-5 w-5 text-purple-500" />
+                      <span
+                        className={`text-sm ${
+                          theme === "dark" ? "text-gray-300" : "text-gray-700"
+                        }`}
+                      >
+                        Certificat
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center space-x-4">
@@ -227,25 +213,21 @@ const FormationDetail: React.FC = () => {
                         theme === "dark" ? "text-white" : "text-gray-900"
                       }`}
                     >
-                      {formation.price}DT
+                      {event.price}DT
                     </span>
-                    {formation.originalPrice && (
+                    {originalPrice && (
                       <span
                         className={`text-lg line-through ml-2 ${
                           theme === "dark" ? "text-gray-500" : "text-gray-400"
                         }`}
                       >
-                        {formation.originalPrice}DT
+                        {originalPrice}DT
                       </span>
                     )}
                   </div>
-                  {formation.originalPrice && (
+                  {event.reduction && (
                     <span className="bg-red-500 text-white px-2 py-1 rounded text-sm font-medium">
-                      -
-                      {Math.round(
-                        (1 - formation.price / formation.originalPrice) * 100
-                      )}
-                      %
+                      -{event.reduction}%
                     </span>
                   )}
                 </div>
@@ -255,19 +237,14 @@ const FormationDetail: React.FC = () => {
             <AnimatedSection direction="right">
               <div className="relative">
                 <img
-                  src={formation.image}
-                  alt={formation.title}
+                  src={
+                    event.coverImage
+                      ? `${import.meta.env.VITE_API_URL}/${event.coverImage}`
+                      : "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  }
+                  alt={event.name}
                   className="w-full h-64 md:h-80 object-cover rounded-2xl"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-40 rounded-2xl flex items-center justify-center">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg"
-                  >
-                    <Play className="h-6 w-6 text-orange-500 ml-1" />
-                  </motion.button>
-                </div>
               </div>
             </AnimatedSection>
           </div>
@@ -292,39 +269,51 @@ const FormationDetail: React.FC = () => {
                       theme === "dark" ? "text-white" : "text-gray-900"
                     }`}
                   >
-                    Prochaine session
+                    Informations
                   </h3>
                   <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-orange-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {formation.schedule.startDate}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-blue-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {formation.schedule.schedule}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4 text-green-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {formation.schedule.location}
-                      </span>
-                    </div>
+                    {event.startDate && (
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4 text-orange-500" />
+                        <span
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {new Date(event.startDate).toLocaleDateString(
+                            "fr-FR"
+                          )}
+                        </span>
+                      </div>
+                    )}
+                    {event.duration && (
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-blue-500" />
+                        <span
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {event.duration} jours
+                        </span>
+                      </div>
+                    )}
+                    {event.location && (
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-4 w-4 text-green-500" />
+                        <span
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {event.location === "online"
+                            ? "En ligne"
+                            : event.location == "in_person"
+                            ? "En personne"
+                            : "Hybride"}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -334,7 +323,7 @@ const FormationDetail: React.FC = () => {
                       theme === "dark" ? "text-white" : "text-gray-900"
                     }`}
                   >
-                    {formation.price}DT
+                    {event.price}DT
                   </div>
                   <div
                     className={`text-sm ${
@@ -347,17 +336,15 @@ const FormationDetail: React.FC = () => {
 
                 <div className="flex flex-col space-y-3">
                   <motion.button
+                    onClick={() => {
+                      navigate(`/partcipate/${event._id}`);
+                    }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="w-full py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
                   >
                     S'inscrire maintenant
                   </motion.button>
-                  <button
-                    className={`w-full py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-600 hover:text-white transition-colors`}
-                  >
-                    Demander des infos
-                  </button>
                 </div>
               </div>
             </div>
@@ -373,249 +360,340 @@ const FormationDetail: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-12">
-              {/* Description */}
-              <AnimatedSection>
-                <div>
-                  <h2
-                    className={`text-2xl font-bold mb-6 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    Description de la formation
-                  </h2>
-                  <p
-                    className={`text-lg leading-relaxed ${
-                      theme === "dark" ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    {formation.longDescription}
-                  </p>
-                </div>
-              </AnimatedSection>
-
-              {/* Curriculum */}
-              <AnimatedSection>
-                <div>
-                  <h2
-                    className={`text-2xl font-bold mb-6 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    Programme détaillé
-                  </h2>
-                  <div className="space-y-4">
-                    {formation.curriculum.map((week, index) => (
-                      <motion.div
-                        key={week.week}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1 }}
-                        className={`p-6 rounded-xl ${
-                          theme === "dark" ? "bg-gray-800" : "bg-gray-50"
-                        }`}
-                      >
-                        <div className="flex items-start space-x-4">
-                          <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                            {week.week}
-                          </div>
-                          <div className="flex-1">
-                            <h3
-                              className={`text-lg font-semibold mb-2 ${
-                                theme === "dark"
-                                  ? "text-white"
-                                  : "text-gray-900"
-                              }`}
-                            >
-                              {week.title}
-                            </h3>
-                            <ul className="space-y-1">
-                              {week.topics.map((topic, idx) => (
-                                <li
-                                  key={idx}
-                                  className="flex items-center space-x-2"
-                                >
-                                  <CheckCircle className="h-4 w-4 text-green-500" />
-                                  <span
-                                    className={`text-sm ${
-                                      theme === "dark"
-                                        ? "text-gray-400"
-                                        : "text-gray-600"
-                                    }`}
-                                  >
-                                    {topic}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </AnimatedSection>
-
-              {/* Learning Outcomes */}
-              <AnimatedSection>
-                <div>
-                  <h2
-                    className={`text-2xl font-bold mb-6 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    Ce que vous allez apprendre
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {formation.outcomes.map((outcome, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1 }}
-                        className="flex items-center space-x-3"
-                      >
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                        <span
-                          className={`${
-                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+              {/* Modules/Curriculum */}
+              {event.modules && event.modules.length > 0 && (
+                <AnimatedSection>
+                  <div>
+                    <h2
+                      className={`text-2xl font-bold mb-6 ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      <BookOpen className="h-6 w-6 inline mr-2" />
+                      Programme détaillé
+                    </h2>
+                    <div className="space-y-4">
+                      {event.modules.map((module, index) => (
+                        <motion.div
+                          key={module._id}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.1 }}
+                          className={`p-6 rounded-xl ${
+                            theme === "dark" ? "bg-gray-800" : "bg-gray-50"
                           }`}
                         >
-                          {outcome}
-                        </span>
-                      </motion.div>
-                    ))}
+                          <div className="flex items-start space-x-4">
+                            <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1">
+                              <h3
+                                className={`text-lg font-semibold mb-2 ${
+                                  theme === "dark"
+                                    ? "text-white"
+                                    : "text-gray-900"
+                                }`}
+                              >
+                                {module.title}
+                              </h3>
+                              {module.items && module.items.length > 0 && (
+                                <ul className="space-y-1">
+                                  {module.items.map((item, idx) => (
+                                    <li
+                                      key={idx}
+                                      className="flex items-center space-x-2"
+                                    >
+                                      <CheckCircle className="h-4 w-4 text-green-500" />
+                                      <span
+                                        className={`text-sm ${
+                                          theme === "dark"
+                                            ? "text-gray-400"
+                                            : "text-gray-600"
+                                        }`}
+                                      >
+                                        {item}
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </AnimatedSection>
+                </AnimatedSection>
+              )}
+
+              {/* Learning Objectives */}
+              {event.objectives && event.objectives.length > 0 && (
+                <AnimatedSection>
+                  <div>
+                    <h2
+                      className={`text-2xl font-bold mb-6 ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      <Target className="h-6 w-6 inline mr-2" />
+                      Objectifs d'apprentissage
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {event.objectives.map((objective, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.1 }}
+                          className="flex items-center space-x-3"
+                        >
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span
+                            className={`${
+                              theme === "dark"
+                                ? "text-gray-300"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {objective}
+                          </span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </AnimatedSection>
+              )}
+
+              {/* Products */}
+              {event.products && event.products.length > 0 && (
+                <AnimatedSection>
+                  <div>
+                    <h2
+                      className={`text-2xl font-bold mb-6 ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      <Package className="h-6 w-6 inline mr-2" />
+                      Produits inclus
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {event.products.map((product, index) => (
+                        <motion.div
+                          key={product._id}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.1 }}
+                          className={`p-4 rounded-xl border ${
+                            theme === "dark"
+                              ? "bg-gray-800 border-gray-700"
+                              : "bg-white border-gray-200"
+                          }`}
+                        >
+                          <div className="flex items-center space-x-4">
+                            {product.images && product.images.length > 0 && (
+                              <img
+                                src={`${import.meta.env.VITE_API_URL}${
+                                  product.images[0]
+                                }`}
+                                alt={product.name}
+                                className="w-16 h-16 object-cover rounded-lg"
+                              />
+                            )}
+                            <div>
+                              <h3
+                                className={`font-semibold ${
+                                  theme === "dark"
+                                    ? "text-white"
+                                    : "text-gray-900"
+                                }`}
+                              >
+                                {product.name}
+                              </h3>
+                              <p
+                                className={`text-sm ${
+                                  theme === "dark"
+                                    ? "text-gray-400"
+                                    : "text-gray-600"
+                                }`}
+                              >
+                                {product.description}
+                              </p>
+                              <span
+                                className={`text-sm font-medium ${
+                                  theme === "dark"
+                                    ? "text-orange-400"
+                                    : "text-orange-600"
+                                }`}
+                              >
+                                {product.price}DT
+                              </span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </AnimatedSection>
+              )}
             </div>
 
             {/* Sidebar */}
             <div className="space-y-8">
               {/* Instructor */}
-              <AnimatedSection>
-                <div
-                  className={`p-6 rounded-xl ${
-                    theme === "dark" ? "bg-gray-800" : "bg-gray-50"
-                  }`}
-                >
-                  <h3
-                    className={`text-lg font-bold mb-4 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
+              {event.instructor && (
+                <AnimatedSection>
+                  <div
+                    className={`p-6 rounded-xl ${
+                      theme === "dark" ? "bg-gray-800" : "bg-gray-50"
                     }`}
                   >
-                    Votre formateur
-                  </h3>
-                  <div className="flex items-center space-x-4 mb-4">
-                    <img
-                      src={formation.instructor.image}
-                      alt={formation.instructor.name}
-                      className="w-16 h-16 rounded-full object-cover"
-                    />
-                    <div>
-                      <h4
-                        className={`font-semibold ${
-                          theme === "dark" ? "text-white" : "text-gray-900"
-                        }`}
-                      >
-                        {formation.instructor.name}
-                      </h4>
-                      <p
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        {formation.instructor.title}
-                      </p>
+                    <h3
+                      className={`text-lg font-bold mb-4 ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      Votre formateur
+                    </h3>
+                    <div className="flex items-center space-x-4 mb-4">
+                      <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
+                        {event.instructor.photoUrl ? (
+                          <img
+                            src={event.instructor.photoUrl}
+                            alt={event.instructor.name}
+                            className="w-16 h-16 rounded-full object-cover"
+                          />
+                        ) : (
+                          <User className="h-8 w-8 text-gray-500" />
+                        )}
+                      </div>
+                      <div>
+                        <h4
+                          className={`font-semibold ${
+                            theme === "dark" ? "text-white" : "text-gray-900"
+                          }`}
+                        >
+                          {event.instructor.name}
+                        </h4>
+                        {event.instructor.title && (
+                          <p
+                            className={`text-sm ${
+                              theme === "dark"
+                                ? "text-gray-400"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {event.instructor.title}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      {event.instructor.experienceYears && (
+                        <div className="flex items-center space-x-2">
+                          <User className="h-4 w-4 text-orange-500" />
+                          <span
+                            className={`text-sm ${
+                              theme === "dark"
+                                ? "text-gray-400"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {event.instructor.experienceYears} ans d'expérience
+                          </span>
+                        </div>
+                      )}
+                      {event.instructor.studentsCount && (
+                        <div className="flex items-center space-x-2">
+                          <Users className="h-4 w-4 text-blue-500" />
+                          <span
+                            className={`text-sm ${
+                              theme === "dark"
+                                ? "text-gray-400"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {event.instructor.studentsCount} étudiants formés
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-orange-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        {formation.instructor.experience}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Users className="h-4 w-4 text-blue-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        {formation.instructor.students}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </AnimatedSection>
+                </AnimatedSection>
+              )}
 
               {/* Prerequisites */}
-              <AnimatedSection>
-                <div
-                  className={`p-6 rounded-xl ${
-                    theme === "dark" ? "bg-gray-800" : "bg-gray-50"
-                  }`}
-                >
-                  <h3
-                    className={`text-lg font-bold mb-4 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
+              {event.required && event.required.length > 0 && (
+                <AnimatedSection>
+                  <div
+                    className={`p-6 rounded-xl ${
+                      theme === "dark" ? "bg-gray-800" : "bg-gray-50"
                     }`}
                   >
-                    Prérequis
-                  </h3>
-                  <ul className="space-y-2">
-                    {formation.prerequisites.map((prereq, index) => (
-                      <li key={index} className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span
-                          className={`text-sm ${
-                            theme === "dark" ? "text-gray-400" : "text-gray-600"
-                          }`}
-                        >
-                          {prereq}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </AnimatedSection>
+                    <h3
+                      className={`text-lg font-bold mb-4 ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      Prérequis
+                    </h3>
+                    <ul className="space-y-2">
+                      {event.required.map((prereq, index) => (
+                        <li key={index} className="flex items-center space-x-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span
+                            className={`text-sm ${
+                              theme === "dark"
+                                ? "text-gray-400"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {prereq}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </AnimatedSection>
+              )}
 
               {/* What's Included */}
-              <AnimatedSection>
-                <div
-                  className={`p-6 rounded-xl ${
-                    theme === "dark" ? "bg-gray-800" : "bg-gray-50"
-                  }`}
-                >
-                  <h3
-                    className={`text-lg font-bold mb-4 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
+              {event.includedInEvent && event.includedInEvent.length > 0 && (
+                <AnimatedSection>
+                  <div
+                    className={`p-6 rounded-xl ${
+                      theme === "dark" ? "bg-gray-800" : "bg-gray-50"
                     }`}
                   >
-                    Inclus dans la formation
-                  </h3>
-                  <ul className="space-y-2">
-                    {formation.included.map((item, index) => (
-                      <li key={index} className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                        <span
-                          className={`text-sm ${
-                            theme === "dark" ? "text-gray-400" : "text-gray-600"
-                          }`}
-                        >
-                          {item}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </AnimatedSection>
+                    <h3
+                      className={`text-lg font-bold mb-4 ${
+                        theme === "dark" ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      Inclus dans la formation
+                    </h3>
+                    <ul className="space-y-2">
+                      {event.includedInEvent.map((item, index) => (
+                        <li key={index} className="flex items-center space-x-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span
+                            className={`text-sm ${
+                              theme === "dark"
+                                ? "text-gray-400"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </AnimatedSection>
+              )}
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Filter,
@@ -13,6 +13,8 @@ import {
 import { useStore } from "../stores/useStore";
 import { translations } from "../data/translations";
 import AnimatedSection from "../components/UI/AnimatedSection";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Academy: React.FC = () => {
   const { theme, language } = useStore();
@@ -21,138 +23,102 @@ const Academy: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedFormat, setSelectedFormat] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const [categories, setCategories] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        let res = await axios.get(
+          import.meta.env.VITE_API_URL + "/categories?type=event"
+        );
+        let { data } = res;
+        setCategories(data?.data || []);
+      } catch (error) {
+        console.log("error fetching categories", error);
+      }
+    };
+
+    const getEvents = async () => {
+      try {
+        let res = await axios.get(import.meta.env.VITE_API_URL + "/events");
+        let { data } = res;
+        setEvents(data?.data || []);
+        console.log("events", data.data);
+      } catch (error) {
+        console.log("error fetching events", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getEvents();
+    getCategories();
+  }, []);
+
+  // Transform API data to match component expectations
+  const transformedEvents = events.map((event) => ({
+    id: event._id,
+    type: event.type, // event, course, bootcamp
+    title: event.name,
+    description: event.objectives?.[0] || "No description available",
+    image: event.coverImage
+      ? `${import.meta.env.VITE_API_URL}/${event.coverImage}`
+      : "https://images.pexels.com/photos/32894960/pexels-photo-32894960.jpeg?auto=compress&cs=tinysrgb&w=800&h=800",
+    category: event.category?._id || "unknown",
+    format:
+      event.location === "online"
+        ? "online"
+        : event.location === "in_person"
+        ? "onsite"
+        : "hybrid",
+    duration: `${event.duration} ${
+      event.type === "event" ? "heures" : "semaines"
+    }`,
+    price: event.price - (event.price * event.reduction) / 100, // Apply reduction
+    originalPrice: event.price,
+    reduction: event.reduction,
+    rating: 4.5, // Default rating since it's not in API
+    students: event.participants?.length || 0,
+    instructor: event.instructor?.name || "N/A",
+    instructorTitle: event.instructor?.title || "",
+    instructorExperience: event.instructor?.experienceYears || 0,
+    startDate: event.startDate
+      ? new Date(event.startDate).toLocaleDateString("fr-FR")
+      : "À définir",
+    location:
+      event.address || (event.location === "online" ? "En ligne" : "Campus"),
+    certification: event.certification,
+    modules: event.modules || [],
+    required: event.required || [],
+    includedInEvent: event.includedInEvent || [],
+    objectives: event.objectives || [],
+    products: event.products || [],
+  }));
 
   const typeFilters = [
-    { id: "all", label: t.academy.all },
-    { id: "formations", label: t.academy.formations },
-    { id: "bootcamps", label: t.academy.bootcamps },
-    { id: "workshops", label: t.academy.workshops },
-    { id: "events", label: t.academy.events },
+    { id: "all", label: t.academy?.all || "Tous" },
+    { id: "course", label: t.academy?.formations || "Formations" },
+    { id: "bootcamp", label: t.academy?.bootcamps || "Bootcamps" },
+    { id: "workshop", label: t.academy?.workshops || "Workshops" },
+    { id: "event", label: t.academy?.events || "Événements" },
   ];
 
   const categoryFilters = [
     { id: "all", label: "Toutes" },
-    { id: "iot", label: t.academy.iot },
-    { id: "robotics", label: t.academy.robotics },
-    { id: "ai", label: t.academy.ai },
-    { id: "programming", label: t.academy.programming },
+    ...categories.map((cat) => ({ id: cat._id, label: cat.name })),
   ];
 
   const formatFilters = [
     { id: "all", label: "Tous" },
-    { id: "online", label: t.academy.online },
-    { id: "onsite", label: t.academy.onsite },
-    { id: "kids", label: t.academy.kids },
+    { id: "online", label: t.academy?.online || "En ligne" },
+    { id: "onsite", label: t.academy?.onsite || "Présentiel" },
+    { id: "hybrid", label: "Hybride" },
   ];
 
-  const academyItems = [
-    {
-      id: "1",
-      type: "formations",
-      title: "Formation IoT Complète",
-      description:
-        "Maîtrisez l'Internet des Objets de A à Z avec des projets pratiques",
-      image:
-        "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800&h=800",
-      category: "iot",
-      format: "onsite",
-      duration: "8 semaines",
-      price: 299,
-      rating: 4.8,
-      students: 156,
-      instructor: "Dr. Ahmed Ben Ali",
-      startDate: "15 Avril 2024",
-      location: "Campus Maker Skills",
-    },
-    {
-      id: "2",
-      type: "bootcamps",
-      title: "Bootcamp IA Intensive",
-      description:
-        "Formation intensive de 16 semaines pour devenir expert en IA",
-      image:
-        "https://images.pexels.com/photos/8386422/pexels-photo-8386422.jpeg?auto=compress&cs=tinysrgb&w=800&h=800",
-      category: "ai",
-      format: "onsite",
-      duration: "16 semaines",
-      price: 4999,
-      rating: 4.9,
-      students: 67,
-      instructor: "Dr. Fatima Zahra",
-      startDate: "1 Mai 2024",
-      location: "Campus + En ligne",
-    },
-    {
-      id: "3",
-      type: "workshops",
-      title: "Workshop Arduino Débutant",
-      description: "Introduction pratique à Arduino avec projets",
-      image:
-        "https://images.pexels.com/photos/159298/pexels-photo-159298.jpeg?auto=compress&cs=tinysrgb&w=800&h=800",
-      category: "iot",
-      format: "onsite",
-      duration: "3 heures",
-      price: 45,
-      rating: 4.7,
-      students: 25,
-      instructor: "Mohamed Slim",
-      startDate: "20 Avril 2024",
-      location: "Lab Maker Skills",
-    },
-    {
-      id: "4",
-      type: "formations",
-      title: "Robotique pour Enfants",
-      description: "Construis ton premier robot avec LEGO Mindstorms",
-      image:
-        "https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?auto=compress&cs=tinysrgb&w=800&h=800",
-      category: "robotics",
-      format: "kids",
-      duration: "4 semaines",
-      price: 149,
-      rating: 4.9,
-      students: 312,
-      instructor: "Sarah Mansouri",
-      startDate: "25 Avril 2024",
-      location: "Campus Maker Skills",
-    },
-    {
-      id: "5",
-      type: "events",
-      title: "Conférence IA & Futur",
-      description: "Conférence sur l'avenir de l'intelligence artificielle",
-      image:
-        "https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=800&h=800",
-      category: "ai",
-      format: "onsite",
-      duration: "4 heures",
-      price: 25,
-      rating: 4.8,
-      students: 200,
-      instructor: "Experts IA",
-      startDate: "30 Avril 2024",
-      location: "Auditorium",
-    },
-    {
-      id: "6",
-      type: "formations",
-      title: "Programmation Python Avancée",
-      description: "Maîtrisez Python pour l'IA, l'IoT et le développement web",
-      image:
-        "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=800&h=800",
-      category: "programming",
-      format: "online",
-      duration: "10 semaines",
-      price: 399,
-      rating: 4.6,
-      students: 178,
-      instructor: "Karim Ben Ahmed",
-      startDate: "5 Mai 2024",
-      location: "En ligne",
-    },
-  ];
-
-  const filteredItems = academyItems.filter((item) => {
+  const filteredItems = transformedEvents.filter((item) => {
     const matchesType = selectedType === "all" || item.type === selectedType;
     const matchesCategory =
       selectedCategory === "all" || item.category === selectedCategory;
@@ -166,13 +132,13 @@ const Academy: React.FC = () => {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "formations":
+      case "course":
         return "bg-primary-900 text-white";
-      case "bootcamps":
+      case "bootcamp":
         return "bg-secondary-500 text-white";
-      case "workshops":
+      case "workshop":
         return "bg-blue-600 text-white";
-      case "events":
+      case "event":
         return "bg-green-600 text-white";
       default:
         return "bg-gray-500 text-white";
@@ -181,18 +147,34 @@ const Academy: React.FC = () => {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case "formations":
+      case "course":
         return "Formation";
-      case "bootcamps":
+      case "bootcamp":
         return "Bootcamp";
-      case "workshops":
+      case "workshop":
         return "Workshop";
-      case "events":
+      case "event":
         return "Événement";
       default:
         return type;
     }
   };
+
+  if (loading) {
+    return (
+      <div
+        className={`min-h-screen pt-16 ${
+          theme === "dark" ? "bg-gray-900" : "bg-white"
+        } transition-colors duration-300`}
+      >
+        <div className="container mx-auto px-4 py-20">
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary-500"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -210,7 +192,7 @@ const Academy: React.FC = () => {
           <AnimatedSection>
             <div className="text-center text-white">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                {t.academy.title}
+                {t.academy?.title || "Académie"}
               </h1>
               <p className="text-xl max-w-3xl mx-auto opacity-90">
                 Découvrez notre gamme complète de formations, bootcamps,
@@ -402,6 +384,10 @@ const Academy: React.FC = () => {
                           src={item.image}
                           alt={item.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://images.pexels.com/photos/32894960/pexels-photo-32894960.jpeg?auto=compress&cs=tinysrgb&w=800&h=800";
+                          }}
                         />
                       </div>
                       <div className="absolute top-4 left-4">
@@ -416,6 +402,16 @@ const Academy: React.FC = () => {
                       {item.price === 0 && (
                         <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
                           Gratuit
+                        </div>
+                      )}
+                      {item.reduction > 0 && (
+                        <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                          -{item.reduction}%
+                        </div>
+                      )}
+                      {item.certification && (
+                        <div className="absolute bottom-4 right-4 bg-purple-500 text-white p-2 rounded-full">
+                          <Award className="h-4 w-4" />
                         </div>
                       )}
                     </div>
@@ -486,10 +482,7 @@ const Academy: React.FC = () => {
                                 : "text-gray-700"
                             }`}
                           >
-                            {new Date(item.startDate).toLocaleDateString(
-                              "fr-FR",
-                              { day: "2-digit", month: "2-digit" }
-                            )}
+                            {item.startDate}
                           </span>
                         </div>
                       </div>
@@ -497,13 +490,22 @@ const Academy: React.FC = () => {
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <div
-                            className={`text-sm ${
+                            className={`text-sm font-medium ${
                               theme === "dark"
-                                ? "text-gray-400"
-                                : "text-gray-600"
+                                ? "text-gray-300"
+                                : "text-gray-700"
                             }`}
                           >
                             {item.instructor}
+                          </div>
+                          <div
+                            className={`text-xs ${
+                              theme === "dark"
+                                ? "text-gray-400"
+                                : "text-gray-500"
+                            }`}
+                          >
+                            {item.instructorTitle}
                           </div>
                           <div className="flex items-center space-x-1 mt-1">
                             <MapPin className="h-3 w-3 text-purple-500" />
@@ -518,21 +520,33 @@ const Academy: React.FC = () => {
                             </span>
                           </div>
                         </div>
-                        <div
-                          className={`text-xl font-bold ${
-                            theme === "dark" ? "text-white" : "text-gray-900"
-                          }`}
-                        >
-                          {item.price === 0 ? "Gratuit" : `${item.price}DT`}
+                        <div className="text-right">
+                          <div
+                            className={`text-xl font-bold ${
+                              theme === "dark" ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {item.price === 0
+                              ? "Gratuit"
+                              : `${item.price.toFixed(0)}DT`}
+                          </div>
+                          {item.reduction > 0 && (
+                            <div className="text-xs text-gray-500 line-through">
+                              {item.originalPrice}DT
+                            </div>
+                          )}
                         </div>
                       </div>
 
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          navigate("/formations/" + item.id);
+                        }}
                         className="w-full py-2 bg-secondary-500 text-white rounded-lg font-medium hover:bg-secondary-600 transition-colors"
                       >
-                        {item.type === "events"
+                        {item.type === "event"
                           ? "S'inscrire"
                           : "En savoir plus"}
                       </motion.button>

@@ -43,6 +43,7 @@ import Blogs from "./features/public/blogs/Blogs";
 import BlogDetailPage from "./features/public/blogs/BlogDetailPage";
 import ShopProductDetailPage from "./features/public/shop/ShopProductDetailPage";
 import OrdersManagement from "./pages/admin/OrdersManagement";
+import ParticipationPage from "./pages/ParticpatationPage";
 
 // Mock data initialization
 const initializeMockData = () => {
@@ -180,6 +181,14 @@ function App() {
             element={
               <PublicLayout>
                 <FormationDetail />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/partcipate/:id"
+            element={
+              <PublicLayout>
+                <ParticipationPage />
               </PublicLayout>
             }
           />
