@@ -9,7 +9,6 @@ import TestimonialsSection from './components/TestimonialsSection';
 import ReviewService from '../../admin/reviews/review.service';
 import { Review } from '../../admin/reviews/review';
 import StatsSection from './components/StatsSection';
-import { heroSlides } from './data/heroSlides';
 import { aboutValues } from './data/aboutValues';
 import { team } from './data/team';
 import { whyChooseUs } from './data/whyChooseUs';
@@ -28,11 +27,15 @@ import ContactSection from './components/ContactSection';
 import CtaSection from './components/CtaSection';
 import BlogService from '../../admin/blogs/blogs.service';
 import { Blog } from '../../admin/blogs/blog';
+import HeroSectionService from '../../admin/hero-section/hero-section.service';
+import { HeroSection as HeroSectionType } from '../../admin/hero-section/hero-section';
+import { getImageUrl } from '../../../shared/utils/imageUtils';
 
 const Home: React.FC = () => {
   const { theme, language } = useStore();
   const t = translations[language];
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [heroSections, setHeroSections] = useState<HeroSectionType[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,11 +48,39 @@ const Home: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [blogs, setBlogs] = useState<Blog[]>([]);
 
+  // Convertir les HeroSection en HeroSlide pour le composant
+  const heroSlides = heroSections.map(section => ({
+    type: section.type,
+    title: section.title,
+    subtitle: section.subtitle,
+    description: section.description,
+    image: section.image ? getImageUrl(section.image) : '',
+    video: undefined,
+    cta: section.buttons && section.buttons.length > 0 ? section.buttons[0].name : 'Découvrir',
+    link: section.buttons && section.buttons.length > 0 ? section.buttons[0].action : '/services'
+  }));
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 8000);
-    return () => clearInterval(interval);
+    // Charger les hero sections depuis l'API
+    const loadHeroSections = async () => {
+      try {
+        const data = await HeroSectionService.getAll();
+        setHeroSections(data);
+      } catch (error) {
+        console.error('Erreur lors du chargement des hero sections:', error);
+        setHeroSections([]);
+      }
+    };
+    loadHeroSections();
+  }, []);
+
+  useEffect(() => {
+    if (heroSlides.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+      }, 8000);
+      return () => clearInterval(interval);
+    }
   }, [heroSlides.length]);
 
   useEffect(() => {
@@ -112,11 +143,15 @@ const Home: React.FC = () => {
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    if (heroSlides.length > 0) {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    if (heroSlides.length > 0) {
+      setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -142,14 +177,16 @@ const Home: React.FC = () => {
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} transition-colors duration-300`}>
       {/* Hero Section with Carousel */}
-     <HeroSection
-        slides={heroSlides}
-        theme={theme}
-        currentSlide={currentSlide}
-        onPrev={prevSlide}
-        onNext={nextSlide}
-        onSelect={(index) => setCurrentSlide(index)}
-      />
+      {heroSlides.length > 0 && (
+        <HeroSection
+          slides={heroSlides}
+          theme={theme}
+          currentSlide={currentSlide}
+          onPrev={prevSlide}
+          onNext={nextSlide}
+          onSelect={(index) => setCurrentSlide(index)}
+        />
+      )}
 
       {/* About Section - Enriched and Moved After Banner */}
       <AboutSection

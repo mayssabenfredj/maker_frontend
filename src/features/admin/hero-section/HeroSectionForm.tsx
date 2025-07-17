@@ -5,7 +5,7 @@ import { getImageUrl } from "../../../shared/utils/imageUtils";
 
 interface HeroSectionFormProps {
   initialValues?: Partial<CreateHeroSectionDto>;
-  onSubmit: (values: CreateHeroSectionDto, imageFiles?: File[]) => void;
+  onSubmit: (values: CreateHeroSectionDto, imageFile?: File) => void;
   onCancel: () => void;
   loading?: boolean;
   theme: "light" | "dark";
@@ -19,12 +19,14 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
   theme,
 }) => {
   const [form, setForm] = useState<CreateHeroSectionDto>({
+    type: initialValues.type || "",
     title: initialValues.title || "",
+    subtitle: initialValues.subtitle || "",
     description: initialValues.description || "",
-    images: initialValues.images || [],
+    image: initialValues.image || "",
     buttons: initialValues.buttons || [],
   });
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
   const handleChange = (
@@ -61,11 +63,11 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(null);
-    if (!form.title || !form.description) {
-      setFormError("Titre et description obligatoires");
+    if (!form.type || !form.title || !form.subtitle || !form.description) {
+      setFormError("Type, titre, sous-titre et description obligatoires");
       return;
     }
-    onSubmit(form, imageFiles);
+    onSubmit(form, imageFile || undefined);
   };
 
   return (
@@ -96,6 +98,28 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
               theme === "dark" ? "text-gray-300" : "text-gray-700"
             }`}
           >
+            Type *
+          </label>
+          <input
+            type="text"
+            name="type"
+            required
+            value={form.type}
+            onChange={handleChange}
+            placeholder="ex: hero, banner, etc."
+            className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+              theme === "dark"
+                ? "bg-gray-700 border-gray-600 text-white"
+                : "bg-white border-gray-300 text-gray-900"
+            } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+          />
+        </div>
+        <div>
+          <label
+            className={`block text-sm font-medium mb-2 ${
+              theme === "dark" ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
             Titre *
           </label>
           <input
@@ -117,14 +141,14 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
               theme === "dark" ? "text-gray-300" : "text-gray-700"
             }`}
           >
-            Description *
+            Sous-titre *
           </label>
-          <textarea
-            name="description"
+          <input
+            type="text"
+            name="subtitle"
             required
-            value={form.description}
+            value={form.subtitle}
             onChange={handleChange}
-            rows={3}
             className={`w-full px-4 py-3 rounded-lg border transition-colors ${
               theme === "dark"
                 ? "bg-gray-700 border-gray-600 text-white"
@@ -134,10 +158,32 @@ const HeroSectionForm: React.FC<HeroSectionFormProps> = ({
         </div>
       </div>
       <div>
+        <label
+          className={`block text-sm font-medium mb-2 ${
+            theme === "dark" ? "text-gray-300" : "text-gray-700"
+          }`}
+        >
+          Description *
+        </label>
+        <textarea
+          name="description"
+          required
+          value={form.description}
+          onChange={handleChange}
+          rows={4}
+          placeholder="Description détaillée de la section..."
+          className={`w-full px-4 py-3 rounded-lg border transition-colors ${
+            theme === "dark"
+              ? "bg-gray-700 border-gray-600 text-white"
+              : "bg-white border-gray-300 text-gray-900"
+          } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
+        />
+      </div>
+      <div>
         <MediaUpload
-          images={imageFiles}
-          setImages={setImageFiles}
-          existingImages={[getImageUrl(form.images?.[0] || "")]}
+          images={imageFile ? [imageFile] : []}
+          setImages={(files) => setImageFile(files[0] || null)}
+          existingImages={form.image ? [getImageUrl(form.image)] : []}
           label="Image"
           multiple={false}
         />

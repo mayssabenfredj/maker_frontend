@@ -34,7 +34,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ slides, theme, currentSlide, 
             alt={slides[currentSlide].title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-blue-900/70" />
+          <div className="absolute inset-0 bg-black/70" />
         </div>
       </div>
 
@@ -47,7 +47,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ slides, theme, currentSlide, 
       </button>
       <button
         onClick={onNext}
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-blue-900 transition-colors"
+        className="absolute right-6 top-1/2 transform -translate-y-1/2 z-30 p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-black transition-colors"
       >
         <ChevronRight className="h-6 w-6" />
       </button>
@@ -124,7 +124,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ slides, theme, currentSlide, 
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex items-center px-8 py-4 border-2 border-blue-900 text-blue-900 bg-white font-semibold rounded-xl hover:bg-blue-900 hover:text-white transition-all duration-300"
+                className="inline-flex items-center px-8 py-4 border-2 border-black text-black bg-white font-semibold rounded-xl hover:bg-black hover:text-white transition-all duration-300"
               >
                 En savoir plus
               </Link>
