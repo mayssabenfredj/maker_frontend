@@ -3,10 +3,7 @@ import { motion } from "framer-motion";
 import {
   Users,
   BookOpen,
-  Award,
-  TrendingUp,
   Calendar,
-  MessageSquare,
   ShoppingBag,
   Zap,
   ArrowUpRight,

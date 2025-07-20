@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Plus,
   Edit,
   Trash2,
   Search,
@@ -10,7 +9,6 @@ import {
   Package,
   Truck,
   Eye,
-  Calendar,
   DollarSign,
   X,
   CheckCircle,

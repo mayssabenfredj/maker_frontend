@@ -10,16 +10,15 @@ import PublicLayout from "./components/Layout/PublicLayout";
 import AdminLayout from "./components/Layout/AdminLayout";
 import Home from "./features/public/home/Home";
 
-import FormationDetail from "./pages/FormationDetail";
+import FormationDetail from "./features/public/FormationDetail";
 
-import Contact from "./pages/Contact";
-import Login from "./pages/admin/Login";
-import Dashboard from "./pages/admin/Dashboard";
-import FormationsManagement from "./pages/admin/FormationsManagement";
-import WorkshopsManagement from "./pages/admin/WorkshopsManagement";
+import Contact from "./features/public/Contact";
+import Login from "./features/admin/Login";
+import Dashboard from "./features/admin/Dashboard";
+
 import ProductsManagement from "./features/admin/products/pages/ProductsManagement";
-import EventsManagement from "./pages/admin/EventsManagement";
-import UsersManagement from "./pages/admin/UsersManagement";
+
+import UsersManagement from "./features/admin/UsersManagement";
 import CategoriesManagement from "./features/admin/categories/pages/CategoriesManagement";
 import { ProductDetail } from "./features/admin/products";
 import {
@@ -27,7 +26,7 @@ import {
   BootcampsManagement,
 } from "./features/admin/bootcamps";
 import ServicesManagement from "./features/admin/services/pages/ServicesManagement";
-import Academy from "./pages/academy";
+import Academy from "./features/public/academy";
 import ServiceDetail from "./features/admin/services/pages/ServiceDetail";
 import PartnersManagement from "./features/admin/partners/PartnersManagement";
 import ReviewsManagement from "./features/admin/reviews/ReviewsManagement";
@@ -40,8 +39,8 @@ import ProjectsManagement from "./features/admin/projects/ProjectsPage";
 import Blogs from "./features/public/blogs/Blogs";
 import BlogDetailPage from "./features/public/blogs/BlogDetailPage";
 import ShopProductDetailPage from "./features/public/shop/ShopProductDetailPage";
-import OrdersManagement from "./pages/admin/OrdersManagement";
-import ParticipationPage from "./pages/ParticpatationPage";
+import OrdersManagement from "./features/admin/OrdersManagement";
+import ParticipationPage from "./features/public/ParticpatationPage";
 
 // Mock data initialization
 const initializeMockData = () => {
@@ -230,8 +229,7 @@ function App() {
             }
           >
             <Route index element={<Dashboard />} />
-            <Route path="formations" element={<FormationsManagement />} />
-            <Route path="workshops" element={<WorkshopsManagement />} />
+            
             <Route path="bootcamps" element={<BootcampsManagement />} />
             <Route path="bootcamps/:id" element={<BootcampDetail />} />
             <Route path="services" element={<ServicesManagement />} />
@@ -247,7 +245,6 @@ function App() {
             <Route path="products/:id" element={<ProductDetail />} />
             <Route path="reviews" element={<ReviewsManagement />} />
 
-            <Route path="events" element={<EventsManagement />} />
             <Route path="categories" element={<CategoriesManagement />} />
             <Route path="users" element={<UsersManagement />} />
             <Route path="orders" element={<OrdersManagement />} />

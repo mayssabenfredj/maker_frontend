@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Users, Calendar } from 'lucide-react';
-import { useStore } from '../stores/useStore';
-import { translations } from '../data/translations';
-import AnimatedSection from '../components/UI/AnimatedSection';
-import GradientBackground from '../components/UI/GradientBackground';
+import { useStore } from '../../stores/useStore';
+import { translations } from '../../data/translations';
+import AnimatedSection from '../../components/UI/AnimatedSection';
+import GradientBackground from '../../components/UI/GradientBackground';
 
 const Contact: React.FC = () => {
   const { theme, language } = useStore();

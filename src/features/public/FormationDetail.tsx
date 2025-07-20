@@ -5,10 +5,10 @@ import {
   ArrowLeft,
   Clock,
   Users,
-  Star,
+
   Award,
   CheckCircle,
-  Play,
+ 
   Calendar,
   MapPin,
   User,
@@ -16,8 +16,8 @@ import {
   Target,
   BookOpen,
 } from "lucide-react";
-import { useStore } from "../stores/useStore";
-import AnimatedSection from "../components/UI/AnimatedSection";
+import { useStore } from "../../stores/useStore";
+import AnimatedSection from "../../components/UI/AnimatedSection";
 import axios from "axios";
 
 const FormationDetail: React.FC = () => {

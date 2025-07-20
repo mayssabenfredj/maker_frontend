@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  Plus,
-  UserPlus,
+
   Search,
   Mail,
   MapPin,
@@ -10,8 +9,7 @@ import {
   X,
   BookOpen,
   Users,
-  Target,
-  CheckCircle,
+  
 } from "lucide-react";
 import { useStore } from "../../stores/useStore";
 import AnimatedSection from "../../components/UI/AnimatedSection";

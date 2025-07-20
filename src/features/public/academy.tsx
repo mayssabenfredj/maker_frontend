@@ -10,9 +10,9 @@ import {
   MapPin,
   Award,
 } from "lucide-react";
-import { useStore } from "../stores/useStore";
-import { translations } from "../data/translations";
-import AnimatedSection from "../components/UI/AnimatedSection";
+import { useStore } from "../../stores/useStore";
+import { translations } from "../../data/translations";
+import AnimatedSection from "../../components/UI/AnimatedSection";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 

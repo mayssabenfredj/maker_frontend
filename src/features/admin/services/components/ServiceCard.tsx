@@ -25,7 +25,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       exit={{ opacity: 0, y: -20 }}
       className={`rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl ${
         theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-      } border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} min-h-[420px] flex flex-col`}
+      } border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} min-h-[420px] h-full flex flex-col`}
     >
       {/* Image du service */}
       <div className="relative h-full overflow-hidden">

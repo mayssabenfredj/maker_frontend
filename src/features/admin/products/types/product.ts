@@ -1,11 +1,4 @@
-export interface CommandeProduct {
-  _id: string;
-  fullname: string;
-  email: string;
-  phone: string;
-  adresseLivraison?: string;
-  message?: string;
-}
+
 
 export interface Event {
   _id: string;
@@ -25,7 +18,6 @@ export interface Product {
   video?: string; // Chemin vers le fichier vidéo
   createdAt?: string;
   updatedAt?: string;
-  commandes?: CommandeProduct[];
   events?: (Event | string)[];
 }
 

@@ -349,7 +349,7 @@ const ServicesManagement: React.FC = () => {
             </div>
           </AnimatedSection>
         ) : services.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             {services.map((service, index) => (
               <AnimatedSection key={service._id} delay={index * 0.1}>
                 <div className="relative">

@@ -13,7 +13,6 @@ import { Product } from "../types/product";
 import { productService } from "../services/product.service";
 import { getProductImageUrl } from "../../../../shared/utils/imageUtils";
 import { ConfirmDialog } from "../../../../shared";
-import * as XLSX from "xlsx";
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,7 +22,7 @@ const ProductDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [, setIsVideoPlaying] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
@@ -84,21 +83,7 @@ const ProductDetail: React.FC = () => {
     }
   };
 
-  const exportCommandesToExcel = () => {
-    if (!product?.commandes || product.commandes.length === 0) return;
-    const ws = XLSX.utils.json_to_sheet(
-      product.commandes.map((cmd) => ({
-        Nom: cmd.fullname,
-        Email: cmd.email,
-        Téléphone: cmd.phone,
-        "Adresse livraison": cmd.adresseLivraison || "",
-        Message: cmd.message || "",
-      }))
-    );
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Commandes");
-    XLSX.writeFile(wb, `commandes_${product.name}.xlsx`);
-  };
+ 
 
   if (loading) {
     return (
@@ -422,143 +407,7 @@ const ProductDetail: React.FC = () => {
               </div>
             )}
 
-            {/* Section Commandes */}
-            {product.commandes && product.commandes.length > 0 && (
-              <div className="mt-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h3
-                    className={`text-lg font-semibold ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    Demandes (Commandes)
-                  </h3>
-                  <button
-                    onClick={exportCommandesToExcel}
-                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2"
-                  >
-                    <span>📊</span>
-                    <span>Exporter en Excel</span>
-                  </button>
-                </div>
-                <div
-                  className={`overflow-x-auto rounded-lg border ${
-                    theme === "dark" ? "border-gray-600" : "border-gray-200"
-                  }`}
-                >
-                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead
-                      className={`${
-                        theme === "dark" ? "bg-gray-700" : "bg-gray-50"
-                      }`}
-                    >
-                      <tr>
-                        <th
-                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-500"
-                          }`}
-                        >
-                          Nom
-                        </th>
-                        <th
-                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-500"
-                          }`}
-                        >
-                          Email
-                        </th>
-                        <th
-                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-500"
-                          }`}
-                        >
-                          Téléphone
-                        </th>
-                        <th
-                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-500"
-                          }`}
-                        >
-                          Adresse livraison
-                        </th>
-                        <th
-                          className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-500"
-                          }`}
-                        >
-                          Message
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody
-                      className={`divide-y divide-gray-200 dark:divide-gray-700 ${
-                        theme === "dark" ? "bg-gray-800" : "bg-white"
-                      }`}
-                    >
-                      {product.commandes.map((cmd) => (
-                        <tr
-                          key={cmd._id}
-                          className={`hover:${
-                            theme === "dark" ? "bg-gray-700" : "bg-gray-50"
-                          }`}
-                        >
-                          <td
-                            className={`px-4 py-3 text-sm ${
-                              theme === "dark" ? "text-white" : "text-gray-900"
-                            }`}
-                          >
-                            {cmd.fullname}
-                          </td>
-                          <td
-                            className={`px-4 py-3 text-sm ${
-                              theme === "dark"
-                                ? "text-gray-300"
-                                : "text-gray-600"
-                            }`}
-                          >
-                            {cmd.email}
-                          </td>
-                          <td
-                            className={`px-4 py-3 text-sm ${
-                              theme === "dark"
-                                ? "text-gray-300"
-                                : "text-gray-600"
-                            }`}
-                          >
-                            {cmd.phone}
-                          </td>
-                          <td
-                            className={`px-4 py-3 text-sm ${
-                              theme === "dark"
-                                ? "text-gray-300"
-                                : "text-gray-600"
-                            }`}
-                          >
-                            {cmd.adresseLivraison || "-"}
-                          </td>
-                          <td
-                            className={`px-4 py-3 text-sm ${
-                              theme === "dark"
-                                ? "text-gray-300"
-                                : "text-gray-600"
-                            }`}
-                          >
-                            {cmd.message || "-"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div
-                  className={`mt-4 text-sm ${
-                    theme === "dark" ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
-                  Total: {product.commandes.length} demande(s)
-                </div>
-              </div>
-            )}
+            
           </div>
         </div>
       </div>
