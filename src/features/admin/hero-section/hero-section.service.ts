@@ -9,12 +9,15 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3020";
 export class HeroSectionService {
   static async getAll(): Promise<HeroSection[]> {
     try {
-      const res = await fetch(`${API_BASE_URL}/hero-section`);
+      const res = await fetch(`${API_BASE_URL}/hero-section`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
+      });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      // Vérifier que data.data existe et est un array
       return Array.isArray(data.data) ? data.data : [];
     } catch (error) {
       console.error("Erreur lors de la récupération des sections:", error);
@@ -24,7 +27,11 @@ export class HeroSectionService {
 
   static async getById(id: string): Promise<HeroSection> {
     try {
-      const res = await fetch(`${API_BASE_URL}/hero-section/${id}`);
+      const res = await fetch(`${API_BASE_URL}/hero-section/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
+      });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
@@ -56,6 +63,9 @@ export class HeroSectionService {
       const res = await fetch(`${API_BASE_URL}/hero-section`, {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
       });
 
       if (!res.ok) {
@@ -91,6 +101,9 @@ export class HeroSectionService {
       const res = await fetch(`${API_BASE_URL}/hero-section/${id}`, {
         method: "PATCH",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
       });
 
       if (!res.ok) {
@@ -109,6 +122,9 @@ export class HeroSectionService {
     try {
       const res = await fetch(`${API_BASE_URL}/hero-section/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
       });
 
       if (!res.ok) {

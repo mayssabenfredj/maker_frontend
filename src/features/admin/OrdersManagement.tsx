@@ -66,7 +66,12 @@ const OrdersManagement: React.FC = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        import.meta.env?.VITE_API_URL + "/orders"
+        import.meta.env?.VITE_API_URL + "/orders",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+          },
+        }
       );
       setOrders(response.data?.data || []);
     } catch (error) {

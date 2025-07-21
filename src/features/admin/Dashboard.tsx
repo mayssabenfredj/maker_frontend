@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Users,
@@ -9,141 +9,104 @@ import {
   ArrowUpRight,
   DollarSign,
   Target,
-  Activity,
   Clock,
 } from "lucide-react";
 import { useStore } from "../../stores/useStore";
 import AnimatedSection from "../../components/UI/AnimatedSection";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
   const { theme } = useStore();
+  const navigate = useNavigate();
+
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
+  const [summary, setSummary] = useState<any>(null);
+  const [loadingSummary, setLoadingSummary] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(import.meta.env.VITE_API_URL + "/events")
+      .then((res) => {
+        setUpcomingEvents(res.data.data || []);
+      })
+      .catch(() => setUpcomingEvents([]));
+  }, []);
+
+  useEffect(() => {
+    setLoadingSummary(true);
+    axios
+      .get(import.meta.env.VITE_API_URL + "/static/summary")
+      .then((res) => {
+        setSummary(res.data);
+      })
+      .catch(() => setSummary(null))
+      .finally(() => setLoadingSummary(false));
+  }, []);
 
   const stats = [
     {
-      title: "Revenus Totaux",
-      value: "DT45,678",
-      change: "+23%",
+      title: "Produits",
+      value: loadingSummary ? "..." : summary?.totalProducts ?? 0,
+      change: "",
+      changeType: "positive",
+      icon: ShoppingBag,
+      color: "bg-blue-500",
+    },
+    {
+      title: "Événements",
+      value: loadingSummary ? "..." : summary?.totalEvents ?? 0,
+      change: "",
+      changeType: "positive",
+      icon: Calendar,
+      color: "bg-orange-600",
+    },
+    {
+      title: "Commandes",
+      value: loadingSummary ? "..." : summary?.totalOrders ?? 0,
+      change: "",
       changeType: "positive",
       icon: DollarSign,
       color: "bg-orange-500",
     },
     {
-      title: "Étudiants Actifs",
-      value: "1,234",
-      change: "+12%",
+      title: "Participants",
+      value: loadingSummary ? "..." : summary?.totalParticipants ?? 0,
+      change: "",
       changeType: "positive",
       icon: Users,
       color: "bg-blue-600",
-    },
-    {
-      title: "Formations",
-      value: "24",
-      change: "+5%",
-      changeType: "positive",
-      icon: BookOpen,
-      color: "bg-orange-600",
-    },
-    {
-      title: "Taux de Réussite",
-      value: "94%",
-      change: "+2%",
-      changeType: "positive",
-      icon: Target,
-      color: "bg-blue-500",
     },
   ];
 
   const quickActions = [
     {
-      title: "Nouvelle Formation",
-      description: "Créer une nouvelle formation",
+      title: "Nouveau Service",
+      description: "Créer une nouveau service",
       icon: BookOpen,
       color: "bg-blue-600",
-      href: "/admin/formations/new",
+      href: "/admin/services",
     },
     {
-      title: "Nouveau Bootcamp",
-      description: "Planifier un bootcamp",
+      title: "Nouveau Blog",
+      description: "Ajouter un blog",
       icon: Zap,
       color: "bg-orange-500",
-      href: "/admin/bootcamps/new",
+      href: "/admin/blogs",
     },
     {
       title: "Ajouter Produit",
       description: "Ajouter un nouveau produit",
       icon: ShoppingBag,
       color: "bg-blue-500",
-      href: "/admin/products/new",
+      href: "/admin/products",
     },
     {
       title: "Nouvel Événement",
       description: "Créer un événement",
       icon: Calendar,
       color: "bg-orange-600",
-      href: "/admin/events/new",
-    },
-  ];
-
-  const recentActivities = [
-    {
-      type: "formation",
-      title: "Nouvelle inscription",
-      description: 'Ahmed Ben Ali s\'est inscrit à "IoT pour Débutants"',
-      time: "2 min",
-      avatar:
-        "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=50",
-    },
-    {
-      type: "order",
-      title: "Nouvelle commande",
-      description: "Commande #1234 - Kit Arduino Starter",
-      time: "15 min",
-      avatar: null,
-    },
-    {
-      type: "bootcamp",
-      title: "Bootcamp terminé",
-      description: "Bootcamp IA - 15 étudiants certifiés",
-      time: "1h",
-      avatar: null,
-    },
-    {
-      type: "partner",
-      title: "Nouveau partenaire",
-      description: "TechCorp a rejoint le réseau",
-      time: "2h",
-      avatar: null,
-    },
-  ];
-
-  const upcomingEvents = [
-    {
-      title: "Début Bootcamp IA",
-      date: "15 Mars",
-      time: "09:00",
-      type: "bootcamp",
-      participants: 20,
-    },
-    {
-      title: "Workshop Robotique",
-      date: "18 Mars",
-      time: "14:00",
-      type: "workshop",
-      participants: 15,
-    },
-    {
-      title: "Réunion Partenaires",
-      date: "20 Mars",
-      time: "10:00",
-      type: "meeting",
-      participants: 8,
-    },
-    {
-      title: "Formation IoT",
-      date: "22 Mars",
-      time: "09:00",
-      type: "formation",
-      participants: 25,
+      href: "/admin/bootcamps",
     },
   ];
 
@@ -200,6 +163,7 @@ const Dashboard: React.FC = () => {
                   <stat.icon className="h-6 w-6 text-white" />
                 </div>
               </div>
+              {/*
               <div className="flex items-center mt-4">
                 <ArrowUpRight
                   className={`h-4 w-4 ${
@@ -225,6 +189,7 @@ const Dashboard: React.FC = () => {
                   vs mois dernier
                 </span>
               </div>
+              */}
             </motion.div>
           </AnimatedSection>
         ))}
@@ -246,6 +211,10 @@ const Dashboard: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={`p-6 rounded-xl ${action.color} text-white cursor-pointer shadow-lg hover:shadow-xl transition-shadow`}
+                onClick={() => navigate(action.href)}
+                tabIndex={0}
+                role="button"
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate(action.href); }}
               >
                 <action.icon className="h-8 w-8 mb-3" />
                 <h3 className="font-semibold mb-1">{action.title}</h3>
@@ -257,80 +226,6 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recent Activities */}
-        <div
-          className={`rounded-2xl p-6 ${
-            theme === "dark" ? "bg-gray-800" : "bg-white"
-          } shadow-lg border border-gray-200 dark:border-gray-700`}
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h2
-              className={`text-xl font-semibold ${
-                theme === "dark" ? "text-white" : "text-gray-900"
-              }`}
-            >
-              Activités Récentes
-            </h2>
-            <Activity
-              className={`h-5 w-5 ${
-                theme === "dark" ? "text-gray-400" : "text-gray-600"
-              }`}
-            />
-          </div>
-          <div className="space-y-4">
-            {recentActivities.map((activity, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-start space-x-3"
-              >
-                {activity.avatar ? (
-                  <img
-                    src={activity.avatar}
-                    alt=""
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div
-                    className={`w-10 h-10 rounded-full ${
-                      index % 2 === 0 ? "bg-orange-500" : "bg-blue-600"
-                    } flex items-center justify-center`}
-                  >
-                    <span className="text-white text-sm font-medium">
-                      {activity.type.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p
-                    className={`text-sm font-medium ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {activity.title}
-                  </p>
-                  <p
-                    className={`text-sm ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}
-                  >
-                    {activity.description}
-                  </p>
-                </div>
-                <span
-                  className={`text-xs ${
-                    theme === "dark" ? "text-gray-500" : "text-gray-400"
-                  }`}
-                >
-                  {activity.time}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
         {/* Upcoming Events */}
         <div
           className={`rounded-2xl p-6 ${
@@ -352,9 +247,9 @@ const Dashboard: React.FC = () => {
             />
           </div>
           <div className="space-y-4">
-            {upcomingEvents.map((event, index) => (
+            {upcomingEvents.slice(0, 4).map((event, index) => (
               <motion.div
-                key={index}
+                key={event._id || index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -368,7 +263,7 @@ const Dashboard: React.FC = () => {
                       theme === "dark" ? "text-white" : "text-gray-900"
                     }`}
                   >
-                    {event.title}
+                    {event.name || event.title}
                   </h3>
                   <span
                     className={`text-xs px-2 py-1 rounded-full ${
@@ -388,33 +283,25 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-4 w-4 text-orange-500" />
-                      <span
-                        className={`${
-                          theme === "dark" ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        {event.date}
+                      <span className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                        {event.startDate
+                          ? new Date(event.startDate).toLocaleDateString('fr-FR')
+                          : 'Non précisée'}
                       </span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <Clock className="h-4 w-4 text-blue-600" />
-                      <span
-                        className={`${
-                          theme === "dark" ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        {event.time}
+                      <span className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                        {event.startDate
+                          ? new Date(event.startDate).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                          : 'Non précisée'}
                       </span>
                     </div>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Users className="h-4 w-4 text-green-500" />
-                    <span
-                      className={`${
-                        theme === "dark" ? "text-gray-400" : "text-gray-600"
-                      }`}
-                    >
-                      {event.participants}
+                    <span className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                      {event.participants?.length || event.participants || 0}
                     </span>
                   </div>
                 </div>
