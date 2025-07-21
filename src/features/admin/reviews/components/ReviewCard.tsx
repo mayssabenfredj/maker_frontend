@@ -12,7 +12,11 @@ interface ReviewCardProps {
 
 const ReviewCard: React.FC<ReviewCardProps> = ({ review, onEdit, onDelete, theme }) => {
   return (
-    <div className={`p-6 rounded-2xl shadow-lg flex flex-col items-center ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}> 
+    <div
+      className={`p-6 rounded-2xl shadow-lg flex flex-col items-center h-full min-h-[420px] md:min-h-[440px] md:h-[440px] ${
+        theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+      }`}
+    >
       <img
         src={getImageUrl(review.image) || '/placeholder-user.png'}
         alt={review.fullName}
@@ -27,7 +31,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, onEdit, onDelete, theme
           <Star key={i} className={`h-4 w-4 ${i < review.stars ? 'text-yellow-400' : 'text-gray-300'}`} fill={i < review.stars ? '#facc15' : 'none'} />
         ))}
       </div>
-      <p className={`text-sm italic text-center mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{review.message}</p>
+      <p className={`text-sm italic text-center mb-4 flex-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{review.message}</p>
       <div className="flex space-x-2 mt-auto">
         <button
           onClick={() => onEdit(review)}

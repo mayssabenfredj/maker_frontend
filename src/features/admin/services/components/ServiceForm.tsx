@@ -5,6 +5,7 @@ import { ServiceService } from '../services/service.service';
 import RichTextEditor from '../../../../shared/components/RichTextEditor';
 import MediaUpload from '../../../../shared/components/MediaUpload';
 import { Product } from '../../products';
+import Select from "react-select";
 
 const ServiceForm: React.FC<ServiceFormProps> = ({
   theme,
@@ -109,23 +110,7 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
             />
           </div>
 
-          <div>
-            <label className={`block text-sm font-medium mb-2 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
-              URL de l'image
-            </label>
-            <input
-              type="url"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 border-gray-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-900'
-              } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-            />
-          </div>
+         
         </div>
 
         <div>
@@ -134,21 +119,52 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           }`}>
             Catégories *
           </label>
-          <select
-            multiple
-            required
-            value={formData.categories}
-            onChange={handleCategoryChange}
-            className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-              theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-white border-gray-300 text-gray-900'
-            } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-          >
-            {categories.map(cat => (
-              <option key={cat._id} value={cat._id}>{cat.name}</option>
-            ))}
-          </select>
+          <Select
+            isMulti
+            name="categories"
+            options={categories.map((cat) => ({ value: cat._id, label: cat.name }))}
+            value={categories
+              .filter((cat) => formData.categories?.includes(cat._id))
+              .map((cat) => ({ value: cat._id, label: cat.name }))}
+            onChange={(selected) => {
+              setFormData({
+                ...formData,
+                categories: selected.map((option) => option.value),
+              });
+            }}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            placeholder="Sélectionner des catégories..."
+            noOptionsMessage={() => "Aucune catégorie disponible"}
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+                borderColor: theme === "dark" ? "#4B5563" : "#D1D5DB",
+                color: theme === "dark" ? "white" : "black",
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+              }),
+              option: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+                color: theme === "dark" ? "white" : "black",
+                "&:hover": {
+                  backgroundColor: theme === "dark" ? "#4B5563" : "#F3F4F6",
+                },
+              }),
+              multiValue: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#1F2937" : "#E5E7EB",
+              }),
+              multiValueLabel: (base) => ({
+                ...base,
+                color: theme === "dark" ? "white" : "black",
+              }),
+            }}
+          />
           <p className={`text-xs mt-1 ${
             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
           }`}>
@@ -163,20 +179,52 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           }`}>
             Événements liés (optionnel)
           </label>
-          <select
-            multiple
-            value={formData.events}
-            onChange={handleEventsChange}
-            className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-              theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-white border-gray-300 text-gray-900'
-            } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-          >
-            {events.map(event => (
-              <option key={event._id} value={event._id}>{event.name}</option>
-            ))}
-          </select>
+          <Select
+            isMulti
+            name="events"
+            options={events.map((ev) => ({ value: ev._id, label: ev.name }))}
+            value={events
+              .filter((ev) => formData.events?.includes(ev._id))
+              .map((ev) => ({ value: ev._id, label: ev.name }))}
+            onChange={(selected) => {
+              setFormData({
+                ...formData,
+                events: selected.map((option) => option.value),
+              });
+            }}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            placeholder="Sélectionner des événements..."
+            noOptionsMessage={() => "Aucun événement disponible"}
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+                borderColor: theme === "dark" ? "#4B5563" : "#D1D5DB",
+                color: theme === "dark" ? "white" : "black",
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+              }),
+              option: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+                color: theme === "dark" ? "white" : "black",
+                "&:hover": {
+                  backgroundColor: theme === "dark" ? "#4B5563" : "#F3F4F6",
+                },
+              }),
+              multiValue: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#1F2937" : "#E5E7EB",
+              }),
+              multiValueLabel: (base) => ({
+                ...base,
+                color: theme === "dark" ? "white" : "black",
+              }),
+            }}
+          />
         </div>
 
         {/* SELECT PROJECTS */}
@@ -186,20 +234,52 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           }`}>
             Projets liés (optionnel)
           </label>
-          <select
-            multiple
-            value={formData.projects}
-            onChange={handleProjectsChange}
-            className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-              theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-white border-gray-300 text-gray-900'
-            } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-          >
-            {projects.map(project => (
-              <option key={project._id} value={project._id}>{project.name}</option>
-            ))}
-          </select>
+          <Select
+            isMulti
+            name="projects"
+            options={projects.map((proj) => ({ value: proj._id, label: proj.name }))}
+            value={projects
+              .filter((proj) => formData.projects?.includes(proj._id))
+              .map((proj) => ({ value: proj._id, label: proj.name }))}
+            onChange={(selected) => {
+              setFormData({
+                ...formData,
+                projects: selected.map((option) => option.value),
+              });
+            }}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            placeholder="Sélectionner des projets..."
+            noOptionsMessage={() => "Aucun projet disponible"}
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+                borderColor: theme === "dark" ? "#4B5563" : "#D1D5DB",
+                color: theme === "dark" ? "white" : "black",
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+              }),
+              option: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+                color: theme === "dark" ? "white" : "black",
+                "&:hover": {
+                  backgroundColor: theme === "dark" ? "#4B5563" : "#F3F4F6",
+                },
+              }),
+              multiValue: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#1F2937" : "#E5E7EB",
+              }),
+              multiValueLabel: (base) => ({
+                ...base,
+                color: theme === "dark" ? "white" : "black",
+              }),
+            }}
+          />
         </div>
 
         {/* SELECT PRODUCTS */}
@@ -209,20 +289,52 @@ const ServiceForm: React.FC<ServiceFormProps> = ({
           }`}>
             Produits liés (optionnel)
           </label>
-          <select
-            multiple
-            value={formData.products}
-            onChange={handleProductsChange}
-            className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-              theme === 'dark'
-                ? 'bg-gray-700 border-gray-600 text-white'
-                : 'bg-white border-gray-300 text-gray-900'
-            } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-          >
-            {products.map(product => (
-              <option key={product._id} value={product._id}>{product.name}</option>
-            ))}
-          </select>
+          <Select
+            isMulti
+            name="products"
+            options={products.map((prod) => ({ value: prod._id, label: prod.name }))}
+            value={products
+              .filter((prod) => formData.products?.includes(prod._id))
+              .map((prod) => ({ value: prod._id, label: prod.name }))}
+            onChange={(selected) => {
+              setFormData({
+                ...formData,
+                products: selected.map((option) => option.value),
+              });
+            }}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            placeholder="Sélectionner des produits..."
+            noOptionsMessage={() => "Aucun produit disponible"}
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+                borderColor: theme === "dark" ? "#4B5563" : "#D1D5DB",
+                color: theme === "dark" ? "white" : "black",
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+              }),
+              option: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#374151" : "white",
+                color: theme === "dark" ? "white" : "black",
+                "&:hover": {
+                  backgroundColor: theme === "dark" ? "#4B5563" : "#F3F4F6",
+                },
+              }),
+              multiValue: (base) => ({
+                ...base,
+                backgroundColor: theme === "dark" ? "#1F2937" : "#E5E7EB",
+              }),
+              multiValueLabel: (base) => ({
+                ...base,
+                color: theme === "dark" ? "white" : "black",
+              }),
+            }}
+          />
         </div>
 
         <div>
