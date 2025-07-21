@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-
   Search,
   Mail,
   MapPin,
@@ -9,7 +8,6 @@ import {
   X,
   BookOpen,
   Users,
-  
 } from "lucide-react";
 import { useStore } from "../../stores/useStore";
 import AnimatedSection from "../../components/UI/AnimatedSection";
@@ -649,6 +647,20 @@ const UsersManagement: React.FC = () => {
                           }`}
                         >
                           {selectedDetails.participant.organizationName}
+                        </span>
+                      </div>
+                    )}
+                    {selectedDetails?.participant?.phone && (
+                      <div className="flex items-start">
+                        <span className="font-medium w-32 text-sm">
+                          Téléphone:
+                        </span>
+                        <span
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {selectedDetails?.participant?.phone}
                         </span>
                       </div>
                     )}

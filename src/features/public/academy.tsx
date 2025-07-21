@@ -29,6 +29,7 @@ const Academy: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     const getCategories = async () => {
       try {
         let res = await axios.get(

@@ -6,6 +6,7 @@ import ModuleEditor from "./ModuleEditor";
 import Select from "react-select";
 import InstructorEditor from "./InstructorEditor";
 import axios from "axios";
+import RichTextEditor from "../../../../shared/components/RichTextEditor";
 
 interface BootcampFieldsProps {
   formData: any;
@@ -23,7 +24,7 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
   const handleArrayChange = (field: keyof CreateBootcampDto, value: string) => {
     setFormData({
       ...formData,
-      [field]: value.split(",").map((item) => item.trim()),
+      [field]: value.split(",").map((item) => item.replace(" ", "")),
     });
   };
   const [showPreview, setShowPreview] = useState(false);
@@ -153,7 +154,12 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
         </label>
         <input
           type="date"
-          value={formData.startDate?.toString().split("T")[0] || ""}
+          min={new Date().toISOString().split("T")[0]}
+          value={
+            formData.startDate
+              ? formData.startDate.toISOString().split("T")[0]
+              : ""
+          }
           onChange={(e) =>
             setFormData({ ...formData, startDate: new Date(e.target.value) })
           }
@@ -516,6 +522,21 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
           onChange={(updated) =>
             setFormData({ ...formData, instructor: updated })
           }
+        />
+      </div>
+      <div className="md:col-span-2">
+        <label
+          className={`block text-sm font-medium mb-2 ${
+            theme === "dark" ? "text-gray-300" : "text-gray-700"
+          }`}
+        >
+          Description
+        </label>
+        <RichTextEditor
+          value={formData.description || ""}
+          onChange={(value) => setFormData({ ...formData, description: value })}
+          placeholder="Décrivez votre événement..."
+          className="w-full"
         />
       </div>
     </div>

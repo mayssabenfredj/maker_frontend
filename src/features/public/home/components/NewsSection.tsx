@@ -1,11 +1,11 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, ArrowRight, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import AnimatedSection from '../../../../components/UI/AnimatedSection';
-import { useStore } from '../../../../stores/useStore';
-import { Blog } from '../../../admin/blogs/blog';
-import { getImageUrl } from '../../../../shared/utils/imageUtils';
+import React from "react";
+import { motion } from "framer-motion";
+import { Calendar, ArrowRight, User } from "lucide-react";
+import { Link } from "react-router-dom";
+import AnimatedSection from "../../../../components/UI/AnimatedSection";
+import { useStore } from "../../../../stores/useStore";
+import { Blog } from "../../../admin/blogs/blog";
+import { getImageUrl } from "../../../../shared/utils/imageUtils";
 
 interface NewsSectionProps {
   blogs: Blog[];
@@ -16,30 +16,36 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'Partenariat':
-        return 'bg-blue-500';
-      case 'Formation':
-        return 'bg-orange-500';
-      case 'Actualité':
-        return 'bg-green-500';
+      case "Partenariat":
+        return "bg-blue-500";
+      case "Formation":
+        return "bg-orange-500";
+      case "Actualité":
+        return "bg-green-500";
       default:
-        return 'bg-gray-500';
+        return "bg-gray-500";
     }
   };
 
   return (
-    <section className={`py-20 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+    <section
+      className={`py-20 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
+    >
       <div className="container mx-auto px-4">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              Actualités & Événements
+            <h2
+              className={`text-3xl md:text-4xl font-bold mb-4 ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
+            >
+              Actualités
             </h2>
-            <p className={`text-xl max-w-2xl mx-auto ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}>
+            <p
+              className={`text-xl max-w-2xl mx-auto ${
+                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
               Restez informé de nos dernières nouvelles et événements
             </p>
           </div>
@@ -51,7 +57,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
               <motion.article
                 whileHover={{ y: -10 }}
                 className={`rounded-2xl shadow-lg overflow-hidden ${
-                  theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+                  theme === "dark" ? "bg-gray-800" : "bg-white"
                 } group`}
               >
                 <div className="relative">
@@ -61,36 +67,50 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getCategoryColor('Actualité')}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getCategoryColor(
+                        "Actualité"
+                      )}`}
+                    >
                       Actualité
                     </span>
                   </div>
                 </div>
                 <div className="p-6">
-                  <h3 className={`text-xl font-bold mb-3 line-clamp-2 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
+                  <h3
+                    className={`text-xl font-bold mb-3 line-clamp-2 ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     {blog.title}
                   </h3>
-                  <p className={`text-sm mb-4 line-clamp-3 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  }`}>
-                    {blog.description?.slice(0, 120) || ''}
+                  <p
+                    className={`text-sm mb-4 line-clamp-3 ${
+                      theme === "dark" ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    {blog.description?.slice(0, 120) || ""}
                   </p>
                   <div className="flex items-center justify-between text-sm mb-4">
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-orange-500" />
-                      <span className={`$${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString('fr-FR') : ''}
+                      <span
+                        className={`$${
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        {blog.createdAt
+                          ? new Date(blog.createdAt).toLocaleDateString("fr-FR")
+                          : ""}
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4 text-blue-500" />
-                      <span className={`$${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
+                      <span
+                        className={`$${
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         Maker Skills
                       </span>
                     </div>

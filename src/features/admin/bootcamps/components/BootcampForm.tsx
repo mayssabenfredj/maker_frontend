@@ -146,23 +146,6 @@ const EventForm: React.FC<BaseFormProps> = ({
           />
 
           {/* Description (commune) */}
-          <div>
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                theme === "dark" ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              Description
-            </label>
-            <RichTextEditor
-              value={formData.description || ""}
-              onChange={(value) =>
-                handleCommonFieldChange("description", value)
-              }
-              placeholder="Décrivez votre événement..."
-              className="w-full"
-            />
-          </div>
 
           {/* Media Upload */}
           <MediaUpload

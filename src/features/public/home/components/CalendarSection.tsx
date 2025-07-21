@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -11,96 +11,41 @@ import {
 } from "lucide-react";
 import { useStore } from "../../../../stores/useStore";
 import AnimatedSection from "../../../../components/UI/AnimatedSection";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CalendarSection: React.FC = () => {
   const { theme } = useStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const events = [
-    {
-      id: 1,
-      title: "Formation IoT Débutant",
-      type: "formation",
-      date: "2024-04-15",
-      time: "09:00",
-      duration: "8 semaines",
-      location: "Campus Maker Skills",
-      participants: 25,
-      image:
-        "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=300",
-      price: 299,
-    },
-    {
-      id: 2,
-      title: "Bootcamp IA Intensive",
-      type: "bootcamp",
-      date: "2024-04-18",
-      time: "09:00",
-      duration: "16 semaines",
-      location: "Campus + En ligne",
-      participants: 20,
-      image:
-        "https://images.pexels.com/photos/8386422/pexels-photo-8386422.jpeg?auto=compress&cs=tinysrgb&w=300",
-      price: 4999,
-    },
-    {
-      id: 3,
-      title: "Workshop Arduino",
-      type: "workshop",
-      date: "2024-04-20",
-      time: "14:00",
-      duration: "3 heures",
-      location: "Lab Électronique",
-      participants: 15,
-      image:
-        "https://images.pexels.com/photos/159298/gears-cogs-machine-machinery-159298.jpeg?auto=compress&cs=tinysrgb&w=300",
-      price: 45,
-    },
-    {
-      id: 4,
-      title: "Conférence Robotique",
-      type: "event",
-      date: "2024-04-25",
-      time: "16:00",
-      duration: "2 heures",
-      location: "Auditorium",
-      participants: 100,
-      image:
-        "https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=300",
-      price: 0,
-    },
-    {
-      id: 5,
-      title: "Formation Robotique Avancée",
-      type: "formation",
-      date: "2024-04-28",
-      time: "10:00",
-      duration: "12 semaines",
-      location: "Lab Robotique",
-      participants: 18,
-      image:
-        "https://images.pexels.com/photos/2599244/pexels-photo-2599244.jpeg?auto=compress&cs=tinysrgb&w=300",
-      price: 599,
-    },
-    {
-      id: 6,
-      title: "Workshop Impression 3D",
-      type: "workshop",
-      date: "2024-05-02",
-      time: "13:00",
-      duration: "4 heures",
-      location: "FabLab",
-      participants: 12,
-      image:
-        "https://images.pexels.com/photos/3862132/pexels-photo-3862132.jpeg?auto=compress&cs=tinysrgb&w=300",
-      price: 60,
-    },
-  ];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/events`
+        );
+        const data = response.data.data || response.data;
+        setEvents(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching events:", err);
+        setError("Failed to load events. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
 
   const filters = [
     { id: "all", label: "Tous", color: "bg-gray-500" },
-    { id: "formation", label: "Formations", color: "bg-blue-600" },
+    { id: "course", label: "Formations", color: "bg-blue-600" },
     { id: "bootcamp", label: "Bootcamps", color: "bg-orange-500" },
     { id: "workshop", label: "Workshops", color: "bg-blue-500" },
     { id: "event", label: "Événements", color: "bg-orange-600" },
@@ -108,7 +53,7 @@ const CalendarSection: React.FC = () => {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "formation":
+      case "course":
         return "bg-blue-600";
       case "bootcamp":
         return "bg-orange-500";
@@ -123,7 +68,7 @@ const CalendarSection: React.FC = () => {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case "formation":
+      case "course":
         return "Formation";
       case "bootcamp":
         return "Bootcamp";
@@ -132,25 +77,67 @@ const CalendarSection: React.FC = () => {
       case "event":
         return "Événement";
       default:
-        return type;
+        return type.charAt(0).toUpperCase() + type.slice(1);
     }
   };
 
-  const filteredEvents =
-    selectedFilter === "all"
-      ? events
-      : events.filter((event) => event.type === selectedFilter);
+  const getLocationLabel = (location: string) => {
+    switch (location) {
+      case "in_person":
+        return "En personne";
+      case "online":
+        return "En ligne";
+      case "hybrid":
+        return "Hybride";
+      default:
+        return location || "Non spécifié";
+    }
+  };
+
+  const filteredEvents = events.filter((event) => {
+    // Apply type filter
+    const matchesType =
+      selectedFilter === "all" || event.type === selectedFilter;
+
+    // Apply month filter
+    if (!event.startDate) {
+      // Only include null startDate events if viewing the current month
+      const now = new Date();
+      return (
+        matchesType &&
+        currentMonth.getMonth() === now.getMonth() &&
+        currentMonth.getFullYear() === now.getFullYear()
+      );
+    }
+
+    const eventDate = new Date(event.startDate);
+    if (isNaN(eventDate.getTime())) {
+      return false; // Exclude invalid dates
+    }
+
+    return (
+      matchesType &&
+      eventDate.getMonth() === currentMonth.getMonth() &&
+      eventDate.getFullYear() === currentMonth.getFullYear()
+    );
+  });
 
   const nextMonth = () => {
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
+    const newMonth = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() + 1,
+      1
     );
+    setCurrentMonth(newMonth);
   };
 
   const prevMonth = () => {
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
+    const newMonth = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() - 1,
+      1
     );
+    setCurrentMonth(newMonth);
   };
 
   return (
@@ -216,7 +203,6 @@ const CalendarSection: React.FC = () => {
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-
             <h3
               className={`text-xl font-bold ${
                 theme === "dark" ? "text-white" : "text-gray-900"
@@ -227,7 +213,6 @@ const CalendarSection: React.FC = () => {
                 year: "numeric",
               })}
             </h3>
-
             <button
               onClick={nextMonth}
               className={`p-2 rounded-lg transition-colors ${
@@ -243,120 +228,190 @@ const CalendarSection: React.FC = () => {
 
         {/* Events Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map((event, index) => (
-            <AnimatedSection key={event.id} delay={index * 0.1}>
-              <motion.div
-                whileHover={{ y: -5, scale: 1.02 }}
-                className={`rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 ${
-                  theme === "dark" ? "bg-gray-800" : "bg-white"
-                } group cursor-pointer`}
+          {loading ? (
+            <AnimatedSection>
+              <div
+                className={`text-center p-6 rounded-2xl ${
+                  theme === "dark" ? "bg-gray-800" : "bg-gray-50"
+                }`}
               >
-                <div className="relative">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
-                        event.type
-                      )}`}
-                    >
-                      {getTypeLabel(event.type)}
-                    </span>
-                  </div>
-                  {event.price === 0 && (
-                    <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Gratuit
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-6">
-                  <h3
-                    className={`text-lg font-bold mb-3 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {event.title}
-                  </h3>
-
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-orange-500" />
+                <p
+                  className={`text-lg ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Chargement des événements...
+                </p>
+              </div>
+            </AnimatedSection>
+          ) : error ? (
+            <AnimatedSection>
+              <div
+                className={`text-center p-6 rounded-2xl ${
+                  theme === "dark" ? "bg-gray-800" : "bg-gray-50"
+                }`}
+              >
+                <p className={`text-lg text-red-500`}>{error}</p>
+              </div>
+            </AnimatedSection>
+          ) : filteredEvents.length > 0 ? (
+            filteredEvents.map((event, index) => (
+              <AnimatedSection key={event._id} delay={index * 0.1}>
+                <motion.div
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  className={`rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 ${
+                    theme === "dark" ? "bg-gray-800" : "bg-white"
+                  } group cursor-pointer`}
+                >
+                  <div className="relative">
+                    <img
+                      src={
+                        event.coverImage?.startsWith("http")
+                          ? event.coverImage
+                          : `${import.meta.env.VITE_API_URL}/${
+                              event.coverImage
+                            }` ||
+                            "https://via.placeholder.com/300x200?text=No+Image"
+                      }
+                      alt={event.name || "Événement"}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-4 left-4">
                       <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
+                          event.type
+                        )}`}
                       >
-                        {new Date(event.date).toLocaleDateString("fr-FR")}
+                        {getTypeLabel(event.type)}
                       </span>
                     </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-4 w-4 text-blue-600" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {event.time} - {event.duration}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4 text-green-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {event.location}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Users className="h-4 w-4 text-purple-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {event.participants} participants max
-                      </span>
-                    </div>
+                    {event.price === 0 && (
+                      <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        Gratuit
+                      </div>
+                    )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div
-                      className={`text-xl font-bold ${
+                  <div className="p-6">
+                    <h3
+                      className={`text-lg font-bold mb-3 ${
                         theme === "dark" ? "text-white" : "text-gray-900"
                       }`}
                     >
-                      {event.price === 0 ? "Gratuit" : `${event.price}DT`}
+                      {event.name || "Événement sans nom"}
+                    </h3>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="h-4 w-4 text-orange-500" />
+                        <span
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {event.startDate
+                            ? new Date(event.startDate).toLocaleDateString(
+                                "fr-FR",
+                                {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                }
+                              )
+                            : "Date non spécifiée"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4 text-blue-600" />
+                        <span
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {event.duration
+                            ? `${event.duration} ${
+                                event.duration.includes("heure")
+                                  ? ""
+                                  : event.duration === "1"
+                                  ? "heure"
+                                  : "heures"
+                              }`
+                            : "Durée non spécifiée"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-4 w-4 text-green-500" />
+                        <span
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {event.address || getLocationLabel(event.location)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-4 w-4 text-purple-500" />
+                        <span
+                          className={`text-sm ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {event.participants?.length || 0} participants
+                        </span>
+                      </div>
                     </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`px-4 py-2 ${getTypeColor(
-                        event.type
-                      )} text-white rounded-lg font-medium hover:opacity-90 transition-opacity`}
-                    >
-                      S'inscrire
-                    </motion.button>
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <div
+                        className={`text-xlISTER font-bold ${
+                          theme === "dark" ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {event.price === 0 ? "Gratuit" : `${event.price}DT`}
+                      </div>
+
+                      <motion.button
+                        onClick={() => navigate(`/formations/${event._id}`)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`px-4 py-2 ${getTypeColor(
+                          event.type
+                        )} text-white rounded-lg font-medium hover:opacity-90 transition-opacity`}
+                      >
+                        S'inscrire
+                      </motion.button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </AnimatedSection>
+            ))
+          ) : (
+            <AnimatedSection>
+              <div
+                className={`text-center p-6 rounded-2xl ${
+                  theme === "dark" ? "bg-gray-800" : "bg-gray-50"
+                }`}
+              >
+                <p
+                  className={`text-lg ${
+                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Aucun événement trouvé pour ce mois
+                </p>
+              </div>
             </AnimatedSection>
-          ))}
+          )}
         </div>
 
         {/* View All Button */}
         <AnimatedSection delay={0.4}>
           <div className="text-center mt-12">
             <motion.button
+              onClick={() => navigate("/academy")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"

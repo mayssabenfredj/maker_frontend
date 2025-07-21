@@ -5,10 +5,8 @@ import {
   ArrowLeft,
   Clock,
   Users,
-
   Award,
   CheckCircle,
- 
   Calendar,
   MapPin,
   User,
@@ -28,6 +26,7 @@ const FormationDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     const getEventDetails = async () => {
       try {
         setLoading(true);
@@ -481,13 +480,10 @@ const FormationDetail: React.FC = () => {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {event.products.map((product, index) => (
-                        <motion.div
+                        <a
                           key={product._id}
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: index * 0.1 }}
-                          className={`p-4 rounded-xl border ${
+                          href={`/shop/${product._id}`}
+                          className={`p-4 rounded-lg border ${
                             theme === "dark"
                               ? "bg-gray-800 border-gray-700"
                               : "bg-white border-gray-200"
@@ -503,37 +499,17 @@ const FormationDetail: React.FC = () => {
                                 className="w-16 h-16 object-cover rounded-lg"
                               />
                             )}
-                            <div>
-                              <h3
-                                className={`font-semibold ${
-                                  theme === "dark"
-                                    ? "text-white"
-                                    : "text-gray-900"
-                                }`}
-                              >
-                                {product.name}
-                              </h3>
-                              <p
-                                className={`text-sm ${
-                                  theme === "dark"
-                                    ? "text-gray-400"
-                                    : "text-gray-600"
-                                }`}
-                              >
-                                {product.description}
-                              </p>
-                              <span
-                                className={`text-sm font-medium ${
-                                  theme === "dark"
-                                    ? "text-orange-400"
-                                    : "text-orange-600"
-                                }`}
-                              >
-                                {product.price}DT
-                              </span>
-                            </div>
+                            <h3
+                              className={`font-semibold ${
+                                theme === "dark"
+                                  ? "text-white"
+                                  : "text-gray-900"
+                              }`}
+                            >
+                              {product.name}
+                            </h3>
                           </div>
-                        </motion.div>
+                        </a>
                       ))}
                     </div>
                   </div>
@@ -544,7 +520,7 @@ const FormationDetail: React.FC = () => {
             {/* Sidebar */}
             <div className="space-y-8">
               {/* Instructor */}
-              {event.instructor && (
+              {event.instructor?.name && (
                 <AnimatedSection>
                   <div
                     className={`p-6 rounded-xl ${
