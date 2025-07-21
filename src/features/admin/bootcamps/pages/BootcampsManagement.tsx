@@ -17,7 +17,7 @@ const BootcampsManagement: React.FC = () => {
   const { theme } = useStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const [bootcamps, setBootcamps] = useState<Bootcamp[]>([]);
+  const [bootcamps, setBootcamps] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -190,7 +190,8 @@ const BootcampsManagement: React.FC = () => {
     }
   };
 
-  const handleEdit = (bootcamp: Bootcamp) => {
+  const handleEdit = (bootcamp: any) => {
+    console.log("bootcamp to edit", bootcamp);
     setEditingBootcamp(bootcamp);
     setFormData({
       name: bootcamp.name,
