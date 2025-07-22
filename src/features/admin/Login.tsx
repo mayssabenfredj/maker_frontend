@@ -47,11 +47,11 @@ const Login: React.FC = () => {
         }`}
       >
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-2 mb-4">
+          <div className="flex items-center justify-center  mb-4">
             <img
-              src="/images/blueLogo.jpg"
+              src="/images/maker.logo.png"
               alt="Maker Skills"
-              className="h-12 w-12 rounded-lg"
+              className="h-16 w-16 rounded-lg"
             />
             <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-blue-600 bg-clip-text text-transparent">
               Maker Skills

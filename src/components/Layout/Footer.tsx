@@ -39,11 +39,11 @@ const Footer: React.FC = () => {
             viewport={{ once: true }}
             className="space-y-4"
           >
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center ">
               <img
-                src="/images/blueLogo.jpg"
+                src="/images/maker.logo.png"
                 alt="Maker Skills"
-                className="h-10 w-10 rounded-lg"
+                className="h-16 w-16 rounded-lg"
               />
               <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-blue-600 bg-clip-text text-transparent">
                 Maker Skills
