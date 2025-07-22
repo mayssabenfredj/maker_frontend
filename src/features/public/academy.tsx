@@ -547,9 +547,7 @@ const Academy: React.FC = () => {
                         }}
                         className="w-full py-2 bg-secondary-500 text-white rounded-lg font-medium hover:bg-secondary-600 transition-colors"
                       >
-                        {item.type === "event"
-                          ? "S'inscrire"
-                          : "En savoir plus"}
+                        En savoir plus
                       </motion.button>
                     </div>
                   </motion.div>

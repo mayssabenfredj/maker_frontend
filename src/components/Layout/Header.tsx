@@ -85,7 +85,7 @@ const Header: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img
-              src="/src/assets/blueLogo.jpg"
+              src="/images/blueLogo.jpg"
               alt="Maker Skills"
               className="h-10 w-10 rounded-lg"
             />

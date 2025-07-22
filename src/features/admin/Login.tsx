@@ -1,5 +1,5 @@
-import React, {  useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { useStore } from "../../stores/useStore";
@@ -49,7 +49,7 @@ const Login: React.FC = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <img
-              src="/src/assets/blueLogo.jpg"
+              src="/images/blueLogo.jpg"
               alt="Maker Skills"
               className="h-12 w-12 rounded-lg"
             />
@@ -171,9 +171,7 @@ const Login: React.FC = () => {
           className={`mt-6 text-center text-sm ${
             theme === "dark" ? "text-gray-400" : "text-gray-600"
           }`}
-        >
-        
-        </div>
+        ></div>
       </motion.div>
     </div>
   );
