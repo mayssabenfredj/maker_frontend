@@ -4,13 +4,21 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3020";
 
 export class PartnerService {
   static async getAll(): Promise<Partner[]> {
-    const res = await fetch(`${API_BASE_URL}/partners`);
+    const res = await fetch(`${API_BASE_URL}/partners`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
+    });
     const data = await res.json();
     return data.data;
   }
 
   static async getById(id: string): Promise<Partner> {
-    const res = await fetch(`${API_BASE_URL}/partners/${id}`);
+    const res = await fetch(`${API_BASE_URL}/partners/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
+    });
     const data = await res.json();
     return data.data;
   }
@@ -28,6 +36,9 @@ export class PartnerService {
     const res = await fetch(`${API_BASE_URL}/partners`, {
       method: "POST",
       body: formData,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
     });
     const data = await res.json();
     return data.data;
@@ -47,13 +58,21 @@ export class PartnerService {
     const res = await fetch(`${API_BASE_URL}/partners/${id}`, {
       method: "PATCH",
       body: formData,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
     });
     const data = await res.json();
     return data.data;
   }
 
   static async delete(id: string): Promise<void> {
-    await fetch(`${API_BASE_URL}/partners/${id}`, { method: "DELETE" });
+    await fetch(`${API_BASE_URL}/partners/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
+    });
   }
 }
 

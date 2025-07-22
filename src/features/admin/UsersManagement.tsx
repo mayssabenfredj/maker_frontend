@@ -26,7 +26,12 @@ const UsersManagement: React.FC = () => {
       try {
         setLoading(true);
         const response = await fetch(
-          import.meta.env.VITE_API_URL + "/participants"
+          import.meta.env.VITE_API_URL + "/participants",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+            },
+          }
         );
         const result = await response.json();
         if (response.ok) {

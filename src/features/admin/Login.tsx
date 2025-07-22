@@ -172,9 +172,7 @@ const Login: React.FC = () => {
             theme === "dark" ? "text-gray-400" : "text-gray-600"
           }`}
         >
-          <p>Compte de démonstration :</p>
-          <p>Email: admin@makerskills.tn</p>
-          <p>Mot de passe: admin123</p>
+        
         </div>
       </motion.div>
     </div>

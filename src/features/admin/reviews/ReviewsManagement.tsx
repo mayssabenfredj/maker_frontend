@@ -133,12 +133,14 @@ const ReviewsManagement: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredReviews.map(review => (
               <AnimatedSection key={review._id}>
-                <ReviewCard
-                  review={review}
-                  onEdit={handleEdit}
-                  onDelete={() => handleDelete(review)}
-                  theme={theme}
-                />
+                <div className="h-full">
+                  <ReviewCard
+                    review={review}
+                    onEdit={handleEdit}
+                    onDelete={() => handleDelete(review)}
+                    theme={theme}
+                  />
+                </div>
               </AnimatedSection>
             ))}
           </div>
