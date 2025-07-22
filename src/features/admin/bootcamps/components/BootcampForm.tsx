@@ -21,6 +21,52 @@ interface BaseFormProps {
   editingEvent?: any;
 }
 
+// Helper function to transform database fields to form fields
+const transformBootcampForForm = (bootcamp: any) => {
+  if (!bootcamp) return {};
+
+  return {
+    ...bootcamp,
+    // Map database field names to form field names
+    startDate: bootcamp.dateDebut ? new Date(bootcamp.dateDebut) : undefined,
+    duration: parseInt(bootcamp.duration) || "",
+    instructor: bootcamp.animator
+      ? {
+          photoUrl:
+            "https://static.vecteezy.com/system/resources/previews/036/594/092/non_2x/man-empty-avatar-photo-placeholder-for-social-networks-resumes-forums-and-dating-sites-male-and-female-no-photo-images-for-unfilled-user-profile-free-vector.jpg",
+          name: bootcamp.animator,
+          title: "",
+          experienceYears: 0,
+          studentsCount: 0,
+        }
+      : {
+          photoUrl:
+            "https://static.vecteezy.com/system/resources/previews/036/594/092/non_2x/man-empty-avatar-photo-placeholder-for-social-networks-resumes-forums-and-dating-sites-male-and-female-no-photo-images-for-unfilled-user-profile-free-vector.jpg",
+          name: "",
+          title: "",
+          experienceYears: 0,
+          studentsCount: 0,
+        },
+    // Handle category - extract ID if it's an object
+    category: bootcamp.category?._id || bootcamp.category || "",
+  };
+};
+
+// Helper function to transform form data back to API format
+const transformFormDataForAPI = (formData: any) => {
+  return {
+    ...formData,
+    // Map form field names back to database field names
+    dateDebut: formData.startDate,
+    periode: formData.duration,
+    animator: formData.instructor?.name || "",
+    // Remove the form-specific fields that shouldn't be sent to API
+    startDate: undefined,
+    duration: undefined,
+    instructor: undefined,
+  };
+};
+
 const EventForm: React.FC<BaseFormProps> = ({
   theme,
   loading,
@@ -34,20 +80,20 @@ const EventForm: React.FC<BaseFormProps> = ({
     editingEvent?.type || "bootcamp"
   );
   const [products, setProducts] = useState<any[]>([]);
-  const [formData, setFormData] = useState<Partial<any>>({
-    ...editingEvent,
-    modules: [{ title: "", items: [] }],
-    instructor: {
-      photoUrl:
-        "https://static.vecteezy.com/system/resources/previews/036/594/092/non_2x/man-empty-avatar-photo-placeholder-for-social-networks-resumes-forums-and-dating-sites-male-and-female-no-photo-images-for-unfilled-user-profile-free-vector.jpg",
-      name: "",
-      title: "",
-      experienceYears: 0,
-      studentsCount: 0,
-    },
-    type: editingEvent?.type || "bootcamp",
+
+  // Transform the editing event data to match form expectations
+  const [formData, setFormData] = useState<Partial<any>>(() => {
+    const transformedData = transformBootcampForForm(editingEvent);
+    return {
+      modules: [{ title: "", items: [] }],
+      ...transformedData,
+      type: editingEvent?.type || "bootcamp",
+    };
   });
+
   console.log(editingEvent);
+  console.log("Transformed form data:", formData);
+
   const handleTypeChange = (type: EventType) => {
     setEventType(type);
     setFormData({ ...formData, type });
@@ -69,28 +115,54 @@ const EventForm: React.FC<BaseFormProps> = ({
   useEffect(() => {
     fetchProducts();
   }, []);
+
   const navigate = useNavigate();
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Final formData:", formData);
-    if (!imageFiles[0]) {
-      alert("Veillez ajouter une image de couverture!");
-    }
-    let responseImage = await uploadFile(
-      import.meta.env.VITE_API_URL + "/upload",
-      imageFiles[0],
-      "file",
-      { path: "events" }
-    );
-    formData.coverImage = responseImage.data.path;
 
-    let response = await axios.post(
-      import.meta.env.VITE_API_URL + "/events",
-      formData
-    );
-    if (response?.status == 201) {
-      onCancel();
+    // Handle image upload only if new image is provided
+    if (imageFiles[0]) {
+      let responseImage = await uploadFile(
+        import.meta.env.VITE_API_URL + "/upload",
+        imageFiles[0],
+        "file",
+        { path: "events" }
+      );
+      formData.coverImage = responseImage.data.path;
+    } else if (!editingEvent && !imageFiles[0]) {
+      alert("Veillez ajouter une image de couverture!");
+      return;
     }
+
+    // Transform form data back to API format
+    const apiData = transformFormDataForAPI(formData);
+
+    try {
+      let response;
+      if (editingEvent) {
+        // Update existing event
+        response = await axios.put(
+          import.meta.env.VITE_API_URL + "/events/" + editingEvent._id,
+          apiData
+        );
+      } else {
+        // Create new event
+        response = await axios.post(
+          import.meta.env.VITE_API_URL + "/events",
+          apiData
+        );
+      }
+
+      if (response?.status === 201 || response?.status === 200) {
+        onCancel();
+      }
+    } catch (error) {
+      console.error("Error saving event:", error);
+      alert("Erreur lors de l'enregistrement de l'événement");
+    }
+
     onSubmit(e); // optional if you still want to notify parent
   };
 

@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3020";
+const API_BASE_URL = "http://51.254.100.226:3020";
 
 export const getProductImageUrl = (imagePath?: string): string => {
   if (!imagePath) {

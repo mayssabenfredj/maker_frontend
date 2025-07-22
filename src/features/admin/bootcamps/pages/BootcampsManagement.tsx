@@ -157,6 +157,7 @@ const BootcampsManagement: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log("formData", formData);
       if (editingBootcamp) {
         await bootcampService.updateBootcamp(
           editingBootcamp._id,
