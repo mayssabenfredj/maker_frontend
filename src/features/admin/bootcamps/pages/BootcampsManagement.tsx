@@ -62,7 +62,7 @@ const BootcampsManagement: React.FC = () => {
       const res = await axios.get(import.meta.env.VITE_API_URL + "/events");
       // Access the data array from the response
       const bootcampsData = res.data.data || [];
-
+      console.log("btcmp", bootcampsData);
       // Transform the data to match your expected structure
       const transformedBootcamps = bootcampsData.map((bootcamp: any) => ({
         _id: bootcamp._id,
@@ -70,10 +70,12 @@ const BootcampsManagement: React.FC = () => {
         category: bootcamp.category || "", // You might need to adjust this
         types: bootcamp.types || [], // You might need to adjust this
         description: bootcamp.description || "", // Not in your sample data
-        dateDebut: bootcamp.startDate || "",
-        dateFin: bootcamp.endDate || "", // Not in your sample data
+        startDate: bootcamp.startDate || "",
         periode: bootcamp.duration || "",
         location: bootcamp.location || "",
+        address: bootcamp.address || "",
+        duration: bootcamp?.duration || "",
+        reduction: bootcamp.reduction || "",
         price: bootcamp.price?.toString() || "0",
         animator: bootcamp.instructor?.name || "",
         products: bootcamp.products || [],

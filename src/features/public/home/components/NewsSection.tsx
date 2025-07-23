@@ -116,7 +116,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                     </div>
                   </div>
                   <Link
-                    to={`/news/${blog._id}`}
+                    to={`/blogs/${blog._id}`}
                     className="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors"
                   >
                     Lire la suite
@@ -131,7 +131,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
         <AnimatedSection delay={0.4}>
           <div className="text-center mt-12">
             <Link
-              to="/news"
+              to="/blogs"
               className="inline-flex items-center px-8 py-3 border-2 border-orange-500 text-orange-500 font-semibold rounded-xl hover:bg-orange-500 hover:text-white transition-all duration-300"
             >
               Voir toutes les actualités

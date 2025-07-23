@@ -45,7 +45,6 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
         console.log("error feching categories", error);
       });
   }, []);
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Nom */}
@@ -118,31 +117,6 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
         />
       </div>
 
-      {/* Durée */}
-      <div>
-        <label
-          className={`block text-sm font-medium mb-2 ${
-            theme === "dark" ? "text-gray-300" : "text-gray-700"
-          }`}
-        >
-          Durée (Jours)
-        </label>
-        <input
-          type="number"
-          min={1}
-          value={formData.duration}
-          onChange={(e) =>
-            setFormData({ ...formData, duration: e.target.value })
-          }
-          className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-            theme === "dark"
-              ? "bg-gray-700 border-gray-600 text-white"
-              : "bg-white border-gray-300 text-gray-900"
-          } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
-          placeholder="Ex: 3 jours, 6 jours..."
-        />
-      </div>
-
       {/* Date de début */}
       <div>
         <label
@@ -150,7 +124,7 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
             theme === "dark" ? "text-gray-300" : "text-gray-700"
           }`}
         >
-          Date de début *
+          Date de début * {JSON.stringify(formData.startDate)}
         </label>
         <input
           type="date"
