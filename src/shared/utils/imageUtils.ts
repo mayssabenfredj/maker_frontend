@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://51.254.100.226:3020";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const getProductImageUrl = (imagePath?: string): string => {
   if (!imagePath) {
