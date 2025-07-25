@@ -47,7 +47,10 @@ const Login: React.FC = () => {
         }`}
       >
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center  mb-4">
+          <div
+            className="flex items-center justify-center  mb-4 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
             <img
               src="/images/maker.logo.png"
               alt="Maker Skills"

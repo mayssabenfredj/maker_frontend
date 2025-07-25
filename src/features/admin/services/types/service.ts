@@ -41,7 +41,6 @@ export interface CreateServiceDto {
   name: string;
   description?: string;
   categories: string[];
-  imageUrl?: string;
   coverImagePath?: string;
   isActive?: boolean;
   events?: string[];
@@ -53,7 +52,6 @@ export interface UpdateServiceDto {
   name?: string;
   description?: string;
   categories?: string[];
-  imageUrl?: string;
   coverImagePath?: string;
   isActive?: boolean;
   events?: string[];
@@ -79,7 +77,6 @@ export interface ServiceFormData {
   name: string;
   description: string;
   categories: string[];
-  imageUrl: string;
   isActive: boolean;
   events: string[];
   projects: string[];

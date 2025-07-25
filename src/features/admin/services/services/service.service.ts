@@ -53,12 +53,13 @@ export class ServiceService {
     // Ajouter les données du service
     Object.keys(serviceData).forEach((key) => {
       const value = serviceData[key as keyof CreateServiceDto];
-      if (value !== undefined && value !== null) {
-        if (Array.isArray(value)) {
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
           value.forEach((item) => formData.append(key, item));
-        } else {
-          formData.append(key, value.toString());
         }
+        // Si le tableau est vide, on n'envoie rien
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
       }
     });
 
@@ -95,12 +96,13 @@ export class ServiceService {
     // Ajouter les données du service
     Object.keys(serviceData).forEach((key) => {
       const value = serviceData[key as keyof UpdateServiceDto];
-      if (value !== undefined && value !== null) {
-        if (Array.isArray(value)) {
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
           value.forEach((item) => formData.append(key, item));
-        } else {
-          formData.append(key, value.toString());
         }
+        // Si le tableau est vide, on n'envoie rien
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value.toString());
       }
     });
 

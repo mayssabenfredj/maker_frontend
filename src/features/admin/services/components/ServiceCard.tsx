@@ -23,19 +23,19 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl ${
-        theme === 'dark' ? 'bg-gray-800' : 'bg-white'
-      } border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} min-h-[420px] h-full flex flex-col`}
+      className={`rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl \
+        ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} \
+        border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'} \
+        h-[500px] flex flex-col`}
     >
       {/* Image du service */}
-      <div className="relative h-full overflow-hidden">
+      <div className="relative w-full h-48 md:h-56 overflow-hidden flex-shrink-0">
         <img
           src={getImageUrl(service.coverImagePath)}
           alt={service.name}
-          className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        
         {/* Badge de statut */}
         <div className="absolute top-3 right-3">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -46,7 +46,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             {service.isActive ? 'Actif' : 'Inactif'}
           </span>
         </div>
-
         {/* Actions rapides */}
         <div className="absolute top-3 left-3 flex space-x-2">
           <button
@@ -62,9 +61,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           </button>
         </div>
       </div>
-
       {/* Contenu de la carte */}
-      <div className="p-6 flex flex-col flex-1">
+      <div className="p-6 flex flex-col flex-1 overflow-hidden">
         <h3 className={`text-xl font-bold mb-2 ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
         }`}>
@@ -72,12 +70,19 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         </h3>
 
         {service.description && (
-          <p className={`text-sm mb-4 line-clamp-2 ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            {service.description}
-          </p>
+          <div
+            className={`text-sm mb-2 line-clamp-3 ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+            } max-h-16 overflow-hidden`}
+            dangerouslySetInnerHTML={{
+              __html: service.description
+            }}
+          />
         )}
+        {/* Affichage du nombre d'associations */}
+        <div className={`text-xs mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+          Événements : {service.events?.length || 0} | Projets : {service.projects?.length || 0} | Produits : {service.products?.length || 0}
+        </div>
 
         {/* Catégories */}
         {service.categories && service.categories.length > 0 && (
@@ -108,55 +113,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           </div>
         )}
 
-        {/* Aperçu des events liés */}
-        {service.events && service.events.length > 0 && (
-          <div className="mb-2">
-            <span className="font-semibold text-xs text-gray-500">Événements : </span>
-            {service.events.slice(0,2).map(event => (
-              <span key={event._id} className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1 mb-1">
-                {event.name}
-              </span>
-            ))}
-            {service.events.length > 2 && (
-              <span className="inline-block text-xs text-blue-600 ml-1">+{service.events.length - 2} autres</span>
-            )}
-          </div>
-        )}
-        {/* Aperçu des projects liés */}
-        {service.projects && service.projects.length > 0 && (
-          <div className="mb-2">
-            <span className="font-semibold text-xs text-gray-500">Projets : </span>
-            {service.projects.slice(0,2).map(project => (
-              <span key={project._id} className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-1 mb-1">
-                {project.name}
-              </span>
-            ))}
-            {service.projects.length > 2 && (
-              <span className="inline-block text-xs text-green-600 ml-1">+{service.projects.length - 2} autres</span>
-            )}
-          </div>
-        )}
-        {/* Aperçu des products liés */}
-        {service.products && service.products.length > 0 && (
-          <div className="mb-2">
-            <span className="font-semibold text-xs text-gray-500">Produits : </span>
-            {service.products.slice(0,2).map(product => (
-              <span key={product._id} className="inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded mr-1 mb-1">
-                {product.name}
-              </span>
-            ))}
-            {service.products.length > 2 && (
-              <span className="inline-block text-xs text-orange-600 ml-1">+{service.products.length - 2} autres</span>
-            )}
-          </div>
-        )}
-
         {/* Actions */}
-        <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
           <div className="text-xs text-gray-500">
             Créé le {new Date(service.createdAt).toLocaleDateString('fr-FR')}
           </div>
-          
           <div className="flex space-x-2">
             <button
               onClick={() => onEdit(service)}
@@ -169,7 +130,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             >
               <Edit className="w-4 h-4" />
             </button>
-            
             <button
               onClick={handleDelete}
               className={`p-2 rounded-lg transition-colors ${
@@ -181,7 +141,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             >
               <Trash2 className="w-4 h-4" />
             </button>
-
             {/* Bouton voir le détail */}
             {onShowDetail && (
               <button

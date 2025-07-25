@@ -166,7 +166,7 @@ const Header: React.FC = () => {
           {/* Controls */}
           <div className="flex items-center space-x-4">
             {/* Language Toggle */}
-            <button
+            { /*<button
               onClick={toggleLanguage}
               className={`p-2 rounded-lg transition-colors ${getTextClasses()} ${getHoverClasses()}`}
             >

@@ -158,7 +158,9 @@ const ServiceDetail: React.FC = () => {
             </div>
             <div>
               <h3 className={`text-lg font-semibold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Description</h3>
-              <div className={`prose max-w-none ${theme === 'dark' ? 'prose-invert' : ''}`}>{service.description || 'Aucune description disponible.'}</div>
+              <div className={`prose max-w-none ${theme === 'dark' ? 'prose-invert' : ''}`}
+                dangerouslySetInnerHTML={{ __html: service.description || 'Aucune description disponible.' }}
+              />
             </div>
           </div>
         </div>

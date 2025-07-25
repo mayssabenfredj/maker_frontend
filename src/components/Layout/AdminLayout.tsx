@@ -254,7 +254,7 @@ const AdminLayout: React.FC = () => {
             </button>
 
             {/* Search */}
-            <div className="hidden md:flex items-center space-x-2">
+           {/*  <div className="hidden md:flex items-center space-x-2">
               <div className="relative">
                 <Search
                   className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
@@ -271,12 +271,12 @@ const AdminLayout: React.FC = () => {
                   } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex items-center space-x-4">
             {/* Notifications */}
-            <button
+            {/* <button
               className={`p-2 rounded-lg transition-colors ${
                 theme === "dark"
                   ? "text-gray-400 hover:text-white hover:bg-gray-700"
@@ -284,7 +284,7 @@ const AdminLayout: React.FC = () => {
               }`}
             >
               <Bell className="h-5 w-5" />
-            </button>
+            </button> */}
 
             {/* Theme toggle */}
             <button
