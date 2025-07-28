@@ -150,7 +150,7 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
             theme === "dark" ? "text-gray-300" : "text-gray-700"
           }`}
         >
-          Date de début *
+          Date de début
         </label>
         <input
           type="date"
