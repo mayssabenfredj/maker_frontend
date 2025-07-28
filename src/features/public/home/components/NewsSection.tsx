@@ -57,8 +57,10 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
               <motion.article
                 whileHover={{ y: -10 }}
                 className={`rounded-2xl shadow-lg overflow-hidden ${
-                  theme === "dark" ? "bg-gray-800" : "bg-white"
-                } group`}
+                  theme === "dark"
+                    ? "bg-gray-800 text-gray-300"
+                    : "bg-white text-gray-700"
+                } group`} // Added fallback text color
               >
                 <div className="relative">
                   <img
@@ -70,7 +72,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                     <span
                       className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getCategoryColor(
                         "Actualité"
-                      )}`}
+                      )} ${theme === "dark" ? "bg-opacity-80" : ""}`} // Ensure category background is readable
                     >
                       Actualité
                     </span>
@@ -95,9 +97,9 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-orange-500" />
                       <span
-                        className={`$${
+                        className={
                           theme === "dark" ? "text-gray-400" : "text-gray-600"
-                        }`}
+                        }
                       >
                         {blog.createdAt
                           ? new Date(blog.createdAt).toLocaleDateString("fr-FR")
@@ -107,9 +109,9 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4 text-blue-500" />
                       <span
-                        className={`$${
+                        className={
                           theme === "dark" ? "text-gray-400" : "text-gray-600"
-                        }`}
+                        }
                       >
                         Maker Skills
                       </span>
@@ -117,7 +119,11 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                   </div>
                   <Link
                     to={`/news/${blog._id}`}
-                    className="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors"
+                    className={`inline-flex items-center font-medium transition-colors ${
+                      theme === "dark"
+                        ? "text-orange-400 hover:text-orange-300"
+                        : "text-orange-500 hover:text-orange-600"
+                    }`}
                   >
                     Lire la suite
                     <ArrowRight className="ml-1 h-4 w-4" />

@@ -53,13 +53,17 @@ const BlogDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div
-        className={`min-h-screen ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} transition-colors duration-300`}
+        className={`min-h-screen ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        } transition-colors duration-300`}
       >
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
             <p
-              className={`mt-4 ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+              className={`mt-4 ${
+                theme === "dark" ? "text-gray-300" : "text-gray-600"
+              }`}
             >
               Chargement...
             </p>
@@ -72,12 +76,16 @@ const BlogDetailPage: React.FC = () => {
   if (!blog) {
     return (
       <div
-        className={`min-h-screen ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} transition-colors duration-300`}
+        className={`min-h-screen ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        } transition-colors duration-300`}
       >
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
             <h1
-              className={`text-2xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+              className={`text-2xl font-bold mb-4 ${
+                theme === "dark" ? "text-white" : "text-gray-900"
+              }`}
             >
               Blog introuvable
             </h1>
@@ -101,10 +109,16 @@ const BlogDetailPage: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"} transition-colors duration-300`}
+      className={`min-h-screen ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+      } transition-colors duration-300`}
     >
       {/* Hero Section */}
-      <section className={` relative py-20 ${theme === 'dark' ? 'bg-primary-900' : 'bg-primary-900'}`}>
+      <section
+        className={` relative py-20 ${
+          theme === "dark" ? "bg-primary-900" : "bg-primary-900"
+        }`}
+      >
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative container mx-auto px-4">
           <motion.button
@@ -185,13 +199,12 @@ const BlogDetailPage: React.FC = () => {
                   transition={{ delay: 0.1 }}
                   className={`prose prose-lg max-w-none mb-12 ${
                     theme === "dark"
-                      ? "prose-invert prose-headings:text-white prose-p:text-gray-300"
-                      : "prose-headings:text-gray-900 prose-p:text-gray-700"
+                      ? "prose-invert prose-headings:text-white prose-p:text-gray-300 text-gray-300"
+                      : "prose-headings:text-gray-900 prose-p:text-gray-700 text-gray-700"
                   }`}
                   dangerouslySetInnerHTML={{ __html: blog.description }}
                 />
               )}
-
               {/* Image Gallery */}
               {images.length > 0 && (
                 <motion.div
@@ -201,7 +214,9 @@ const BlogDetailPage: React.FC = () => {
                   className="mb-12"
                 >
                   <h3
-                    className={`text-2xl font-bold mb-6 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                    className={`text-2xl font-bold mb-6 ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
                   >
                     Galerie d'images
                   </h3>
@@ -236,7 +251,9 @@ const BlogDetailPage: React.FC = () => {
                   }`}
                 >
                   <h3
-                    className={`text-xl font-bold mb-6 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
+                    className={`text-xl font-bold mb-6 ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}
                   >
                     Articles similaires
                   </h3>
@@ -264,11 +281,15 @@ const BlogDetailPage: React.FC = () => {
                               {relatedBlog.title}
                             </h4>
                             <p
-                              className={`text-sm mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+                              className={`text-sm mt-1 ${
+                                theme === "dark"
+                                  ? "text-gray-400"
+                                  : "text-gray-500"
+                              }`}
                             >
                               {relatedBlog.createdAt
                                 ? new Date(
-                                    relatedBlog.createdAt,
+                                    relatedBlog.createdAt
                                   ).toLocaleDateString("fr-FR")
                                 : ""}
                             </p>
