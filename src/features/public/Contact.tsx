@@ -306,17 +306,16 @@ const Contact: React.FC = () => {
                   <div className={`w-full h-64 rounded-lg ${
                     theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'
                   } flex items-center justify-center`}>
-                    <div className="text-center">
-                      <MapPin className={`h-12 w-12 mx-auto mb-2 ${
-                        theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                      }`} />
-                      <p className={`${
-                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        Carte interactive
-                      </p>
-                    </div>
-                  </div>
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d391.04297645829513!2d10.18657616640743!3d36.89437955554207!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sfr!2stn!4v1753711102693!5m2!1sfr!2stn"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen={true}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="w-full h-full rounded-lg"
+                  ></iframe>
                 </div>
 
                 {/* Quick Contact */}
@@ -381,7 +380,8 @@ const Contact: React.FC = () => {
                     </motion.button>
                   </div>
                 </div>
-              </div>
+                </div>
+                </div>
             </AnimatedSection>
           </div>
         </div>

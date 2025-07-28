@@ -72,7 +72,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         {service.description && (
           <div
             className={`text-sm mb-2 line-clamp-3 ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
             } max-h-16 overflow-hidden`}
             dangerouslySetInnerHTML={{
               __html: service.description

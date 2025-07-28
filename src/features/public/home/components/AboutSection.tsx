@@ -61,7 +61,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ theme, aboutValues, team, w
         ))}
       </div>
       {/* Team Section */}
-      <AnimatedSection>
+      {/* <AnimatedSection>
         <div className="text-center mb-12">
           <h3 className={`text-2xl md:text-3xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Notre Équipe d'Experts</h3>
           <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Des professionnels passionnés et expérimentés pour vous accompagner</p>
@@ -106,7 +106,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ theme, aboutValues, team, w
             </motion.div>
           </AnimatedSection>
         ))}
-      </div>
+      </div> */}
       {/* Why Choose Us */}
       <AnimatedSection>
         <div className="text-center mb-12">
