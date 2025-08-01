@@ -1017,7 +1017,7 @@ const ParticipationPage = () => {
                         event.location.slice(1)}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                 {event.category && event.category.name &&  <div className="flex items-center space-x-2">
                     <Target className="h-4 w-4 text-red-500" />
                     <span
                       className={`text-sm ${
@@ -1026,7 +1026,7 @@ const ParticipationPage = () => {
                     >
                       {event.category.name}
                     </span>
-                  </div>
+                  </div>}
                  {event?.instructor?.name &&  <div className="flex items-center space-x-2">
                     <Users className="h-4 w-4 text-indigo-500" />
                     <span
