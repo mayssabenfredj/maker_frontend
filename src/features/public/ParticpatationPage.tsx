@@ -981,7 +981,7 @@ const ParticipationPage = () => {
                       {event.name}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  {event.duration && <div className="flex items-center space-x-2">
                     <Clock className="h-4 w-4 text-blue-500" />
                     <span
                       className={`text-sm ${
@@ -990,8 +990,8 @@ const ParticipationPage = () => {
                     >
                       {event.duration} jours
                     </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
+                  </div>}
+                      {event.startDate &&     <div className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4 text-green-500" />
                     <span
                       className={`text-sm ${
@@ -1005,7 +1005,7 @@ const ParticipationPage = () => {
                         year: "numeric",
                       })}
                     </span>
-                  </div>
+                  </div>}
                   <div className="flex items-center space-x-2">
                     <MapPin className="h-4 w-4 text-purple-500" />
                     <span
@@ -1027,17 +1027,17 @@ const ParticipationPage = () => {
                       {event.category.name}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                 {event?.instructor?.name &&  <div className="flex items-center space-x-2">
                     <Users className="h-4 w-4 text-indigo-500" />
                     <span
                       className={`text-sm ${
                         theme === "dark" ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
-                      Instructeur: {event.instructor.name} (
-                      {event.instructor.title})
+                      Instructeur: {event?.instructor?.name} (
+                      {event?.instructor?.title})
                     </span>
-                  </div>
+                  </div>}
                   <div className="flex items-center space-x-2">
                     <Award className="h-4 w-4 text-yellow-500" />
                     <span

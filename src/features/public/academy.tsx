@@ -435,18 +435,7 @@ const Academy: React.FC = () => {
                       </p>
 
                       <div className="grid grid-cols-2 gap-2 mb-4 text-xs">
-                        <div className="flex items-center space-x-1">
-                          <Clock className="h-3 w-3 text-secondary-500" />
-                          <span
-                            className={`${
-                              theme === "dark"
-                                ? "text-gray-300"
-                                : "text-gray-700"
-                            }`}
-                          >
-                            {item.duration}
-                          </span>
-                        </div>
+                   
 
                         <div className="flex items-center space-x-1">
                           <Users className="h-3 w-3 text-primary-900" />

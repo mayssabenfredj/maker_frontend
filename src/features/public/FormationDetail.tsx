@@ -359,8 +359,8 @@ const FormationDetail: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-12">
-              {/* Modules/Curriculum */}
-              {event.modules && event.modules.length > 0 && (
+              {/* Modules/Curriculum */} 
+              {event.modules && event.modules[0].title !== "" && event.modules.length > 0 && (
                 <AnimatedSection>
                   <div>
                     <h2
