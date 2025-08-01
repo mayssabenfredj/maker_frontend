@@ -78,7 +78,7 @@ const Academy: React.FC = () => {
     duration: `${event.duration} ${
       event.type === "event" ? "heures" : "semaines"
     }`,
-    price: event.price - (event.price * event.reduction) / 100, // Apply reduction
+    price: event.price - (event.price * (event.reduction ?? 0)) / 100, // Apply reduction
     originalPrice: event.price,
     reduction: event.reduction,
     rating: 4.5, // Default rating since it's not in API
@@ -527,7 +527,7 @@ const Academy: React.FC = () => {
                               theme === "dark" ? "text-white" : "text-gray-900"
                             }`}
                           >
-                            {item.price === 0
+                            {item.price === 0 || item.price === null || item.price === undefined
                               ? "Gratuit"
                               : `${item.price.toFixed(0)}DT`}
                           </div>
