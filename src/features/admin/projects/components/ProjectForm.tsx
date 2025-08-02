@@ -229,66 +229,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                     }`}
                   />
                 </div>
-              </div>
-
-              {/* Champ Catégories */}
-              <div>
-                <label
-                  className={`block text-sm font-medium mb-2 ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  Catégories *
-                </label>
-                <Select
-                  isMulti
-                  required
-                  name="categories"
-                  options={categories}
-                  value={categories.filter((option) =>
-                    formData.categories.includes(option.value)
-                  )}
-                  onChange={(selected) => {
-                    setFormData({
-                      ...formData,
-                      categories: selected.map((option) => option.value),
-                    });
-                  }}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                  placeholder="Sélectionner des catégories..."
-                  noOptionsMessage={() => "Aucune option disponible"}
-                  styles={{
-                    control: (base) => ({
-                      ...base,
-                      backgroundColor: theme === "dark" ? "#374151" : "white",
-                      borderColor: theme === "dark" ? "#4B5563" : "#D1D5DB",
-                      color: theme === "dark" ? "white" : "black",
-                    }),
-                    menu: (base) => ({
-                      ...base,
-                      backgroundColor: theme === "dark" ? "#374151" : "white",
-                    }),
-                    option: (base) => ({
-                      ...base,
-                      backgroundColor: theme === "dark" ? "#374151" : "white",
-                      color: theme === "dark" ? "white" : "black",
-                      "&:hover": {
-                        backgroundColor:
-                          theme === "dark" ? "#4B5563" : "#F3F4F6",
-                      },
-                    }),
-                    multiValue: (base) => ({
-                      ...base,
-                      backgroundColor: theme === "dark" ? "#1F2937" : "#E5E7EB",
-                    }),
-                    multiValueLabel: (base) => ({
-                      ...base,
-                      color: theme === "dark" ? "white" : "black",
-                    }),
-                  }}
-                />
-              </div>
+              </div> 
 
               {/* Champ Image de couverture */}
               {!editingProject && (

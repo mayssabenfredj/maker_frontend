@@ -61,8 +61,7 @@ const BootcampsManagement: React.FC = () => {
     try {
       const res = await axios.get(import.meta.env.VITE_API_URL + "/events");
       // Access the data array from the response
-      const bootcampsData = res.data.data || [];
-
+      const bootcampsData = res.data.data || [];  
       // Transform the data to match your expected structure
       const transformedBootcamps = bootcampsData.map((bootcamp: any) => ({
         _id: bootcamp._id,
@@ -70,17 +69,24 @@ const BootcampsManagement: React.FC = () => {
         category: bootcamp.category || "", // You might need to adjust this
         types: bootcamp.types || [], // You might need to adjust this
         description: bootcamp.description || "", // Not in your sample data
-        dateDebut: bootcamp.startDate || "",
+        dateDebut: bootcamp.dateDebut || "",
         dateFin: bootcamp.endDate || "", // Not in your sample data
-        periode: bootcamp.duration || "",
+        periode: bootcamp.periode || "",
+        duration:bootcamp.periode || "",
         location: bootcamp.location || "",
+        address: bootcamp.address || "",
         price: bootcamp.price?.toString() || "0",
-        animator: bootcamp.instructor?.name || "",
+        reduction: bootcamp.reduction || "0", 
+        animator: bootcamp.animator || "",
         products: bootcamp.products || [],
         // Add other fields as needed
         modules: bootcamp.modules || [],
         certification: bootcamp.certification || false,
         coverImage: bootcamp.coverImage || "",
+        required:bootcamp.required || null , 
+        includedInEvent:bootcamp.includedInEvent || null , 
+        objectives:bootcamp.objectives || null , 
+       /*  instructor: */
       }));
 
       setBootcamps(transformedBootcamps);
@@ -156,15 +162,12 @@ const BootcampsManagement: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      console.log("formData", formData);
+    try {  
       if (editingBootcamp) {
-        await bootcampService.updateBootcamp(
-          editingBootcamp._id,
-          formData,
-          imageFiles.length > 0 ? imageFiles : undefined
-        );
-      }
+      let obj:any = formData
+      obj.price = obj.price ? parseInt(obj.price) : null
+    //  await  axios.patch(import.meta.env.VITE_API_URL + `/events/${editingBootcamp._id}`, obj);
+    }
       setShowForm(false);
       setEditingBootcamp(null);
       setFormData({

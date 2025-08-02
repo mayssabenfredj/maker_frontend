@@ -18,13 +18,13 @@ interface BaseFormProps {
   onCancel: () => void;
   imageFiles: File[];
   setImageFiles: (files: File[]) => void;
-  editingEvent?: any;
+  editingBootcamp?: any;
 }
 
 // Helper function to transform database fields to form fields
 const transformBootcampForForm = (bootcamp: any) => {
   if (!bootcamp) return {};
-
+  console.log("editing data:", bootcamp);
   return {
     ...bootcamp,
     // Map database field names to form field names
@@ -64,6 +64,7 @@ const transformFormDataForAPI = (formData: any) => {
     startDate: undefined,
     duration: undefined,
     instructor: undefined,
+    price: formData.price ? parseInt(formData.price) : null,
   };
 };
 
@@ -81,6 +82,7 @@ const EventForm: React.FC<BaseFormProps> = ({
   );
   const [products, setProducts] = useState<any[]>([]);
 
+  let [mainImage,setMainImage] = useState<string[] | null>(editingEvent?.coverImage ?[import.meta.env.VITE_API_URL + "/" + editingEvent?.coverImage] : null);
   // Transform the editing event data to match form expectations
   const [formData, setFormData] = useState<Partial<any>>(() => {
     const transformedData = transformBootcampForForm(editingEvent);
@@ -137,13 +139,16 @@ const EventForm: React.FC<BaseFormProps> = ({
     }
 
     // Transform form data back to API format
-    const apiData = transformFormDataForAPI(formData);
-
+    const apiData = transformFormDataForAPI(formData); 
+    if(!apiData?.category){
+      alert("Veillez choisir une catégorie!");
+      return;
+    }
     try {
       let response;
       if (editingEvent) {
         // Update existing event
-        response = await axios.put(
+        response = await axios.patch(
           import.meta.env.VITE_API_URL + "/events/" + editingEvent._id,
           apiData
         );
@@ -202,7 +207,7 @@ const EventForm: React.FC<BaseFormProps> = ({
                     {type === "bootcamp" && "Bootcamp"}
                     {type === "workshop" && "Atelier"}
                     {type === "event" && "Événement"}
-                    {type === "course" && "Cours"}
+                    {type === "course" && "Formation"}
                   </button>
                 )
               )}
@@ -217,16 +222,16 @@ const EventForm: React.FC<BaseFormProps> = ({
             theme={theme}
           />
 
-          {/* Description (commune) */}
-
+          {/* Description (commune) */} 
           {/* Media Upload */}
           <MediaUpload
             images={imageFiles}
             setImages={setImageFiles}
-            existingImages={editingEvent?.galleryImages || []}
+            existingImages={mainImage || []}
             onRemoveExistingImage={(index) => {
               const newImages = [...(formData.galleryImages || [])];
               newImages.splice(index, 1);
+              setMainImage(null)
               handleCommonFieldChange("galleryImages", newImages);
             }}
             label="Images de l'événement"

@@ -270,7 +270,7 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
               : "bg-white border-gray-300 text-gray-900"
           } focus:outline-none focus:ring-2 focus:ring-orange-500/20`}
         >
-          <option value="true" disabled>
+          <option  disabled selected>
             Choisir une catégorie
           </option>
           {categories.map((category: any) => (

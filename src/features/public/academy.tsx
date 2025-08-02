@@ -83,7 +83,7 @@ const Academy: React.FC = () => {
     reduction: event.reduction,
     rating: 4.5, // Default rating since it's not in API
     students: event.participants?.length || 0,
-    instructor: event.instructor?.name || "N/A",
+    instructor: event.instructor?.name || "",
     instructorTitle: event.instructor?.title || "",
     instructorExperience: event.instructor?.experienceYears || 0,
     startDate: event.startDate
@@ -250,38 +250,7 @@ const Academy: React.FC = () => {
                 </div>
               </div>
 
-              {/* Type Filter */}
-              <div className="mb-6">
-                <label
-                  className={`block text-sm font-medium mb-3 ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  Type
-                </label>
-                <div className="space-y-2">
-                  {typeFilters.map((filter) => (
-                    <label key={filter.id} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="type"
-                        value={filter.id}
-                        checked={selectedType === filter.id}
-                        onChange={(e) => setSelectedType(e.target.value)}
-                        className="w-4 h-4 text-secondary-500 border-gray-300 focus:ring-secondary-500"
-                      />
-                      <span
-                        className={`ml-2 text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {filter.label}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
+          
               {/* Category Filter */}
               <div className="mb-6">
                 <label
@@ -374,7 +343,12 @@ const Academy: React.FC = () => {
               {filteredItems.map((item, index) => (
                 <AnimatedSection key={item.id} delay={index * 0.1}>
                   <motion.div
-                    whileHover={{ y: -5 }}
+                     onClick={() => {
+                      navigate("/formations/" + item.id);
+                    }}
+
+                    
+                    whileHover={{ y: -5,cursor: "pointer"  }}
                     className={`rounded-xl shadow-lg overflow-hidden ${
                       theme === "dark" ? "bg-gray-800" : "bg-white"
                     } group`}
@@ -400,11 +374,7 @@ const Academy: React.FC = () => {
                           {getTypeLabel(item.type)}
                         </span>
                       </div>
-                      {item.price === 0 && (
-                        <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
-                          Gratuit
-                        </div>
-                      )}
+                  
                       {item.reduction > 0 && (
                         <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-medium">
                           -{item.reduction}%
@@ -437,18 +407,7 @@ const Academy: React.FC = () => {
                       <div className="grid grid-cols-2 gap-2 mb-4 text-xs">
                    
 
-                        <div className="flex items-center space-x-1">
-                          <Users className="h-3 w-3 text-primary-900" />
-                          <span
-                            className={`${
-                              theme === "dark"
-                                ? "text-gray-300"
-                                : "text-gray-700"
-                            }`}
-                          >
-                            {item.students}
-                          </span>
-                        </div>
+                      
 
                         <div className="flex items-center space-x-1">
                           <Star className="h-3 w-3 text-yellow-500 fill-current" />
@@ -517,8 +476,8 @@ const Academy: React.FC = () => {
                             }`}
                           >
                             {item.price === 0 || item.price === null || item.price === undefined
-                              ? "Gratuit"
-                              : `${item.price.toFixed(0)}DT`}
+                              ? ""
+                              : item.price ? `${item.price.toFixed(0)}DT` : "" }
                           </div>
                           {item.reduction > 0 && (
                             <div className="text-xs text-gray-500 line-through">

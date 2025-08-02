@@ -161,18 +161,7 @@ const FormationDetail: React.FC = () => {
                     </div>
                   )}
 
-                  {event.participants && (
-                    <div className="flex items-center space-x-2">
-                      <Users className="h-5 w-5 text-blue-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {event.participants.length} participants
-                      </span>
-                    </div>
-                  )}
+            
 
                   {event.location && (
                     <div className="flex items-center space-x-2">
@@ -212,7 +201,9 @@ const FormationDetail: React.FC = () => {
                         theme === "dark" ? "text-white" : "text-gray-900"
                       }`}
                     >
-                      {event.price}DT
+                      {event.price === 0 || event.price === null || event.price === undefined
+                        ? ""
+                        : event.price ? `${event.price.toFixed(0)}DT` : "" }
                     </span>
                     {originalPrice && (
                       <span
@@ -220,7 +211,7 @@ const FormationDetail: React.FC = () => {
                           theme === "dark" ? "text-gray-500" : "text-gray-400"
                         }`}
                       >
-                        {originalPrice}DT
+                       {originalPrice ? `${originalPrice.toFixed(0)}DT` : ""}
                       </span>
                     )}
                   </div>
@@ -322,7 +313,9 @@ const FormationDetail: React.FC = () => {
                       theme === "dark" ? "text-white" : "text-gray-900"
                     }`}
                   >
-                    {event.price}DT
+                    {event.price === 0 || event.price === null || event.price === undefined
+                      ? ""
+                      : event.price ? `${event.price.toFixed(0)}DT` : "" }
                   </div>
                   <div
                     className={`text-sm ${
@@ -476,7 +469,7 @@ const FormationDetail: React.FC = () => {
                       }`}
                     >
                       <Package className="h-6 w-6 inline mr-2" />
-                      Produits inclus
+                      Produits recommandés
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {event.products.map((product, index) => (

@@ -27,7 +27,7 @@ const Header: React.FC = () => {
     { path: "/", label: t.nav.home },
     {
       path: "/academy",
-      label: t.nav.academy,
+      label: "Formations",
     },
     { path: "/services", label: t.nav.services },
     { path: "/shop", label: t.nav.shop },
@@ -201,14 +201,7 @@ const Header: React.FC = () => {
                   {t.admin.logout}
                 </button>
               </div>
-            ) : (
-              <Link
-                to="/admin/login"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-900 rounded-lg hover:bg-blue-800 transition-colors"
-              >
-                {t.nav.login}
-              </Link>
-            )}
+            ) :  null}
 
             {/* Mobile Menu Button */}
             <button

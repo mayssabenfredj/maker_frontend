@@ -70,9 +70,18 @@ class ProjectService {
     data.technologies = JSON.stringify(data.technologies);
     data.categories = JSON.stringify(data.categories);
     console.log("data =>", data);
-    const response = await axios.patch(BASE_URL + "/projects/" + id, data);
+    const response = await this.request<{ message: string; data: Project }>(
+      `/projects/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          'Content-Type': 'application/json', // Add this
+        },
+        body: JSON.stringify(data),
+      }
+    );
     console.log("response =>", response);
-    return response.data?.data;
+    return response.data;
   }
 
   async deleteProject(id: string): Promise<void> {

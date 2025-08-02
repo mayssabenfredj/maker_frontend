@@ -28,6 +28,7 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({
   
   return (
     <motion.div
+    onClick={() => navigate(`/shop/${product._id}`)}
       whileHover={{ y: -5 }}
       className={`rounded-2xl shadow-lg overflow-hidden ${
         theme === "dark" ? "bg-gray-800" : "bg-white"
@@ -113,27 +114,7 @@ const ShopProductCard: React.FC<ShopProductCardProps> = ({
         />
         
         {/* Rating */}
-        <div className="flex items-center space-x-2 mb-3">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`h-4 w-4 ${
-                  i < Math.floor(product.rating || 0)
-                    ? "text-yellow-500 fill-current"
-                    : "text-gray-300"
-                }`}
-              />
-            ))}
-          </div>
-          <span
-            className={`text-sm ${
-              theme === "dark" ? "text-gray-400" : "text-gray-600"
-            }`}
-          >
-            {product.rating ?? 0} ({product.reviews ?? 0} avis)
-          </span>
-        </div>
+      
         
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mb-3">
