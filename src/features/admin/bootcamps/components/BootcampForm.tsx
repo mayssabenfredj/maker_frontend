@@ -65,6 +65,7 @@ const transformFormDataForAPI = (formData: any) => {
     duration: undefined,
     instructor: undefined,
     price: formData.price ? parseInt(formData.price) : null,
+    reduction : formData.reduction ? parseInt(formData.reduction) : null,
   };
 };
 
