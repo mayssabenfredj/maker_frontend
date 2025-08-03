@@ -529,9 +529,9 @@ const UsersManagement: React.FC = () => {
                           theme === "dark" ? "text-gray-300" : "text-gray-700"
                         }`}
                       >
-                        {selectedDetails.event.event.instructor.name} (
-                        {selectedDetails.event.event.instructor.title},{" "}
-                        {selectedDetails.event.event.instructor.experienceYears}{" "}
+                        {selectedDetails.event.event?.instructor?.name} (
+                        {selectedDetails.event.event?.instructor?.title},{" "}
+                        {selectedDetails.event.event?.instructor?.experienceYears}{" "}
                         ans d'expérience)
                       </span>
                     </div>
