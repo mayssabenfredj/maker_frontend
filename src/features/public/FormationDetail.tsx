@@ -13,6 +13,7 @@ import {
   Package,
   Target,
   BookOpen,
+  DollarSign,
 } from "lucide-react";
 import { useStore } from "../../stores/useStore";
 import AnimatedSection from "../../components/UI/AnimatedSection";
@@ -148,80 +149,119 @@ const FormationDetail: React.FC = () => {
                 </h1>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                  {event.duration && (
-                    <div className="flex items-center space-x-2">
-                      <Clock className="h-5 w-5 text-orange-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {event.duration} jours
-                      </span>
-                    </div>
-                  )}
+  {event.duration && (
+    <div className="flex items-center space-x-2">
+      <Clock className="h-5 w-5 text-orange-500" />
+      <span
+        className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+      >
+        {event.duration} jours
+      </span>
+    </div>
+  )}
 
-            
+  {event.location && (
+    <div className="flex items-center space-x-2">
+      <MapPin className="h-5 w-5 text-green-500" />
+      <span
+        className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+      >
+        {event.location === "online"
+          ? "En ligne"
+          : event.location === "in_person"
+          ? "En personne"
+          : "Hybride"}
+      </span>
+    </div>
+  )}
 
-                  {event.location && (
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="h-5 w-5 text-green-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        {event.location === "online"
-                          ? "En ligne"
-                          : event.location === "in_person"
-                          ? "En personne"
-                          : "Hybride"}
-                      </span>
-                    </div>
-                  )}
+  {event.certification && (
+    <div className="flex items-center space-x-2">
+      <Award className="h-5 w-5 text-purple-500" />
+      <span
+        className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+      >
+        Certificat
+      </span>
+    </div>
+  )}
 
-                  {event.certification && (
-                    <div className="flex items-center space-x-2">
-                      <Award className="h-5 w-5 text-purple-500" />
-                      <span
-                        className={`text-sm ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
-                      >
-                        Certificat
-                      </span>
-                    </div>
-                  )}
-                </div>
+  {(event.price !== undefined && event.price !== null && event.price !== 0) || originalPrice ? (
+    <div className="flex items-center space-x-2">
+      <span className="inline-flex h-5 w-5 items-center justify-center text-blue-500 text-lg">
+        💰
+      </span>
+      <span
+        className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+      >
+        {event.price ? `${event.price.toFixed(0)}DT` : "Gratuit"}
+        {originalPrice && (
+          <span
+            className={`text-sm line-through ml-2 ${
+              theme === "dark" ? "text-gray-500" : "text-gray-400"
+            }`}
+          >
+            {originalPrice.toFixed(0)}DT
+          </span>
+        )}
+      </span>
+    </div>
+  ) : null}
+</div>
 
-                <div className="flex items-center space-x-4">
-                  <div>
-                    <span
-                      className={`text-3xl font-bold ${
+              
+                {event.objectives && event.objectives.length > 0 && (
+                <AnimatedSection>
+                  <div className="mt-12">
+                    <h2
+                      className={`text-2xl font-bold mb-6 ${
                         theme === "dark" ? "text-white" : "text-gray-900"
                       }`}
                     >
-                      {event.price === 0 || event.price === null || event.price === undefined
-                        ? ""
-                        : event.price ? `${event.price.toFixed(0)}DT` : "" }
-                    </span>
-                    {originalPrice && (
-                      <span
-                        className={`text-lg line-through ml-2 ${
-                          theme === "dark" ? "text-gray-500" : "text-gray-400"
-                        }`}
-                      >
-                       {originalPrice ? `${originalPrice.toFixed(0)}DT` : ""}
-                      </span>
-                    )}
+                      <Target className="h-6 w-6 inline mr-2" />
+                      Objectifs d'apprentissage
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {event.objectives.map((objective: string, index: number) => (
+                        objective ?  
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.1 }}
+                          className="flex items-center space-x-3"
+                        >
+                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span
+                            className={`${
+                              theme === "dark"
+                                ? "text-gray-300"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {objective}
+                          </span>
+                        </motion.div> : null
+                      ))}
+                    </div>
                   </div>
-                  {event.reduction && (
-                    <span className="bg-red-500 text-white px-2 py-1 rounded text-sm font-medium">
-                      -{event.reduction}%
-                    </span>
-                  )}
-                </div>
+                </AnimatedSection>
+              )}
+
               </div>
+              <AnimatedSection className="mt-6 w-full sm:w-auto sm:max-w-xs">
+    <motion.button
+      onClick={() => {
+        navigate(`/partcipate/${event._id}`);
+      }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="w-full py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
+    >
+      S'inscrire maintenant
+    </motion.button>
+  </AnimatedSection>
             </AnimatedSection>
 
             <AnimatedSection direction="right">
@@ -229,7 +269,7 @@ const FormationDetail: React.FC = () => {
                 <img
                   src={
                     event.coverImage
-                      ? `${import.meta.env.VITE_API_URL}/${event.coverImage}`
+                      ? `https://makerskills.tn/api/${event.coverImage}`
                       : "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800"
                   }
                   alt={event.name}
@@ -246,101 +286,7 @@ const FormationDetail: React.FC = () => {
         className={`py-8 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
       >
         <div className="container mx-auto px-4">
-          <AnimatedSection>
-            <div
-              className={`max-w-4xl mx-auto p-8 rounded-2xl shadow-lg ${
-                theme === "dark" ? "bg-gray-800" : "bg-orange-50"
-              }`}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                <div>
-                  <h3
-                    className={`text-xl font-bold mb-2 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    Informations
-                  </h3>
-                  <div className="space-y-2">
-                    {event.startDate && (
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="h-4 w-4 text-orange-500" />
-                        <span
-                          className={`text-sm ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-700"
-                          }`}
-                        >
-                          {new Date(event.startDate).toLocaleDateString(
-                            "fr-FR"
-                          )}
-                        </span>
-                      </div>
-                    )}
-                    {event.duration && (
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-blue-500" />
-                        <span
-                          className={`text-sm ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-700"
-                          }`}
-                        >
-                          {event.duration} jours
-                        </span>
-                      </div>
-                    )}
-                    {event.location && (
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="h-4 w-4 text-green-500" />
-                        <span
-                          className={`text-sm ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-700"
-                          }`}
-                        >
-                          {event.location === "online"
-                            ? "En ligne"
-                            : event.location == "in_person"
-                            ? "En personne"
-                            : "Hybride"}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="text-center">
-                  <div
-                    className={`text-2xl font-bold mb-1 ${
-                      theme === "dark" ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {event.price === 0 || event.price === null || event.price === undefined
-                      ? ""
-                      : event.price ? `${event.price.toFixed(0)}DT` : "" }
-                  </div>
-                  <div
-                    className={`text-sm ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}
-                  >
-                    Financement possible
-                  </div>
-                </div>
-
-                <div className="flex flex-col space-y-3">
-                  <motion.button
-                    onClick={() => {
-                      navigate(`/partcipate/${event._id}`);
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-full py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
-                  >
-                    S'inscrire maintenant
-                  </motion.button>
-                </div>
-              </div>
-            </div>
-          </AnimatedSection>
+   
         </div>
       </section>
 
@@ -366,6 +312,7 @@ const FormationDetail: React.FC = () => {
                     </h2>
                     <div className="space-y-4">
                       {event.modules.map((module, index) => (
+                        module?.title ? 
                         <motion.div
                           key={module._id}
                           initial={{ opacity: 0, y: 20 }}
@@ -413,7 +360,7 @@ const FormationDetail: React.FC = () => {
                               )}
                             </div>
                           </div>
-                        </motion.div>
+                        </motion.div> : null
                       ))}
                     </div>
                   </div>
@@ -421,43 +368,7 @@ const FormationDetail: React.FC = () => {
               )}
 
               {/* Learning Objectives */}
-              {event.objectives && event.objectives.length > 0 && (
-                <AnimatedSection>
-                  <div>
-                    <h2
-                      className={`text-2xl font-bold mb-6 ${
-                        theme === "dark" ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      <Target className="h-6 w-6 inline mr-2" />
-                      Objectifs d'apprentissage
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {event.objectives.map((objective, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, x: -20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: index * 0.1 }}
-                          className="flex items-center space-x-3"
-                        >
-                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                          <span
-                            className={`${
-                              theme === "dark"
-                                ? "text-gray-300"
-                                : "text-gray-700"
-                            }`}
-                          >
-                            {objective}
-                          </span>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                </AnimatedSection>
-              )}
+          
 
               {/* Products */}
               {event.products && event.products.length > 0 && (
