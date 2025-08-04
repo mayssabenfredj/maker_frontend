@@ -78,7 +78,7 @@ const ParticipationPage = () => {
         console.log(response.data);
       } catch (error) {
         console.log("error fetching the event details", error);
-        setError("Erreur lors du chargement des détails de l'événement");
+       
       } finally {
         setLoading(false);
       }
@@ -124,17 +124,19 @@ const ParticipationPage = () => {
           ? {}
           : { organizationName: formData.organizationName }),
       };
-
+      if(submitData.dateOfBirth === "") submitData.dateOfBirth = null;
       axios
         .post(import.meta.env.VITE_API_URL + "/participants", submitData)
         .then((res) => {
           setSubmitted(true);
         })
         .catch((err) => {
-          console.log("error", err);
+          console.log("error", err)
+          setError(err.response.data.message);
         });
     } catch (error) {
       console.error("Submission error:", error);
+      
     } finally {
       setIsSubmitting(false);
     }
@@ -771,14 +773,20 @@ const ParticipationPage = () => {
                         exit={{ opacity: 0, x: -20 }}
                         className="space-y-6"
                       >
+                            {error && (
+                              <div className="bg-red-100 border border-red-500 rounded-lg p-4 mt-4">
+                                <p className="text-red-500 text-sm">
+                                  {error}
+                                </p>
+                              </div>
+                            )}
                         <h2
                           className={`text-xl font-bold mb-4 ${
                             theme === "dark" ? "text-white" : "text-gray-900"
                           }`}
                         >
                           Confirmation de votre inscription
-                        </h2>
-
+                        </h2> 
                         <div
                           className={`p-6 rounded-xl ${
                             theme === "dark" ? "bg-gray-700" : "bg-gray-50"
@@ -791,6 +799,7 @@ const ParticipationPage = () => {
                           >
                             Récapitulatif
                           </h3>
+                      
                           <div className="space-y-3 text-sm">
                             <div className="flex justify-between">
                               <span
