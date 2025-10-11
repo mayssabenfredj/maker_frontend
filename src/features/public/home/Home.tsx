@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { ArrowRight, Cpu, Bot, Brain, Lightbulb, Users, Award, Globe, Star, Clock, ChevronLeft, ChevronRight, Play, CheckCircle, Quote, Calendar, MapPin, Target, Eye, Heart, Handshake, ExternalLink, Mail, Phone, User, Building, Briefcase, GraduationCap } from 'lucide-react';
 import { useStore } from '../../../stores/useStore';
 import { translations } from '../../../data/translations';
-import AnimatedSection from '../../../components/UI/AnimatedSection';
 import TestimonialsSection from './components/TestimonialsSection';
 import ReviewService from '../../admin/reviews/review.service';
 import { Review } from '../../admin/reviews/review';
@@ -14,7 +11,6 @@ import { team } from './data/team';
 import { whyChooseUs } from './data/whyChooseUs';
 import { features } from './data/features';
 import { contactTypes } from './data/contactTypes';
-import { calendarEvents } from './data/calendarEvents';
 import HeroSection from './components/HeroSection';
 import AboutSection from './components/AboutSection';
 import CalendarSection from './components/CalendarSection';

@@ -99,18 +99,12 @@ const CalendarSection: React.FC = () => {
     const matchesType =
       selectedFilter === "all" || event.type === selectedFilter;
 
-    // Apply month filter
-    if (!event.startDate) {
-      // Only include null startDate events if viewing the current month
-      const now = new Date();
-      return (
-        matchesType &&
-        currentMonth.getMonth() === now.getMonth() &&
-        currentMonth.getFullYear() === now.getFullYear()
-      );
+    // Require dateDebut: exclude events without a start date
+    if (!event.dateDebut) {
+      return false;
     }
 
-    const eventDate = new Date(event.startDate);
+    const eventDate = new Date(event.dateDebut);
     if (isNaN(eventDate.getTime())) {
       return false; // Exclude invalid dates
     }
@@ -309,8 +303,8 @@ const CalendarSection: React.FC = () => {
                             theme === "dark" ? "text-gray-300" : "text-gray-700"
                           }`}
                         >
-                          {event.startDate
-                            ? new Date(event.startDate).toLocaleDateString(
+                          {event.dateDebut
+                                ? new Date(event.dateDebut).toLocaleDateString(
                                 "fr-FR",
                                 {
                                   day: "numeric",
@@ -364,9 +358,9 @@ const CalendarSection: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                       <div
-                        className={`text-xlISTER font-bold ${
+                        className={`text-xl font-bold ${
                           theme === "dark" ? "text-white" : "text-gray-900"
                         }`}
                       >
