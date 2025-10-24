@@ -22,19 +22,19 @@ const Contact: React.FC = () => {
     {
       icon: MapPin,
       title: 'Adresse',
-      details: ['123 Rue de l\'Innovation', 'Tunis 1000, Tunisie'],
+      details: ['Technopole d\'el Ghazala, Ariana, Tunisie'],
       color: 'from-orange-500 to-red-500'
     },
     {
       icon: Phone,
       title: 'Téléphone',
-      details: ['+216 12 345 678', '+216 98 765 432'],
+      details: ['+216 25 801 660'],
       color: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Mail,
       title: 'Email',
-      details: ['contact@makerskills.tn', 'info@makerskills.tn'],
+      details: ['contact@makerskills.tn'],
       color: 'from-purple-500 to-pink-500'
     },
     {
@@ -331,7 +331,7 @@ const Contact: React.FC = () => {
                   <div className="space-y-4">
                     <motion.a
                       whileHover={{ scale: 1.02 }}
-                      href="tel:+21612345678"
+                      href="tel:+21625801660"
                       className={`flex items-center space-x-3 p-4 rounded-lg transition-colors ${
                         theme === 'dark'
                           ? 'bg-gray-700 hover:bg-gray-600'

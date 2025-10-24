@@ -187,8 +187,8 @@ const ContactSection: React.FC<ContactSectionProps> = ({ theme, formData, handle
                     <p className={`${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                     }`}>
-                      123 Rue de l'Innovation<br />
-                      Tunis 1000, Tunisie
+                      Adresse Technopole d'El Ghazala<br />
+                      Ariana, Tunisie, 2088 
                     </p>
                   </div>
                 </div>
@@ -204,9 +204,8 @@ const ContactSection: React.FC<ContactSectionProps> = ({ theme, formData, handle
                     </h3>
                     <p className={`${
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
-                      +216 12 345 678<br />
-                      +216 98 765 432
+                    }`}> 
+                      +216 25 801 660
                     </p>
                   </div>
                 </div>
@@ -224,7 +223,6 @@ const ContactSection: React.FC<ContactSectionProps> = ({ theme, formData, handle
                       theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                     }`}>
                       contact@makerskills.tn<br />
-                      info@makerskills.tn
                     </p>
                   </div>
                 </div>

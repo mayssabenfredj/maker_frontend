@@ -158,7 +158,7 @@ const Footer: React.FC = () => {
                     theme === "dark" ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
-                  123 Rue de l'Innovation, Tunis
+                  Adresse Technopole d'El Ghazala, Ariana, Tunisie
                 </span>
               </div>
               <div className="flex items-center space-x-3">
@@ -172,7 +172,7 @@ const Footer: React.FC = () => {
                     theme === "dark" ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
-                  +216 12 345 678
+                  +216 25 801 660
                 </span>
               </div>
               <div className="flex items-center space-x-3">
