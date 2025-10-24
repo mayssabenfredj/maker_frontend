@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import AnimatedSection from '../../../../components/UI/AnimatedSection';
-import { Briefcase } from 'lucide-react';
 
 interface AboutValue {
   icon: React.ElementType;
@@ -10,14 +9,6 @@ interface AboutValue {
   stats: string;
 }
 
-interface TeamMember {
-  name: string;
-  role: string;
-  image: string;
-  description: string;
-  specialties: string[];
-  experience: string;
-}
 
 interface WhyChooseUsReason {
   icon: React.ElementType;
@@ -28,11 +19,10 @@ interface WhyChooseUsReason {
 interface AboutSectionProps {
   theme: string;
   aboutValues: AboutValue[];
-  team: TeamMember[];
   whyChooseUs: WhyChooseUsReason[];
 }
 
-const AboutSection: React.FC<AboutSectionProps> = ({ theme, aboutValues, team, whyChooseUs }) => (
+const AboutSection: React.FC<AboutSectionProps> = ({ theme, aboutValues, whyChooseUs }) => (
   <section className={`py-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}>
     <div className="container mx-auto px-4">
       <AnimatedSection>
@@ -43,7 +33,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ theme, aboutValues, team, w
         </div>
       </AnimatedSection>
       {/* Mission, Vision, Values */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16 items-stretch">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16 items-stretch">
         {aboutValues.map((value, index) => (
           <AnimatedSection key={index} delay={index * 0.1}>
             <motion.div
