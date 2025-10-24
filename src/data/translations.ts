@@ -5,7 +5,7 @@ export const translations = {
       academy: "Académie",
       services: "Services",
       shop: "Boutique",
-      blogs: "Blogs",
+      blogs: "Réalisations",
       contact: "Contact",
       login: "Connexion",
       admin: "Admin",

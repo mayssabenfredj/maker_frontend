@@ -25,11 +25,11 @@ const Header: React.FC = () => {
 
   const navItems = [
     { path: "/", label: t.nav.home },
+        { path: "/services", label: t.nav.services },
     {
       path: "/academy",
       label: "Formations",
     },
-    { path: "/services", label: t.nav.services },
     { path: "/shop", label: t.nav.shop },
     { path: "/blogs", label: t.nav.blogs },
     { path: "/contact", label: t.nav.contact },

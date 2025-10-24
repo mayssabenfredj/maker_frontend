@@ -116,6 +116,8 @@ const CalendarSection: React.FC = () => {
     );
   });
 
+  const hasEvents = filteredEvents.length > 0;
+
   const nextMonth = () => {
     const newMonth = new Date(
       currentMonth.getFullYear(),
@@ -221,7 +223,7 @@ const CalendarSection: React.FC = () => {
         </AnimatedSection>
 
         {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${hasEvents ? 'mt-6' : ''}`}>
           {loading ? (
             <AnimatedSection>
               <div
@@ -364,7 +366,7 @@ const CalendarSection: React.FC = () => {
                           theme === "dark" ? "text-white" : "text-gray-900"
                         }`}
                       >
-                        {event.price === 0 || event.price === undefined ? "Gratuit" : `${event.price}DT`}
+                        {event.price === 0 || event.price === undefined  || event.price === null || event.price === "" ? "Gratuit" : `${event.price}DT`}
                       </div>
 
                       <motion.button
@@ -383,37 +385,54 @@ const CalendarSection: React.FC = () => {
               </AnimatedSection>
             ))
           ) : (
-            <AnimatedSection>
-              <div
-                className={`text-center p-6 rounded-2xl ${
-                  theme === "dark" ? "bg-gray-800" : "bg-gray-50"
-                }`}
-              >
-                <p
-                  className={`text-lg ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-700"
+            // Make the empty-state take the full width of the grid (span all columns)
+            <div className="col-span-1 md:col-span-2 lg:col-span-3">
+              <AnimatedSection>
+                <div
+                  className={`mx-auto text-center p-10 rounded-2xl w-full ${
+                    theme === "dark" ? "bg-gray-800" : "bg-gray-50"
                   }`}
                 >
-                  Aucun événement trouvé pour ce mois
-                </p>
-              </div>
-            </AnimatedSection>
+                  <div className="mx-auto mb-4 w-24 h-24 flex items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900">
+                    <Calendar className="h-10 w-10 text-orange-500" />
+                  </div>
+                  <h4 className={`text-xl font-semibold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+                    Aucun événement ce mois-ci
+                  </h4>
+                  <p className={`mt-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                    Essayez d'ajuster le filtre ou consultez tous nos événements.
+                  </p>
+
+                  <div className="mt-6">
+                    <motion.button
+                      onClick={() => navigate("/academy")}
+                      whileHover={{ scale: 1.03 }}
+                      className="mx-auto px-6 py-2 bg-orange-500 text-white rounded-lg font-medium hover:opacity-90"
+                    >
+                      Voir tous les événements
+                    </motion.button>
+                  </div>
+                </div>
+              </AnimatedSection>
+            </div>
           )}
         </div>
 
-        {/* View All Button */}
-        <AnimatedSection delay={0.4}>
-          <div className="text-center mt-12">
-            <motion.button
-              onClick={() => navigate("/academy")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"
-            >
-              Voir tous les événements
-            </motion.button>
-          </div>
-        </AnimatedSection>
+        {/* View All Button - only show when there ARE events (avoid duplicate when empty state already has the button) */}
+        {filteredEvents.length > 0 && (
+          <AnimatedSection delay={0.4}>
+            <div className="text-center mt-12">
+              <motion.button
+                onClick={() => navigate("/academy")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"
+              >
+                Voir tous les événements
+              </motion.button>
+            </div>
+          </AnimatedSection>
+        )}
       </div>
     </section>
   );
