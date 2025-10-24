@@ -58,7 +58,7 @@ const ServiceCTA: React.FC<ServiceCTAProps> = ({ title, description, buttonText,
           
           <div className="flex gap-4">
             <motion.a
-              href="tel:+33123456789"
+              href="tel:+21625801660"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all duration-300"
