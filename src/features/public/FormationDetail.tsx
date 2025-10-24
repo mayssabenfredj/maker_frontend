@@ -266,15 +266,21 @@ const FormationDetail: React.FC = () => {
 
             <AnimatedSection direction="right">
               <div className="relative">
-                <img
-                  src={
-                    event.coverImage
-                      ? `https://makerskills.tn/api/${event.coverImage}`
-                      : "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  }
-                  alt={event.name}
-                  className="w-full h-64 md:h-80 object-cover rounded-2xl"
-                />
+                {/* Use object-contain so the whole image is visible without being cropped.
+                    Add a subtle background and padding so letterboxing looks intentional. */}
+                <div className={`w-full h-64 md:h-80 rounded-2xl overflow-hidden flex items-center justify-center ${
+                  theme === "dark" ? "bg-gray-700" : "bg-gray-100"
+                }`}>
+                  <img
+                    src={
+                      event.coverImage
+                        ? `https://makerskills.tn/api/${event.coverImage}`
+                        : "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800"
+                    }
+                    alt={event.name}
+                    className="max-h-full w-full object-contain"
+                  />
+                </div>
               </div>
             </AnimatedSection>
           </div>
