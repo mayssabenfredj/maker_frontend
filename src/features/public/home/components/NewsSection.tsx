@@ -27,6 +27,15 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
     }
   };
 
+  // Take the 3 most recent blogs (by createdAt) to display
+  const latestBlogs = [...blogs]
+    .sort((a, b) => {
+      const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return tb - ta;
+    })
+    .slice(0, 3);
+
   return (
     <section
       className={`py-20 ${theme === "dark" ? "bg-gray-900" : "bg-white"}`}
@@ -52,7 +61,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
         </AnimatedSection>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {blogs.map((blog, index) => (
+          {latestBlogs.map((blog, index) => (
             <AnimatedSection key={blog._id} delay={index * 0.1}>
               <motion.article
                 whileHover={{ y: -10 }}
@@ -60,7 +69,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                   theme === "dark"
                     ? "bg-gray-800 text-gray-300"
                     : "bg-white text-gray-700"
-                } group`} // Added fallback text color
+                } group flex flex-col h-full`} // ensure equal-height cards
               >
                 <div className="relative">
                   <img
@@ -78,7 +87,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                     </span>
                   </div>
                 </div>
-                <div className="p-6">
+                <div className="p-6 flex-1 flex flex-col">
                   <h3
                     className={`text-xl font-bold mb-3 line-clamp-2 ${
                       theme === "dark" ? "text-white" : "text-gray-900"
@@ -117,17 +126,19 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                       </span>
                     </div>
                   </div>
-                  <Link
-                    to={`/news/${blog._id}`}
-                    className={`inline-flex items-center font-medium transition-colors ${
-                      theme === "dark"
-                        ? "text-orange-400 hover:text-orange-300"
-                        : "text-orange-500 hover:text-orange-600"
-                    }`}
-                  >
-                    Lire la suite
-                    <ArrowRight className="ml-1 h-4 w-4" />
-                  </Link>
+                  <div className="mt-auto">
+                    <Link
+                      to={`/news/${blog._id}`}
+                      className={`inline-flex items-center font-medium transition-colors ${
+                        theme === "dark"
+                          ? "text-orange-400 hover:text-orange-300"
+                          : "text-orange-500 hover:text-orange-600"
+                      }`}
+                    >
+                      Lire la suite
+                      <ArrowRight className="ml-1 h-4 w-4" />
+                    </Link>
+                  </div>
                 </div>
               </motion.article>
             </AnimatedSection>

@@ -366,7 +366,7 @@ const CalendarSection: React.FC = () => {
                           theme === "dark" ? "text-white" : "text-gray-900"
                         }`}
                       >
-                        {event.price === 0 || event.price === undefined ? "Gratuit" : `${event.price}DT`}
+                        {event.price === 0 || event.price === undefined  || event.price === null || event.price === "" ? "Gratuit" : `${event.price}DT`}
                       </div>
 
                       <motion.button
