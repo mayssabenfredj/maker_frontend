@@ -95,13 +95,18 @@ const NewsSection: React.FC<NewsSectionProps> = ({ blogs }) => {
                   >
                     {blog.title}
                   </h3>
-                  <p
-                    className={`text-sm mb-4 line-clamp-3 ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
-                    }`}
-                  >
-                    {blog.description?.slice(0, 120) || ""}
-                  </p>
+                  {blog.description && (
+                    <div
+                      className={`text-sm mb-4 line-clamp-3 ${
+                        theme === "dark" ? "text-gray-400" : "text-gray-600"
+                      }`}
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          (blog.description.slice(0, 120) as string) +
+                          (blog.description.length > 120 ? "..." : ""),
+                      }}
+                    />
+                  )}
                   <div className="flex items-center justify-between text-sm mb-4">
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-orange-500" />

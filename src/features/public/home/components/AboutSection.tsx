@@ -43,19 +43,19 @@ const AboutSection: React.FC<AboutSectionProps> = ({ theme, aboutValues, team, w
         </div>
       </AnimatedSection>
       {/* Mission, Vision, Values */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16 items-stretch">
         {aboutValues.map((value, index) => (
           <AnimatedSection key={index} delay={index * 0.1}>
             <motion.div
               whileHover={{ y: -10 }}
-              className={`p-8 rounded-2xl shadow-lg relative overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}
+              className={`p-8 rounded-2xl shadow-lg relative overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} flex flex-col h-full`}
             >
               <div className={`w-16 h-16 rounded-xl ${index % 2 === 0 ? 'bg-orange-500' : 'bg-blue-900'} flex items-center justify-center mb-6`}>
                 <value.icon className="h-8 w-8 text-white" />
               </div>
               <h3 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{value.title}</h3>
               <p className={`mb-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{value.description}</p>
-              <div className={`text-sm font-semibold ${index % 2 === 0 ? 'text-orange-500' : 'text-blue-900'}`}>{value.stats}</div>
+              <div className={`text-sm font-semibold ${index % 2 === 0 ? 'text-orange-500' : 'text-blue-900'} mt-auto`}>{value.stats}</div>
             </motion.div>
           </AnimatedSection>
         ))}
