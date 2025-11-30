@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useStore } from "../../stores/useStore";
 import AnimatedSection from "../../components/UI/AnimatedSection";
+import { getImageUrl } from "../../shared/utils/imageUtils";
 import axios from "axios";
 
 const FormationDetail: React.FC = () => {
@@ -274,7 +275,7 @@ const FormationDetail: React.FC = () => {
                   <img
                     src={
                       event.coverImage
-                        ? `https://makerskills.tn/api/${event.coverImage}`
+                        ? getImageUrl(event.coverImage)
                         : "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800"
                     }
                     alt={event.name}
@@ -402,9 +403,7 @@ const FormationDetail: React.FC = () => {
                           <div className="flex items-center space-x-4">
                             {product.images && product.images.length > 0 && (
                               <img
-                                src={`${import.meta.env.VITE_API_URL}${
-                                  product.images[0]
-                                }`}
+                                src={getImageUrl(product.images[0])}
                                 alt={product.name}
                                 className="w-16 h-16 object-cover rounded-lg"
                               />
