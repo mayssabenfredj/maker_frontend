@@ -24,7 +24,7 @@ const BootcampFields: React.FC<BootcampFieldsProps> = ({
   const handleArrayChange = (field: keyof CreateBootcampDto, value: string) => {
     setFormData({
       ...formData,
-      [field]: value.split(",").map((item) => item.replace(" ", "")),
+      [field]: value.split(",").map((item) => item.trim()),
     });
   };
   const [showPreview, setShowPreview] = useState(false);
